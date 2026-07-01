@@ -1,0 +1,861 @@
+// ──────────────────────────────────────────────
+// Water Purifier Service ERP — Prisma Schema
+// Multi-Tenant SaaS
+// ──────────────────────────────────────────────
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+// Notes: Enums are defined as comments for SQLite compatibility.
+// In PostgreSQL (Supabase) production, restore the enum declarations.
+
+// ──────────────────────────────────────────────
+// Tenant
+// ──────────────────────────────────────────────
+
+model Tenant {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  logo      String?
+  phone     String?
+  email     String?
+  address   String?
+  reportConfig String? @default("{\"primaryColor\":\"#1e40af\",\"footerText\":\"Bu rapor Water Purifier Service ERP sistemi tarafindan olusturulmustur.\",\"sections\":{\"customer\":true,\"device\":true,\"measurements\":true,\"filters\":true,\"signature\":true}}") // JSON: PDF tasarım ayarları
+  googleReviewUrl String? @map("google_review_url") // Firma Google Review linki
+  surveyMessage   String? @map("survey_message")     // Özel anket davet mesajı (opsiyonel)
+  isActive  Boolean   @default(true)
+  plan      String    @default("STARTER") // STARTER | PROFESSIONAL
+  maxUsers  Int       @default(10)
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  users                 User[]
+  profiles              Profile[]
+  devices               Device[]
+  devicePhotos          DevicePhoto[]
+  tdsReadings           TdsReading[]
+  technicians           Technician[]
+  customers             Customer[]
+  customerAddresses     CustomerAddress[]
+  customerPhones        CustomerPhone[]
+  serviceTickets        ServiceTicket[]
+  servicePhotos         ServicePhoto[]
+  filterCatalogs        FilterCatalog[]
+  filterChanges         FilterChange[]
+  deviceFilters         DeviceFilter[]
+  deviceMaintenance     DeviceMaintenance[]
+  maintenanceReminders  MaintenanceReminder[]
+  inventory             InventoryItem[]
+  inventoryTransactions InventoryTransaction[]
+  whatsappSessions      WhatsAppSession[]
+  messageTemplates      MessageTemplate[]
+  serviceSurveys        ServiceSurvey[]
+  automationRules       AutomationRule[]
+  automationLogs        AutomationLog[]
+  coupons               Coupon[]
+  couponUsages          CouponUsage[]
+
+  @@schema("public")
+  @@map("tenants")
+}
+
+// ──────────────────────────────────────────────
+// Profile — app-level user profile (mirrors auth.users)
+// ──────────────────────────────────────────────
+
+model Profile {
+  id        String   @id
+  email     String?
+  fullName  String?  @map("full_name")
+  role      String   @default("viewer")
+  tenantId  String?  @map("tenant_id")
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@schema("public")
+  @@map("profiles")
+}
+
+// ──────────────────────────────────────────────
+// User — role: SUPER_ADMIN | TENANT_ADMIN | TENANT_USER
+// ──────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  tenantId     String?
+  tenant       Tenant?   @relation(fields: [tenantId], references: [id])
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("TENANT_USER")
+  phone        String?
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  deletedAt    DateTime? // soft delete
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("users")
+}
+
+// ──────────────────────────────────────────────
+// Device — status: ACTIVE | PASSIVE | SCRAP
+// ──────────────────────────────────────────────
+
+model Device {
+  id            String    @id @default(cuid())
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id])
+  serialNo      String    @unique
+  brand         String
+  model         String
+  warrantyStart DateTime?
+  warrantyEnd   DateTime?
+  qrCode        String?   @unique
+  status        String    @default("ACTIVE")
+  customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id])
+  installDate   DateTime?
+  notes         String?
+  deletedAt     DateTime? // soft delete
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tdsReadings          TdsReading[]
+  photos               DevicePhoto[]
+  serviceTickets       ServiceTicket[]
+  deviceFilters        DeviceFilter[]
+  deviceMaintenance    DeviceMaintenance[]
+  maintenanceReminders MaintenanceReminder[]
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@schema("public")
+  @@map("devices")
+}
+
+// ──────────────────────────────────────────────
+// DevicePhoto
+// ──────────────────────────────────────────────
+
+model DevicePhoto {
+  id          String    @id @default(cuid())
+  deviceId    String
+  device      Device    @relation(fields: [deviceId], references: [id])
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  storagePath String
+  fileName    String
+  mimeType    String    @default("image/jpeg")
+  fileSize    Int?
+  isPrimary   Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([deviceId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("device_photos")
+}
+
+// ──────────────────────────────────────────────
+// TdsReading
+// ──────────────────────────────────────────────
+
+model TdsReading {
+  id         String    @id @default(cuid())
+  deviceId   String
+  device     Device    @relation(fields: [deviceId], references: [id])
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  tdsValue   Int
+  inValue    Int?
+  outValue   Int?
+  notes      String?
+  recordedAt DateTime  @default(now())
+  recordedBy String?
+  deletedAt  DateTime? // soft delete
+
+  @@index([deviceId])
+  @@index([tenantId])
+  @@index([recordedAt])
+  @@schema("public")
+  @@map("tds_readings")
+}
+
+// ──────────────────────────────────────────────
+// Technician
+// ──────────────────────────────────────────────
+
+model Technician {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  name      String
+  phone     String?
+  email     String?
+  isActive  Boolean   @default(true)
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  serviceTickets ServiceTicket[]
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("technicians")
+}
+
+// ──────────────────────────────────────────────
+// Customer (soft delete, tags, multiple phones/addresses)
+// ──────────────────────────────────────────────
+
+model Customer {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  name      String
+  email     String?
+  notes     String?
+  tags      String    @default("") // comma-separated: "VIP,bayii"
+  deletedAt DateTime? // soft delete
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Legacy single fields (kept for migration)
+  phone    String  @default("")
+  address  String?
+  city     String?
+  district String?
+
+  // Relations
+  devices              Device[]
+  addresses            CustomerAddress[]
+  phones               CustomerPhone[]
+  serviceTickets       ServiceTicket[]
+  maintenanceReminders MaintenanceReminder[]
+  couponUsages         CouponUsage[]
+
+  @@index([tenantId])
+  @@index([tenantId, name])
+  @@schema("public")
+  @@map("customers")
+}
+
+// ──────────────────────────────────────────────
+// CustomerAddress — multiple addresses
+// ──────────────────────────────────────────────
+
+model CustomerAddress {
+  id         String    @id @default(cuid())
+  customerId String
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  label      String    @default("") // "Ev", "İş", "Yazlık"
+  address    String
+  city       String    @default("")
+  district   String    @default("")
+  deletedAt  DateTime?
+
+  @@index([customerId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("customer_addresses")
+}
+
+// ──────────────────────────────────────────────
+// CustomerPhone — multiple phones
+// ──────────────────────────────────────────────
+
+model CustomerPhone {
+  id         String    @id @default(cuid())
+  customerId String
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tenantId   String
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  label      String    @default("") // "Cep", "İş", "Ev"
+  number     String
+  deletedAt  DateTime?
+
+  @@index([customerId])
+  @@index([tenantId])
+  @@index([number])
+  @@schema("public")
+  @@map("customer_phones")
+}
+
+// ──────────────────────────────────────────────
+// ServiceTicket — status: PENDING | ASSIGNED | IN_PROGRESS | COMPLETED | CANCELLED
+// ──────────────────────────────────────────────
+
+model ServiceTicket {
+  id           String      @id @default(cuid())
+  tenantId     String
+  tenant       Tenant      @relation(fields: [tenantId], references: [id])
+  ticketNo     String      @unique
+  customerId   String
+  customer     Customer    @relation(fields: [customerId], references: [id])
+  deviceId     String
+  device       Device      @relation(fields: [deviceId], references: [id])
+  technicianId String?
+  technician   Technician? @relation(fields: [technicianId], references: [id])
+  status       String      @default("PENDING")
+  issueDesc    String
+  resolution   String?
+  scheduledAt  DateTime?
+  completedAt  DateTime?
+
+  tdsBefore      Int?
+  tdsAfter       Int?
+  pressureBefore Float?
+  pressureAfter  Float?
+  leakCheck      Boolean?
+  leakNotes      String?
+  workDone       String?
+  customerNote   String?
+
+  signatureDataUrl String?
+  signatureName    String?
+  pdfStoragePath   String?
+
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  photos            ServicePhoto[]
+  filterChanges     FilterChange[]
+  deviceMaintenance DeviceMaintenance[]
+  couponUsages      CouponUsage[]
+  surveys           ServiceSurvey[]
+  coupons           Coupon[]
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("service_tickets")
+}
+
+// ──────────────────────────────────────────────
+// ServicePhoto — photoType: BEFORE | AFTER | GENERAL
+// ──────────────────────────────────────────────
+
+model ServicePhoto {
+  id          String        @id @default(cuid())
+  ticketId    String
+  ticket      ServiceTicket @relation(fields: [ticketId], references: [id])
+  tenantId    String
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  storagePath String
+  fileName    String
+  mimeType    String        @default("image/jpeg")
+  fileSize    Int?
+  photoType   String        @default("GENERAL")
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+
+  @@index([ticketId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("service_photos")
+}
+
+// ──────────────────────────────────────────────
+// FilterCatalog — stage: SEDIMENT | CARBON_BLOCK | GAC | MEMBRANE | POST_CARBON | UV | ALKALINE | MINERAL | OTHER
+// ──────────────────────────────────────────────
+
+model FilterCatalog {
+  id               String         @id @default(cuid())
+  tenantId         String
+  tenant           Tenant         @relation(fields: [tenantId], references: [id])
+  name             String
+  sku              String?
+  stage            String
+  compatibleModels String?
+  isActive         Boolean        @default(true)
+  sortOrder        Int            @default(0)
+  inventoryItemId  String?
+  inventoryItem    InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+  deletedAt        DateTime?      // soft delete
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  filterChanges FilterChange[]
+  deviceFilters DeviceFilter[]
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("filter_catalogs")
+}
+
+// ──────────────────────────────────────────────
+// FilterChange
+// ──────────────────────────────────────────────
+
+model FilterChange {
+  id         String        @id @default(cuid())
+  ticketId   String
+  ticket     ServiceTicket @relation(fields: [ticketId], references: [id])
+  filterId   String
+  filter     FilterCatalog @relation(fields: [filterId], references: [id])
+  tenantId   String
+  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+  quantity   Int           @default(1)
+  oldMeterHr Int?
+  notes      String?
+  deletedAt  DateTime?
+  createdAt  DateTime      @default(now())
+
+  @@index([ticketId])
+  @@index([filterId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("filter_changes")
+}
+
+// ──────────────────────────────────────────────
+// DeviceFilter — tracks installed filters with lifespan
+// ──────────────────────────────────────────────
+
+model DeviceFilter {
+  id                   String        @id @default(cuid())
+  deviceId             String
+  device               Device        @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  filterCatalogId      String
+  filterCatalog        FilterCatalog @relation(fields: [filterCatalogId], references: [id])
+  tenantId             String
+  tenant               Tenant        @relation(fields: [tenantId], references: [id])
+  installedAt          DateTime      @default(now())
+  expectedLifespanDays Int
+  notes                String?
+  deletedAt            DateTime? // soft delete
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@index([deviceId])
+  @@index([filterCatalogId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("device_filters")
+}
+
+// ──────────────────────────────────────────────
+// DeviceMaintenance — tracks individual maintenance events per device
+// ──────────────────────────────────────────────
+
+model DeviceMaintenance {
+  id              String         @id @default(cuid())
+  deviceId        String
+  device          Device         @relation(fields: [deviceId], references: [id])
+  tenantId        String
+  tenant          Tenant         @relation(fields: [tenantId], references: [id])
+  ticketId        String? // optional link to service ticket
+  ticket          ServiceTicket? @relation(fields: [ticketId], references: [id])
+  maintenanceType String         @default("FILTER_CHANGE") // FILTER_CHANGE | INSPECTION | GENERAL
+  description     String?
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  notes           String?
+  deletedAt       DateTime? // soft delete
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  reminders MaintenanceReminder[]
+
+  @@index([deviceId])
+  @@index([tenantId])
+  @@index([scheduledDate])
+  @@schema("public")
+  @@map("device_maintenance")
+}
+
+// ──────────────────────────────────────────────
+// MaintenanceReminder — logs WhatsApp/SMS reminders sent for upcoming maintenance
+// ──────────────────────────────────────────────
+
+model MaintenanceReminder {
+  id             String             @id @default(cuid())
+  deviceId       String
+  device         Device             @relation(fields: [deviceId], references: [id])
+  tenantId       String
+  tenant         Tenant             @relation(fields: [tenantId], references: [id])
+  customerId     String
+  customer       Customer           @relation(fields: [customerId], references: [id])
+  maintenanceId  String? // optional link to device_maintenance record
+  maintenance    DeviceMaintenance? @relation(fields: [maintenanceId], references: [id])
+  reminderType   String // "15_DAYS" | "7_DAYS" | "OVERDUE"
+  channel        String             @default("WHATSAPP") // WHATSAPP | SMS | EMAIL
+  recipientPhone String?
+  messageText    String?
+  status         String             @default("PENDING") // PENDING | SENT | FAILED
+  sentAt         DateTime?
+  errorMessage   String?
+  deletedAt      DateTime? // soft delete
+  createdAt      DateTime           @default(now())
+
+  @@index([deviceId])
+  @@index([tenantId])
+  @@index([reminderType])
+  @@index([status])
+  @@index([createdAt])
+  @@schema("public")
+  @@map("maintenance_reminders")
+}
+
+// ──────────────────────────────────────────────
+// Coupon / Discount
+// ──────────────────────────────────────────────
+
+model Coupon {
+  id          String         @id @default(cuid())
+  tenantId    String
+  tenant      Tenant         @relation(fields: [tenantId], references: [id])
+  ticketId    String?
+  ticket      ServiceTicket? @relation(fields: [ticketId], references: [id])
+  code        String // tenant bazında unique
+  discountPct Int            @default(10) // yüzde indirim (varsayılan %10)
+  maxUses     Int            @default(1) // 0 = sınırsız
+  currentUses Int            @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean        @default(true)
+  autoCreated Boolean        @default(false) // anket>=4 puan ile otomatik oluşturulduysa
+  minRating   Int?
+  description String?
+  deletedAt   DateTime? // soft delete
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  usages CouponUsage[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([code])
+  @@schema("public")
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id         String         @id @default(cuid())
+  couponId   String
+  coupon     Coupon         @relation(fields: [couponId], references: [id])
+  tenantId   String
+  tenant     Tenant         @relation(fields: [tenantId], references: [id])
+  customerId String?
+  customer   Customer?      @relation(fields: [customerId], references: [id])
+  ticketId   String?
+  ticket     ServiceTicket? @relation(fields: [ticketId], references: [id])
+  usedAt     DateTime       @default(now())
+  deletedAt  DateTime? // soft delete
+
+  @@index([couponId])
+  @@index([tenantId])
+  @@schema("public")
+  @@map("coupon_usages")
+}
+
+// ──────────────────────────────────────────────
+// InventoryItem — filtre/parça stoğu
+// ──────────────────────────────────────────────
+
+model InventoryItem {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  name      String
+  sku       String?
+  quantity  Int       @default(0)
+  minStock  Int       @default(0)
+  unitPrice Float     @default(0)
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  transactions   InventoryTransaction[]
+  filterCatalogs FilterCatalog[]
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("inventory_items")
+}
+
+// ──────────────────────────────────────────────
+// InventoryTransaction — stok giriş/çıkış hareketleri
+// type: IN | OUT
+// referenceType: PURCHASE | SERVICE | RETURN | ADJUSTMENT | OTHER
+// ──────────────────────────────────────────────
+
+model InventoryTransaction {
+  id            String        @id @default(cuid())
+  itemId        String
+  item          InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tenantId      String
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  type          String // "IN" (giriş) | "OUT" (çıkış)
+  quantity      Int // pozitif tam sayı
+  referenceType String        @default("OTHER") // PURCHASE | SERVICE | RETURN | ADJUSTMENT | OTHER
+  referenceId   String? // Sipariş no, servis fiş no vb.
+  notes         String?
+  createdBy     String?
+  deletedAt     DateTime?
+  createdAt     DateTime      @default(now())
+
+  @@index([itemId])
+  @@index([tenantId])
+  @@index([createdAt])
+  @@schema("public")
+  @@map("inventory_transactions")
+}
+
+// ──────────────────────────────────────────────
+// AutomationRule — Event-driven automation engine
+// trigger-condition-action rule system
+// ──────────────────────────────────────────────
+// trigger: service.completed | maintenance.due | device.registered
+//         | customer.created | filter.change.due | survey.response
+// condition: JSON array of { type, operator, value }
+// action: JSON array of { type, params }
+//   action types: wait, sendMessage, sendSurvey, createTicket, notifyTechnician
+
+model AutomationRule {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String // rule name
+  description String? // optional description
+  trigger     String // event trigger key
+  conditions  String    @default("[]") // JSON array of Condition
+  actions     String    @default("[]") // JSON array of Action
+  isActive    Boolean   @default(true) // enable/disable toggle
+  priority    Int       @default(0) // execution order (higher = first)
+  cooldownMin Int       @default(0) // min minutes between re-fires
+  lastFiredAt DateTime? // last execution timestamp
+  deletedAt   DateTime? // soft delete
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  logs AutomationLog[]
+
+  @@index([tenantId])
+  @@index([trigger])
+  @@index([isActive])
+  @@schema("public")
+  @@map("automation_rules")
+}
+
+// ──────────────────────────────────────────────
+// AutomationLog — execution audit trail
+// ──────────────────────────────────────────────
+
+model AutomationLog {
+  id          String         @id @default(cuid())
+  tenantId    String
+  tenant      Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  ruleId      String
+  rule        AutomationRule @relation(fields: [ruleId], references: [id])
+  trigger     String // which trigger fired
+  entityType  String? // e.g. "service_ticket", "device"
+  entityId    String? // ID of the entity that triggered
+  context     String         @default("{}") // JSON — trigger context snapshot
+  status      String         @default("PENDING") // PENDING | SUCCESS | PARTIAL | FAILED
+  actionsJson String         @default("[]") // snapshot of actions attempted
+  result      String? // JSON — per-action results
+  errorMsg    String? // error if any
+  deletedAt   DateTime?
+  executedAt  DateTime       @default(now())
+
+  @@index([tenantId])
+  @@index([ruleId])
+  @@index([trigger])
+  @@index([executedAt])
+  @@schema("public")
+  @@map("automation_logs")
+}
+
+// ──────────────────────────────────────────────
+// ServiceSurvey — memnuniyet anketi
+// Servis tamamlanınca müşteriye WhatsApp ile anket linki gönderilir.
+// Müşteri 1-5 arası puan verir.
+//   Puan >= 4 → kupon oluştur + Google Review linki gönder
+//   Puan <= 2 → yüksek öncelikli bildirim oluştur
+// ──────────────────────────────────────────────
+
+model ServiceSurvey {
+  id               String        @id @default(cuid())
+  ticketId         String        @unique
+  ticket           ServiceTicket @relation(fields: [ticketId], references: [id])
+  tenantId         String
+  tenant           Tenant        @relation(fields: [tenantId], references: [id])
+  score            Int? // 1-5 puan (null = henüz yanıtlanmamış)
+  comment          String? // isteğe bağlı yorum
+  sentAt           DateTime      @default(now()) // anket linkinin gönderildiği zaman
+  respondedAt      DateTime? // müşterinin yanıtladığı zaman
+  couponSent       Boolean       @default(false) // kupon gönderildi mi?
+  couponCode       String? // oluşturulan kupon kodu
+  googleReviewSent Boolean       @default(false) // Google Review linki gönderildi mi?
+  notificationSent Boolean       @default(false) // düşük puan bildirimi gönderildi mi?
+  deletedAt        DateTime? // soft delete
+
+  @@index([tenantId])
+  @@index([ticketId])
+  @@schema("public")
+  @@map("service_surveys")
+}
+
+// ──────────────────────────────────────────────
+// SystemSetting — key-value yapılandırma (super admin)
+// ──────────────────────────────────────────────
+
+model SystemSetting {
+  key       String   @id
+  value     String   @default("")
+  updatedBy String?
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@schema("public")
+  @@map("system_settings")
+}
+
+// ──────────────────────────────────────────────
+// AuditLog
+// ──────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String?
+  userId    String?
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([createdAt])
+  @@schema("public")
+  @@map("audit_logs")
+}
+
+// ──────────────────────────────────────────────
+// MessageTemplate — tenant-level message templates
+// ──────────────────────────────────────────────
+// Her tenant kendi mesaj şablonlarını oluşturur.
+// Değişkenler {{variable_name}} formatında kullanılır.
+// Desteklenen değişkenler: customer_name, device_model,
+//   next_service_date, company_name, phone, technician, discount_code
+
+model MessageTemplate {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name      String // şablon adı (ör: "Bakım Hatırlatma")
+  content   String // şablon metni (ör: "Sayın {{customer_name}}...")
+  variables String    @default("") // JSON string: kullanılan değişken listesi
+  isActive  Boolean   @default(true)
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tenantId])
+  @@schema("public")
+  @@map("message_templates")
+}
+
+// ──────────────────────────────────────────────
+// WhatsAppSession — WAHA multi-tenant session management
+// ──────────────────────────────────────────────
+// Her tenant için ayrı bir WAHA session.
+// QR bağlantı, durum takibi, otomatik yeniden
+// bağlanma bu model üzerinden yönetilir.
+
+model WhatsAppSession {
+  id       String @id @default(cuid())
+  tenantId String @unique
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
+  // WAHA session adı (örn: "wa_tenant_abc123")
+  sessionName String @unique
+  status      String @default("DISCONNECTED")
+  // CONNECTING | CONNECTED | DISCONNECTED | ERROR
+
+  // QR kod — base64 veya JSON string (en son üretilen QR)
+  qrCode String?
+
+  // Bağlanan telefon numarası (WAHA webhook'tan gelir)
+  phoneNumber     String?
+  phoneNumberIntl String? // Uluslararası format: +905551234567
+
+  // Bağlantı zaman damgaları
+  lastConnectedAt    DateTime?
+  lastDisconnectedAt DateTime?
+  lastErrorAt        DateTime?
+
+  // Hata bilgisi
+  errorMessage String?
+
+  // Otomatik yeniden bağlanma
+  autoReconnect Boolean   @default(true)
+  retryCount    Int       @default(0)
+  maxRetries    Int       @default(5)
+  lastRetryAt   DateTime?
+
+  // Webhook secret (WAHA callback doğrulaması için)
+  webhookSecret String?
+
+  // Session metadata (JSON — bağlantı detayları, cihaz bilgisi vs.)
+  metadata String?
+
+  deletedAt DateTime? // soft delete
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([tenantId])
+  @@index([sessionName])
+  @@index([status])
+  @@schema("public")
+  @@map("whatsapp_sessions")
+}
+
+// ──────────────────────────────────────────────
+// ServicePayment — Ödeme / Tahsilat
+// ──────────────────────────────────────────────
+
+model ServicePayment {
+  id              String    @id @default(cuid())
+  ticketId        String    @map("ticket_id")
+  tenantId        String    @map("tenant_id")
+  customerId      String    @map("customer_id")
+  amount          Decimal   @db.Decimal(10, 2)
+  paymentMethod   String    @map("payment_method")
+  status          String    @default("PAID")
+  installmentCount Int?     @map("installment_count")
+  paidAt          DateTime? @map("paid_at")
+  dueDate         DateTime? @map("due_date")
+  notes           String?
+  createdBy       String?   @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([ticketId])
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([status])
+  @@index([paymentMethod])
+  @@schema("public")
+  @@map("service_payments")
+}

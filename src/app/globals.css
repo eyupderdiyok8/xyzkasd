@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: oklch(98% 0.01 250);
+    --foreground: oklch(28% 0.02 270);
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(28% 0.02 270);
+    --popover: oklch(100% 0 0);
+    --popover-foreground: oklch(28% 0.02 270);
+    --primary: oklch(58% 0.16 270);
+    --primary-foreground: oklch(100% 0 0);
+    --secondary: oklch(96% 0.01 270);
+    --secondary-foreground: oklch(35% 0.02 270);
+    --muted: oklch(96% 0.01 270);
+    --muted-foreground: oklch(54% 0.03 270);
+    --accent: oklch(72% 0.16 35);
+    --accent-foreground: oklch(100% 0 0);
+    --destructive: oklch(55% 0.2 25);
+    --destructive-foreground: oklch(100% 0 0);
+    --border: oklch(92% 0.01 270);
+    --input: oklch(92% 0.01 270);
+    --ring: oklch(58% 0.16 270);
+    --radius: 1.25rem;
+    --success: oklch(62% 0.19 160);
+    --warning: oklch(72% 0.16 80);
+    --danger: oklch(55% 0.2 25);
+  }
+
+  .dark {
+    --background: oklch(20% 0.02 270);
+    --foreground: oklch(94% 0.01 270);
+    --card: oklch(24% 0.02 270);
+    --card-foreground: oklch(94% 0.01 270);
+    --popover: oklch(24% 0.02 270);
+    --popover-foreground: oklch(94% 0.01 270);
+    --primary: oklch(68% 0.15 270);
+    --primary-foreground: oklch(20% 0.02 270);
+    --secondary: oklch(28% 0.02 270);
+    --secondary-foreground: oklch(90% 0.01 270);
+    --muted: oklch(28% 0.02 270);
+    --muted-foreground: oklch(70% 0.02 270);
+    --accent: oklch(74% 0.15 35);
+    --accent-foreground: oklch(20% 0.02 270);
+    --destructive: oklch(55% 0.15 25);
+    --destructive-foreground: oklch(100% 0 0);
+    --border: oklch(30% 0.02 270);
+    --input: oklch(30% 0.02 270);
+    --ring: oklch(68% 0.15 270);
+    --radius: 1.25rem;
+    --success: oklch(62% 0.19 160);
+    --warning: oklch(72% 0.16 80);
+    --danger: oklch(55% 0.15 25);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    font-family: 'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.25s ease-out;
+  }
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+  .animate-fade-up {
+    animation: fade-up 0.35s ease-out both;
+  }
+  .animate-slide-in {
+    animation: slide-in 0.25s ease-out;
+  }
+
+  /* Mobile safe areas */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left { padding-left: env(safe-area-inset-left); }
+  .safe-right { padding-right: env(safe-area-inset-right); }
+
+  /* Hide scrollbar but keep scroll */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Touch-optimized tap target */
+  .tap-44 { min-height: 44px; min-width: 44px; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
