@@ -13,6 +13,7 @@ interface InventoryItem {
   quantity: number;
   minStock: number;
   unitPrice: number;
+  photoPath: string | null;
   isCritical: boolean;
   createdAt: string;
   updatedAt: string;
@@ -224,6 +225,55 @@ export default function InventoryItemDetailPage({
               Sil
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Photo */}
+      <div className="mt-4 flex items-start gap-4">
+        {item.photoPath ? (
+          <div className="relative rounded-lg border border-border overflow-hidden w-32 h-32">
+            <img src={item.photoPath} alt={item.name} className="w-full h-full object-cover" />
+            <button
+              onClick={async () => {
+                if (!confirm('Fotoğrafı silmek istediğinize emin misiniz?')) return;
+                await fetch(`/api/inventory/${item.id}/photo`, {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ photo: null }),
+                });
+                loadItem();
+              }}
+              className="absolute top-1 right-1 rounded-full bg-black/50 p-1 text-white hover:bg-red-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        ) : (
+          <div className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+            <span className="text-xs text-gray-400">Fotoğraf yok</span>
+          </div>
+        )}
+        <div className="space-y-2">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-gray-50 transition-colors">
+            📷 {item.photoPath ? 'Fotoğrafı Değiştir' : 'Fotoğraf Yükle'}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async () => {
+                  await fetch(`/api/inventory/${item.id}/photo`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ photo: reader.result }),
+                  });
+                  loadItem();
+                };
+                reader.readAsDataURL(file);
+              }}
+            />
+          </label>
         </div>
       </div>
 
