@@ -324,6 +324,7 @@ export default function ServiceRecordPage() {
 
   // Signature
   const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [signatureName, setSignatureName] = useState('');
   const signatureCanvasRef = useRef<HTMLCanvasElement>(null!);
 
@@ -557,6 +558,7 @@ export default function ServiceRecordPage() {
       leakNotes: leakNotes || null,
       workDone: workDone || null,
       customerNote: customerNote || null,
+      expenses: expenses.length > 0 ? JSON.stringify(expenses) : null,
       resolution: resolution || null,
       signatureDataUrl: sigUrl,
       signatureName: signatureName || null,
@@ -1023,6 +1025,12 @@ export default function ServiceRecordPage() {
             )}
           </div>
 
+          {/* ── Technician Expenses ── */}
+          <div className="rounded-lg border border-border bg-white p-5">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">🧾 Teknisyen Masrafları</h2>
+            <ExpensesSection expenses={expenses} setExpenses={setExpenses} disabled={!!existingPayment} />
+          </div>
+
           {/* Submit */}
           <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
             <button type="button" onClick={() => router.back()}
@@ -1174,6 +1182,70 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
     <div className="rounded-lg border border-border bg-white p-4">
       <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</p>
       <p className="mt-1 text-lg font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+interface Expense { type: string; amount: number; description: string; }
+
+const EXPENSE_TYPES = [
+  { key: 'travel', label: 'Yol / Ulaşım' },
+  { key: 'parking', label: 'Park / Otopark' },
+  { key: 'meal', label: 'Yemek' },
+  { key: 'material', label: 'Malzeme / Sarf' },
+  { key: 'other', label: 'Diğer' },
+];
+
+function ExpensesSection({ expenses, setExpenses, disabled }: {
+  expenses: Expense[];
+  setExpenses: (e: Expense[]) => void;
+  disabled?: boolean;
+}) {
+  const add = () => setExpenses([...expenses, { type: 'travel', amount: 0, description: '' }]);
+  const remove = (i: number) => setExpenses(expenses.filter((_, idx) => idx !== i));
+  const update = (i: number, field: keyof Expense, value: string | number) => {
+    const next = [...expenses];
+    next[i] = { ...next[i], [field]: value };
+    setExpenses(next);
+  };
+
+  return (
+    <div className="space-y-3">
+      {expenses.length === 0 && (
+        <p className="text-sm text-gray-400">Henüz masraf eklenmedi.</p>
+      )}
+      {expenses.map((e, i) => (
+        <div key={i} className="flex flex-wrap items-end gap-2 p-3 rounded-lg bg-gray-50">
+          <div className="flex-1 min-w-[100px]">
+            <select value={e.type} onChange={(ev) => update(i, 'type', ev.target.value)} disabled={disabled}
+              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs">
+              {EXPENSE_TYPES.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
+            </select>
+          </div>
+          <div className="w-24">
+            <input type="number" min="0" step="0.01" value={e.amount || ''} onChange={(ev) => update(i, 'amount', parseFloat(ev.target.value) || 0)}
+              disabled={disabled} placeholder="0₺"
+              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs" />
+          </div>
+          <div className="flex-1 min-w-[120px]">
+            <input type="text" value={e.description} onChange={(ev) => update(i, 'description', ev.target.value)}
+              disabled={disabled} placeholder="Açıklama"
+              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs" />
+          </div>
+          {!disabled && (
+            <button type="button" onClick={() => remove(i)}
+              className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600">
+              ✕
+            </button>
+          )}
+        </div>
+      ))}
+      {!disabled && (
+        <button type="button" onClick={add}
+          className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+          + Masraf Ekle
+        </button>
+      )}
     </div>
   );
 }

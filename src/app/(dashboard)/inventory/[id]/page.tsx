@@ -62,6 +62,7 @@ export default function InventoryItemDetailPage({
   const [txReference, setTxReference] = useState('OTHER');
   const [txReferenceId, setTxReferenceId] = useState('');
   const [txNotes, setTxNotes] = useState('');
+  const [txCost, setTxCost] = useState('');
   const [txSaving, setTxSaving] = useState(false);
   const [txError, setTxError] = useState<string | null>(null);
 
@@ -112,6 +113,7 @@ export default function InventoryItemDetailPage({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           quantity: qty,
+          unitCost: txCost ? parseFloat(txCost) : undefined,
           referenceType: txReference,
           referenceId: txReferenceId.trim() || null,
           notes: txNotes.trim() || null,
@@ -379,6 +381,22 @@ export default function InventoryItemDetailPage({
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 />
               </div>
+
+              {showModal === 'IN' && (
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground">Birim Maliyet (₺)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={txCost}
+                    onChange={(e) => setTxCost(e.target.value)}
+                    placeholder="0.00"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-400">Gider takibi için stok giriş maliyeti</p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-muted-foreground">Referans Türü</label>
