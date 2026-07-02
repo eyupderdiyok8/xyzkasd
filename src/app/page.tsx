@@ -59,7 +59,7 @@ function FeatureCard({ icon, title, desc, color }: { icon: string; title: string
 
 /* ── Plan Card ───────────────────────────── */
 function PlanCard({
-  name, price, period, desc, features, cta, popular, dark = false,
+  name, price, period, desc, features, cta, popular, dark = false, icon,
 }: {
   name: string; price: string; period: string; desc: string;
   features: string[]; cta: { text: string; href: string };
