@@ -325,7 +325,6 @@ export default function ServiceRecordPage() {
 
   // Signature
   const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [signatureName, setSignatureName] = useState('');
   const signatureCanvasRef = useRef<HTMLCanvasElement>(null!);
 
@@ -559,7 +558,6 @@ export default function ServiceRecordPage() {
       leakNotes: leakNotes || null,
       workDone: workDone || null,
       customerNote: customerNote || null,
-      expenses: expenses.length > 0 ? JSON.stringify(expenses) : null,
       resolution: resolution || null,
       signatureDataUrl: sigUrl,
       signatureName: signatureName || null,
@@ -1026,12 +1024,6 @@ export default function ServiceRecordPage() {
             )}
           </div>
 
-          {/* ── Technician Expenses ── */}
-          <div className="rounded-lg border border-border bg-white p-5">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">🧾 Teknisyen Masrafları</h2>
-            <ExpensesSection expenses={expenses} setExpenses={setExpenses} disabled={!!existingPayment} />
-          </div>
-
           {/* Submit */}
           <div className="flex flex-col sm:flex-row sm:justify-end gap-3">
             <button type="button" onClick={() => router.back()}
@@ -1125,36 +1117,11 @@ export default function ServiceRecordPage() {
             </div>
           )}
 
-          {/* Expenses */}
-          {ticket.expenses && (() => {
-            try {
-              const exps: Expense[] = typeof ticket.expenses === 'string' ? JSON.parse(ticket.expenses) : ticket.expenses;
-              if (!Array.isArray(exps) || exps.length === 0) return null;
-              const total = exps.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-              return (
-                <div className="rounded-lg border border-border bg-white p-5">
-                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">🧾 Masraflar</h2>
-                  <div className="space-y-2">
-                    {exps.map((e, i) => (
-                      <div key={i} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {EXPENSE_TYPES.find(t => t.key === e.type)?.label ?? e.type}
-                          {e.description ? ` — ${e.description}` : ''}
-                        </span>
-                        <span className="font-mono text-red-600 font-medium">
-                          {Number(e.amount).toFixed(2)} ₺
-                        </span>
-                      </div>
-                    ))}
-                    <div className="border-t pt-2 flex justify-between text-sm font-bold">
-                      <span>Toplam</span>
-                      <span className="font-mono text-red-700">{total.toFixed(2)} ₺</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            } catch { return null; }
-          })()}
+          {/* Expenses — editable after completion */}
+          <div className="rounded-lg border border-border bg-white p-5">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">🧾 Masraflar</h2>
+            <EditableExpenses ticketId={ticket.id} initialExpenses={ticket.expenses} />
+          </div>
 
           {/* Photos */}
           {(ticket.photos?.length ?? 0) > 0 && (
@@ -1228,56 +1195,60 @@ const EXPENSE_TYPES = [
   { key: 'other', label: 'Diğer' },
 ];
 
-function ExpensesSection({ expenses, setExpenses, disabled }: {
-  expenses: Expense[];
-  setExpenses: (e: Expense[]) => void;
-  disabled?: boolean;
-}) {
-  const add = () => setExpenses([...expenses, { type: 'travel', amount: 0, description: '' }]);
-  const remove = (i: number) => setExpenses(expenses.filter((_, idx) => idx !== i));
+function EditableExpenses({ ticketId, initialExpenses }: { ticketId: string; initialExpenses: string | null }) {
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
+    try { return initialExpenses ? JSON.parse(initialExpenses) : []; }
+    catch { return []; }
+  });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const save = async (newExpenses: Expense[]) => {
+    setExpenses(newExpenses);
+    setSaving(true);
+    await fetch(`/api/service-tickets/${ticketId}/expenses`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expenses: JSON.stringify(newExpenses) }),
+    });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const add = () => save([...expenses, { type: 'travel', amount: 0, description: '' }]);
+  const remove = (i: number) => save(expenses.filter((_, idx) => idx !== i));
   const update = (i: number, field: keyof Expense, value: string | number) => {
     const next = [...expenses];
     next[i] = { ...next[i], [field]: value };
-    setExpenses(next);
+    save(next);
   };
+
+  const total = expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
 
   return (
     <div className="space-y-3">
-      {expenses.length === 0 && (
-        <p className="text-sm text-gray-400">Henüz masraf eklenmedi.</p>
-      )}
+      {saved && <div className="text-xs text-emerald-600">✓ Kaydedildi</div>}
+      {expenses.length === 0 && <p className="text-sm text-gray-400">Henüz masraf eklenmedi.</p>}
       {expenses.map((e, i) => (
         <div key={i} className="flex flex-wrap items-end gap-2 p-3 rounded-lg bg-gray-50">
-          <div className="flex-1 min-w-[100px]">
-            <select value={e.type} onChange={(ev) => update(i, 'type', ev.target.value)} disabled={disabled}
-              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs">
-              {EXPENSE_TYPES.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
-            </select>
-          </div>
-          <div className="w-24">
-            <input type="number" min="0" step="0.01" value={e.amount || ''} onChange={(ev) => update(i, 'amount', parseFloat(ev.target.value) || 0)}
-              disabled={disabled} placeholder="0₺"
-              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs" />
-          </div>
-          <div className="flex-1 min-w-[120px]">
-            <input type="text" value={e.description} onChange={(ev) => update(i, 'description', ev.target.value)}
-              disabled={disabled} placeholder="Açıklama"
-              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs" />
-          </div>
-          {!disabled && (
-            <button type="button" onClick={() => remove(i)}
-              className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600">
-              ✕
-            </button>
-          )}
+          <select value={e.type} onChange={(ev) => update(i, 'type', ev.target.value)}
+            className="flex-1 min-w-[100px] rounded border border-gray-200 px-2 py-1.5 text-xs">
+            {EXPENSE_TYPES.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
+          </select>
+          <input type="number" min="0" step="0.01" value={e.amount || ''} onChange={(ev) => update(i, 'amount', parseFloat(ev.target.value) || 0)}
+            placeholder="0₺" className="w-24 rounded border border-gray-200 px-2 py-1.5 text-xs" />
+          <input type="text" value={e.description} onChange={(ev) => update(i, 'description', ev.target.value)}
+            placeholder="Açıklama" className="flex-1 min-w-[120px] rounded border border-gray-200 px-2 py-1.5 text-xs" />
+          <button type="button" onClick={() => remove(i)} disabled={saving}
+            className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600">✕</button>
         </div>
       ))}
-      {!disabled && (
-        <button type="button" onClick={add}
-          className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-          + Masraf Ekle
-        </button>
-      )}
+      <div className="flex items-center justify-between">
+        <button type="button" onClick={add} disabled={saving}
+          className="text-xs text-blue-600 hover:text-blue-800 font-medium">+ Masraf Ekle</button>
+        {total > 0 && <span className="text-sm font-bold text-red-600 font-mono">{total.toFixed(2)} ₺</span>}
+      </div>
     </div>
   );
 }
