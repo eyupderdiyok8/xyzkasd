@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Fix for Vercel ENOENT error with parenthesized route groups like (dashboard)
+  // and Prisma client bundling issues
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
+  },
   async headers() {
     return [
       // Service Worker — allow root scope
