@@ -7,7 +7,7 @@
 // ──────────────────────────────────────────────
 
 import { BaseRepository } from './base.repository';
-import type { AutomationRule as PrismaAutomationRule } from '@prisma/client';
+import type { AutomationRule as PrismaAutomationRule } from "@/lib/generated/client";
 import type {
   AutomationTrigger,
   Condition,

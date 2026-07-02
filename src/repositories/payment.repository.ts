@@ -1,5 +1,5 @@
 import { BaseRepository, prismaClient } from './base.repository';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from "@/lib/generated/client";
 
 export type PaymentMethod = 'CASH' | 'CREDIT_CARD' | 'BANK_TRANSFER' | 'PROMISSORY_NOTE' | 'DEFERRED';
 export type PaymentStatus = 'PAID' | 'PENDING' | 'OVERDUE';

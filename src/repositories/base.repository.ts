@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma as prismaClient } from '@/lib/prisma';
 import { AuditService } from '@/lib/audit.service';
 import type { AuditAction } from '@/lib/audit.service';
-export const prismaClient = new PrismaClient();
+export { prismaClient };
 
 export interface RepositoryContext {
   tenantId: string | null;

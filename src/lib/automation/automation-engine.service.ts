@@ -6,7 +6,7 @@
 // Actions execute sequentially (wait blocks, then next action runs).
 // ──────────────────────────────────────────────
 
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from "@/lib/generated/client";
 import { BaseRepository } from '@/repositories/base.repository';
 import {
   AutomationRuleRepository,
