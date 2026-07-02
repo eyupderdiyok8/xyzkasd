@@ -121,7 +121,7 @@ export default function SidebarNav({ role, plan, collapsed, onToggleCollapse }: 
   }
 
   return (
-    <nav className="flex-1 overflow-y-auto py-2">
+    <nav className="flex-1 overflow-y-auto overflow-x-hidden py-2">
       {visibleSections.map((section) => {
         const isOpen = expanded[section.key] ?? false;
         const hasActive = section.items.some(item =>
@@ -140,7 +140,7 @@ export default function SidebarNav({ role, plan, collapsed, onToggleCollapse }: 
                 isOpen && 'rotate-180',
                 hasActive && 'text-primary',
               )} />
-              <span className={cn(hasActive && 'text-primary')}>{section.label}</span>
+              <span className={cn(hasActive && 'text-primary', 'truncate')}>{section.label}</span>
               <div className="ml-auto h-px flex-1 bg-border" />
             </button>
 
@@ -160,7 +160,7 @@ export default function SidebarNav({ role, plan, collapsed, onToggleCollapse }: 
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
-                      <span>{item.label}</span>
+                      <span className="truncate">{item.label}</span>
                     </Link>
                   );
                 })}
