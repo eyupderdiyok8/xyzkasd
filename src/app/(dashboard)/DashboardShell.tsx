@@ -15,6 +15,7 @@ import {
   Menu, X, Home, Settings,
 } from 'lucide-react';
 import TenantSwitcher from '@/components/TenantSwitcher';
+import SidebarNav from './SidebarNav';
 
 interface NavItem {
   href: string;
@@ -89,29 +90,7 @@ export default function DashboardShell({ children, role, plan, fullName, email }
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 py-3">
-        {visibleItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
-                collapsed && 'justify-center px-2',
-              )}
-              title={collapsed ? item.label : undefined}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
-      </nav>
+      <SidebarNav role={role} plan={plan} collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
 
       {/* User + Collapse */}
       <div className="border-t border-border p-2 space-y-1">
