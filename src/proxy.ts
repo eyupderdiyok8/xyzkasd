@@ -4,7 +4,7 @@ import { getMinimumRoleForPath, ROLE_HIERARCHY } from '@/lib/roles';
 import { getRequiredFeatureForPath, hasFeature, type PlanType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/auth/callback', '/auth/logout', '/public', '/survey'];
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/auth/callback', '/auth/logout', '/auth/forgot-password', '/auth/reset-password', '/public', '/survey'];
 const LOGIN_PAGE = '/login';
 const FORBIDDEN_REDIRECT = '/';
 const UPGRADE_REDIRECT = '/';
