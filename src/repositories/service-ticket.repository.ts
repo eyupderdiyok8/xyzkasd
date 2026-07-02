@@ -270,6 +270,52 @@ export class ServiceTicketRepository extends BaseRepository {
       }
     }
 
+    // ── Process generic service parts (inventory deduction) ──
+    if (data.serviceParts) {
+      try {
+        const parts: Array<{ name: string; quantity: number }> = JSON.parse(data.serviceParts);
+        if (Array.isArray(parts) && parts.length > 0) {
+          // Find matching inventory items by name (case-insensitive)
+          const partNames = parts.map(p => p.name.trim()).filter(Boolean);
+          if (partNames.length > 0) {
+            const matchingItems = await this.prisma.inventoryItem.findMany({
+              where: {
+                ...this.tenantFilter(),
+                name: { in: partNames, mode: 'insensitive' },
+                quantity: { gt: 0 },
+              },
+              select: { id: true, name: true, quantity: true },
+            });
+
+            for (const match of matchingItems) {
+              const part = parts.find(p => p.name.trim().toLowerCase() === match.name.toLowerCase());
+              if (!part || part.quantity < 1) continue;
+              const qty = Math.min(part.quantity, match.quantity);
+
+              // Decrement inventory
+              await this.prisma.inventoryItem.update({
+                where: { id: match.id },
+                data: { quantity: { decrement: qty } },
+              });
+
+              // Record transaction
+              await this.prisma.inventoryTransaction.create({
+                data: {
+                  itemId: match.id,
+                  tenantId: ticket.tenantId,
+                  type: 'OUT',
+                  quantity: qty,
+                  referenceType: 'SERVICE',
+                  referenceId: ticket.ticketNo,
+                  notes: `Servis #${ticket.ticketNo} — ${match.name}`,
+                },
+              });
+            }
+          }
+        }
+      } catch { /* invalid JSON — skip inventory deduction */ }
+    }
+
     // ── Record DeviceMaintenance event ────────────
     await this.prisma.deviceMaintenance.create({
       data: {
