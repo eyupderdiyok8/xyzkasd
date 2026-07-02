@@ -1,20 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { RevenueStatsData } from '@/lib/dashboard-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Banknote, Clock, AlertTriangle, TrendingUp, Wallet, CreditCard, Landmark, FileText, Calendar } from 'lucide-react';
 
 // ─── Types ──────────────────────────────────────
-
-interface RevenueStatsData {
-  totalRevenue: number;
-  collectedToday: number;
-  pendingAmount: number;
-  overdueAmount: number;
-  byMethod: Array<{ method: string; total: number; count: number }>;
-  byTechnician: Array<{ technicianId: string; technicianName: string; total: number; count: number }>;
-  monthlyRevenue: Array<{ month: string; total: number; count: number }>;
-}
 
 const METHOD_LABELS: Record<string, string> = {
   CASH: 'Nakit',
@@ -142,12 +133,13 @@ function MethodBreakdown({ byMethod }: { byMethod: Array<{ method: string; total
 
 // ─── Main Component ─────────────────────────────
 
-export default function RevenueStats() {
-  const [data, setData] = useState<RevenueStatsData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function RevenueStats({ initialData }: { initialData?: RevenueStatsData }) {
+  const [data, setData] = useState<RevenueStatsData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialData) return;
     fetch('/api/reports?type=revenue')
       .then((r) => r.json())
       .then((j) => {
@@ -156,7 +148,7 @@ export default function RevenueStats() {
       })
       .catch(() => setError('Sunucuya bağlanılamadı'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initialData]);
 
   if (loading) {
     return (

@@ -13,11 +13,12 @@ const ACTIONS = [
   { href: '/inventory', label: 'Stok Kontrol', icon: Package, minRole: 'technician' as UserRole },
 ];
 
-export default function QuickActions() {
-  const [role, setRole] = useState<UserRole | null>(null);
+export default function QuickActions({ role: initialRole }: { role?: UserRole }) {
+  const [role, setRole] = useState<UserRole | null>(initialRole ?? null);
   useEffect(() => {
+    if (initialRole) return;
     fetch('/api/auth/me').then(r => r.json()).then(j => setRole(j.data?.role ?? null)).catch(() => {});
-  }, []);
+  }, [initialRole]);
 
   const visible = ACTIONS.filter(a => role && hasRole(role, a.minRole));
   if (visible.length === 0) return null;

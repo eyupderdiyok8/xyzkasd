@@ -1,5 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { ProfileRow } from '@/lib/supabase/types';
+import type { UserRole } from '@/lib/supabase/types';
+import { loadDashboardStats, loadMaintenanceReminders, loadOverdueQueue, loadRevenueStats } from '@/lib/dashboard-data';
 import MaintenanceReminders from '@/components/MaintenanceReminders';
 import OverdueQueue from '@/components/OverdueQueue';
 import DashboardStats from '@/components/DashboardStats';
@@ -18,9 +20,18 @@ export default async function DashboardPage({
   const { data: _profile } = await supabase.from('profiles').select('*').eq('id', user!.id).single();
   const profile = _profile as ProfileRow | null;
   const displayName = profile?.full_name ?? profile?.email?.split('@')[0] ?? 'Kullanıcı';
-
-  // Revenue stats are shown for manager+ roles
   const canSeeRevenue = profile?.role && ['manager', 'tenant_admin', 'super_admin'].includes(profile.role);
+
+  // Fetch ALL dashboard data in parallel on the server — single Prisma roundtrip batch
+  const tenantId = profile?.tenant_id;
+  const [stats, reminders, queue, revenue] = tenantId
+    ? await Promise.all([
+        loadDashboardStats(tenantId),
+        loadMaintenanceReminders(tenantId),
+        loadOverdueQueue(tenantId),
+        canSeeRevenue ? loadRevenueStats(tenantId) : null,
+      ])
+    : [null, null, null, null];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -41,15 +52,15 @@ export default async function DashboardPage({
       </div>
 
       {/* Revenue Stats (manager+) — the most important part! 💰 */}
-      {canSeeRevenue && <RevenueStats />}
+      {canSeeRevenue && <RevenueStats initialData={revenue ?? undefined} />}
 
       {/* Top row: Stats + Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <DashboardStats />
+          <DashboardStats initialData={stats ?? undefined} />
         </div>
         <div>
-          <QuickActions />
+          <QuickActions role={profile?.role as UserRole | undefined} />
         </div>
       </div>
 
@@ -57,11 +68,11 @@ export default async function DashboardPage({
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-border bg-white p-6">
           <h2 className="mb-4 text-sm font-semibold text-slate-900">Bakım Hatırlatmaları</h2>
-          <MaintenanceReminders />
+          <MaintenanceReminders initialData={reminders ?? undefined} />
         </div>
         <div className="rounded-lg border border-border bg-white p-6">
           <h2 className="mb-4 text-sm font-semibold text-slate-900">Gecikmiş Bakım Kuyruğu</h2>
-          <OverdueQueue />
+          <OverdueQueue initialData={queue ?? undefined} />
         </div>
       </div>
 

@@ -1,38 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { DashboardStatsData } from '@/lib/dashboard-data';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Wrench, Clock, AlertTriangle } from 'lucide-react';
 
-interface ServiceItem {
-  id: string; ticketNo: string; status: string;
-  customer: { name: string; phone: string };
-  technician: { name: string } | null;
-  scheduledAt: string | null; createdAt: string;
-}
-
-interface DashboardStats {
-  todayServiceCount: number;
-  todayServices: ServiceItem[];
-  upcomingMaintenanceCount: number;
-  overdueMaintenanceCount: number;
-}
-
 const SL: Record<string, string> = { PENDING: 'Bekliyor', ASSIGNED: 'Atandı', IN_PROGRESS: 'İşlemde', COMPLETED: 'Tamamlandı', CANCELLED: 'İptal' };
 const SV: Record<string, 'secondary' | 'default' | 'success' | 'destructive' | 'outline'> = { PENDING: 'secondary', ASSIGNED: 'default', IN_PROGRESS: 'default', COMPLETED: 'success', CANCELLED: 'destructive' };
 
-export default function DashboardStats() {
-  const [data, setData] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function DashboardStats({ initialData }: { initialData?: DashboardStatsData }) {
+  const [data, setData] = useState<DashboardStatsData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialData) return; // server already provided data
     fetch('/api/reports?type=dashboard')
       .then(r => r.json()).then(j => { if (j.error) setError(j.error.message); else setData(j.data); })
       .catch(() => setError('Sunucuya bağlanılamadı'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initialData]);
 
   if (loading) return (
     <div className="grid gap-4 sm:grid-cols-3">

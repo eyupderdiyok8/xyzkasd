@@ -1,8 +1,11 @@
-import { Suspense } from 'react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ROLE_LABELS } from '@/lib/roles';
 import type { ProfileRow } from '@/lib/supabase/types';
-import { DashboardStats, MaintenanceReminders, OverdueQueue } from '@/components/dashboard-client-barrel';
+import type { UserRole } from '@/lib/supabase/types';
+import { loadDashboardStats, loadMaintenanceReminders, loadOverdueQueue } from '@/lib/dashboard-data';
+import DashboardStats from '@/components/DashboardStats';
+import MaintenanceReminders from '@/components/MaintenanceReminders';
+import OverdueQueue from '@/components/OverdueQueue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -18,16 +21,24 @@ export default async function DashboardPage({
 }) {
   const sp = await searchParams;
   const supabase = await createServerSupabaseClient();
-
   const { data: { user } } = await supabase.auth.getUser();
   const { data: _profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user!.id)
     .single();
-
   const profile = _profile as ProfileRow | null;
   const errorMessage = sp.error ? ERROR_MESSAGES[sp.error] ?? null : null;
+
+  // Fetch dashboard data server-side — parallel Prisma queries
+  const tenantId = profile?.tenant_id;
+  const [stats, reminders, queue] = tenantId
+    ? await Promise.all([
+        loadDashboardStats(tenantId),
+        loadMaintenanceReminders(tenantId),
+        loadOverdueQueue(tenantId),
+      ])
+    : [null, null, null];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -54,9 +65,7 @@ export default async function DashboardPage({
       </div>
 
       {/* Dashboard Stats — bento grid */}
-      <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-muted" />}>
-        <DashboardStats />
-      </Suspense>
+      <DashboardStats initialData={stats ?? undefined} />
 
       {/* Bento grid: Maintenance + Overdue side by side */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -65,9 +74,7 @@ export default async function DashboardPage({
             <CardTitle className="text-base">Bakım Hatırlatmaları</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<div className="h-20 animate-pulse rounded-lg bg-muted" />}>
-              <MaintenanceReminders />
-            </Suspense>
+            <MaintenanceReminders initialData={reminders ?? undefined} />
           </CardContent>
         </Card>
 
@@ -76,9 +83,7 @@ export default async function DashboardPage({
             <CardTitle className="text-base">Gecikmiş Bakım Kuyruğu</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<div className="h-20 animate-pulse rounded-lg bg-muted" />}>
-              <OverdueQueue />
-            </Suspense>
+            <OverdueQueue initialData={queue ?? undefined} />
           </CardContent>
         </Card>
       </div>

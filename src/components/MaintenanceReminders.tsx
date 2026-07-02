@@ -1,34 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { MaintenanceRemindersData, MaintenanceItemData } from '@/lib/dashboard-data';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, Bell, Calendar, CheckCircle2 } from 'lucide-react';
 
-interface MaintenanceItem {
-  deviceId: string; serialNo: string; brand: string; model: string;
-  customerName: string | null; customerPhone: string | null;
-  daysUntilDue: number | null; daysOverdue: number | null;
-  dueDate: string; reason: string; filterName: string | null;
-}
-
-interface DashboardData {
-  upcoming15Count: number; upcoming7Count: number; overdueCount: number;
-  upcoming15: MaintenanceItem[]; upcoming7: MaintenanceItem[]; overdue: MaintenanceItem[];
-}
-
-export default function MaintenanceReminders() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function MaintenanceReminders({ initialData }: { initialData?: MaintenanceRemindersData }) {
+  const [data, setData] = useState<MaintenanceRemindersData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialData) return;
     fetch('/api/maintenance/reminders')
       .then(r => r.json()).then(j => { if (j.data) setData(j.data); else setError(j.error?.message); })
       .catch(() => setError('Sunucuya bağlanılamadı'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initialData]);
 
   if (loading) return <div className="space-y-2"><Skeleton className="h-8 w-full" /><Skeleton className="h-10 w-full" /></div>;
   if (error) return <div className="text-sm text-red-600">{error}</div>;
@@ -82,7 +72,7 @@ function Section({ title, count, children, color }: { title: string; count: numb
   );
 }
 
-function Row({ item, color }: { item: MaintenanceItem; color: 'red' | 'amber' | 'blue' }) {
+function Row({ item, color }: { item: MaintenanceItemData; color: 'red' | 'amber' | 'blue' }) {
   const b = { red: 'border-red-300', amber: 'border-amber-300', blue: 'border-blue-300' }[color];
   const bg = { red: 'bg-red-50', amber: 'bg-amber-50', blue: 'bg-blue-50' }[color];
   return (
