@@ -22,6 +22,7 @@ import {
   Ticket,
   ThumbsUp,
   ChevronLeft,
+  Settings,
 } from 'lucide-react';
 
 interface NavItem {
@@ -49,6 +50,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/automation', label: 'Otomasyon', icon: Bot, minRole: 'manager', requiredFeature: 'automation' },
   { href: '/admin/coupons', label: 'Kupon / İndirim', icon: Ticket, minRole: 'tenant_admin' },
   { href: '/admin/surveys', label: 'Anketler', icon: ThumbsUp, minRole: 'manager' },
+  { href: '/settings', label: 'Hesap Ayarları', icon: Settings, minRole: 'viewer' },
 ];
 
 interface SidebarNavProps {
