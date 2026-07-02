@@ -47,7 +47,9 @@ export async function POST(req: Request) {
   }
 
   if (!auth.tenantId) {
-    return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Bu işlem için yetkiniz bulunmuyor.' } }, { status: 403 });
+    return NextResponse.json({
+      error: { code: 'FORBIDDEN', message: 'Lütfen üst menüden bir firma seçin.' },
+    }, { status: 403 });
   }
 
   let b;
