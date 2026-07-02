@@ -39,6 +39,8 @@ interface PhotoInfo {
   createdAt: string;
 }
 
+interface ServicePart { name: string; quantity: number; }
+
 interface TicketDetail {
   id: string;
   ticketNo: string;
@@ -57,6 +59,7 @@ interface TicketDetail {
   signatureName: string | null;
   pdfStoragePath: string | null;
   expenses: string | null;
+  serviceParts: string | null;
   completedAt: string | null;
   createdAt: string;
   customer: {
@@ -323,6 +326,9 @@ export default function ServiceRecordPage() {
     Array<{ filterId: string; quantity: number; notes: string }>
   >([]);
 
+  // Generic parts
+  const [serviceParts, setServiceParts] = useState<ServicePart[]>([]);
+
   // Signature
   const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
   const [signatureName, setSignatureName] = useState('');
@@ -564,6 +570,7 @@ export default function ServiceRecordPage() {
       filterChanges: selectedFilters.map((f) => ({
         filterId: f.filterId, quantity: f.quantity, notes: f.notes || null,
       })),
+      serviceParts: serviceParts.length > 0 ? JSON.stringify(serviceParts) : null,
     };
 
     if (payAmount <= 0) {
@@ -844,13 +851,16 @@ export default function ServiceRecordPage() {
             />
           </div>
 
-          {/* Filter Replacement */}
+          {/* Değişen Parçalar */}
           <div className="rounded-lg border border-border bg-white p-5">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Değişen Filtreler</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Değişen Parçalar</h2>
+
+            {/* Filtreler */}
+            <p className="text-xs font-medium text-gray-400 mb-2">Filtreler</p>
             {filterCatalog.length === 0 ? (
               <p className="text-sm text-gray-400">Filtre kataloğu bulunamadı.</p>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 {filterCatalog.map((filter) => {
                   const selected = selectedFilters.find((f) => f.filterId === filter.id);
                   return (
@@ -863,13 +873,9 @@ export default function ServiceRecordPage() {
                       {selected && (
                         <div className="flex items-center gap-2">
                           <label className="text-xs text-gray-500">Adet:</label>
-                          <input
-                            type="number"
-                            min="1"
-                            value={selected.quantity}
+                          <input type="number" min="1" value={selected.quantity}
                             onChange={(e) => updateFilterQty(filter.id, Number(e.target.value))}
-                            className="w-16 rounded border border-gray-300 px-2 py-1 text-sm text-center"
-                          />
+                            className="w-16 rounded border border-gray-300 px-2 py-1 text-sm text-center" />
                         </div>
                       )}
                     </div>
@@ -877,6 +883,10 @@ export default function ServiceRecordPage() {
                 })}
               </div>
             )}
+
+            {/* Diğer Parçalar (serbest giriş) */}
+            <p className="text-xs font-medium text-gray-400 mb-2 border-t pt-3">Diğer Parçalar (Musluk, Tank, Valf, Hortum...)</p>
+            <ServicePartsList parts={serviceParts} setParts={setServiceParts} />
           </div>
 
           {/* Work Done & Resolution */}
@@ -1053,9 +1063,35 @@ export default function ServiceRecordPage() {
               value={ticket.pressureBefore != null && ticket.pressureAfter != null ? `${ticket.pressureBefore} → ${ticket.pressureAfter} bar` : '—'} />
             <SummaryCard label="Kaçak"
               value={ticket.leakCheck == null ? '—' : ticket.leakCheck ? 'Kaçak Var' : 'Kaçak Yok'} />
-            <SummaryCard label="Değişen Filtre"
-              value={`${ticket.filterChanges?.length ?? 0} adet`} />
+            <SummaryCard label="Değişen Parçalar"
+              value={`${(ticket.filterChanges?.length ?? 0) + (() => { try { const p = ticket.serviceParts ? JSON.parse(ticket.serviceParts) : []; return Array.isArray(p) ? p.length : 0; } catch { return 0; } })()} adet`} />
           </div>
+
+          {/* Filter + Parts Details */}
+          {((ticket.filterChanges?.length ?? 0) > 0 || ticket.serviceParts) && (
+            <div className="rounded-lg border border-border bg-white p-5">
+              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Parça Detayları</h2>
+              <div className="space-y-2 text-sm">
+                {ticket.filterChanges?.map((f, i) => (
+                  <div key={i} className="flex justify-between">
+                    <span className="text-muted-foreground">{f.filter.name} ({f.filter.stage})</span>
+                    <span className="font-mono font-medium">{f.quantity} adet</span>
+                  </div>
+                ))}
+                {(() => {
+                  try {
+                    const p = ticket.serviceParts ? JSON.parse(ticket.serviceParts) : [];
+                    return Array.isArray(p) ? p.map((sp: ServicePart, i: number) => (
+                      <div key={`sp-${i}`} className="flex justify-between">
+                        <span className="text-muted-foreground">{sp.name || 'Parça'}</span>
+                        <span className="font-mono font-medium">{sp.quantity} adet</span>
+                      </div>
+                    )) : null;
+                  } catch { return null; }
+                })()}
+              </div>
+            </div>
+          )}
 
           {/* Payment Info */}
           {(existingPayment || paymentAmount) && (
@@ -1249,6 +1285,40 @@ function EditableExpenses({ ticketId, initialExpenses }: { ticketId: string; ini
           className="text-xs text-blue-600 hover:text-blue-800 font-medium">+ Masraf Ekle</button>
         {total > 0 && <span className="text-sm font-bold text-red-600 font-mono">{total.toFixed(2)} ₺</span>}
       </div>
+    </div>
+  );
+}
+
+function ServicePartsList({ parts, setParts }: { parts: ServicePart[]; setParts: (p: ServicePart[]) => void }) {
+  const add = () => setParts([...parts, { name: '', quantity: 1 }]);
+  const remove = (i: number) => setParts(parts.filter((_, idx) => idx !== i));
+  const update = (i: number, field: keyof ServicePart, value: string | number) => {
+    const next = [...parts];
+    next[i] = { ...next[i], [field]: value };
+    setParts(next);
+  };
+
+  const SUGGESTIONS = ['Musluk', 'Tank', 'Shutoff Valf', 'Çekvalf', 'Flow Restrictor', 'Hortum', 'Housing', 'Adaptör', 'Konnektör', 'Diğer'];
+
+  return (
+    <div className="space-y-2">
+      {parts.length === 0 && <p className="text-sm text-gray-400">Henüz parça eklenmedi.</p>}
+      {parts.map((p, i) => (
+        <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
+          <input type="text" value={p.name} onChange={(ev) => update(i, 'name', ev.target.value)}
+            placeholder="Parça adı" list="part-suggestions"
+            className="flex-1 rounded border border-gray-200 px-2 py-1.5 text-xs" />
+          <datalist id="part-suggestions">
+            {SUGGESTIONS.map(s => <option key={s} value={s} />)}
+          </datalist>
+          <input type="number" min="1" value={p.quantity} onChange={(ev) => update(i, 'quantity', parseInt(ev.target.value) || 1)}
+            className="w-16 rounded border border-gray-200 px-2 py-1.5 text-xs text-center" />
+          <button type="button" onClick={() => remove(i)}
+            className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600">✕</button>
+        </div>
+      ))}
+      <button type="button" onClick={add}
+        className="text-xs text-blue-600 hover:text-blue-800 font-medium">+ Parça Ekle</button>
     </div>
   );
 }

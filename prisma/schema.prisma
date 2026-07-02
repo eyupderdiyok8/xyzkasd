@@ -330,6 +330,7 @@ model ServiceTicket {
   workDone       String?
   customerNote   String?
   expenses       String?   @default("[]") // JSON: [{type, amount, description}] yol, park vb masraflar
+  serviceParts   String?   @default("[]") @map("service_parts") // JSON: [{name, quantity, stage?}] değişen parçalar
 
   signatureDataUrl String?
   signatureName    String?

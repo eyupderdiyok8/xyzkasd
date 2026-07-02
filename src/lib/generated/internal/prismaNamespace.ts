@@ -2806,6 +2806,7 @@ export const ServiceTicketScalarFieldEnum = {
   workDone: 'workDone',
   customerNote: 'customerNote',
   expenses: 'expenses',
+  serviceParts: 'serviceParts',
   signatureDataUrl: 'signatureDataUrl',
   signatureName: 'signatureName',
   pdfStoragePath: 'pdfStoragePath',

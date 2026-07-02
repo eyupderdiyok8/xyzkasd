@@ -61,6 +61,7 @@ export type ServiceTicketMinAggregateOutputType = {
   workDone: string | null
   customerNote: string | null
   expenses: string | null
+  serviceParts: string | null
   signatureDataUrl: string | null
   signatureName: string | null
   pdfStoragePath: string | null
@@ -90,6 +91,7 @@ export type ServiceTicketMaxAggregateOutputType = {
   workDone: string | null
   customerNote: string | null
   expenses: string | null
+  serviceParts: string | null
   signatureDataUrl: string | null
   signatureName: string | null
   pdfStoragePath: string | null
@@ -119,6 +121,7 @@ export type ServiceTicketCountAggregateOutputType = {
   workDone: number
   customerNote: number
   expenses: number
+  serviceParts: number
   signatureDataUrl: number
   signatureName: number
   pdfStoragePath: number
@@ -164,6 +167,7 @@ export type ServiceTicketMinAggregateInputType = {
   workDone?: true
   customerNote?: true
   expenses?: true
+  serviceParts?: true
   signatureDataUrl?: true
   signatureName?: true
   pdfStoragePath?: true
@@ -193,6 +197,7 @@ export type ServiceTicketMaxAggregateInputType = {
   workDone?: true
   customerNote?: true
   expenses?: true
+  serviceParts?: true
   signatureDataUrl?: true
   signatureName?: true
   pdfStoragePath?: true
@@ -222,6 +227,7 @@ export type ServiceTicketCountAggregateInputType = {
   workDone?: true
   customerNote?: true
   expenses?: true
+  serviceParts?: true
   signatureDataUrl?: true
   signatureName?: true
   pdfStoragePath?: true
@@ -338,6 +344,7 @@ export type ServiceTicketGroupByOutputType = {
   workDone: string | null
   customerNote: string | null
   expenses: string | null
+  serviceParts: string | null
   signatureDataUrl: string | null
   signatureName: string | null
   pdfStoragePath: string | null
@@ -390,6 +397,7 @@ export type ServiceTicketWhereInput = {
   workDone?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   customerNote?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   expenses?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
+  serviceParts?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureDataUrl?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureName?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   pdfStoragePath?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
@@ -429,6 +437,7 @@ export type ServiceTicketOrderByWithRelationInput = {
   workDone?: Prisma.SortOrderInput | Prisma.SortOrder
   customerNote?: Prisma.SortOrderInput | Prisma.SortOrder
   expenses?: Prisma.SortOrderInput | Prisma.SortOrder
+  serviceParts?: Prisma.SortOrderInput | Prisma.SortOrder
   signatureDataUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   signatureName?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfStoragePath?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -471,6 +480,7 @@ export type ServiceTicketWhereUniqueInput = Prisma.AtLeast<{
   workDone?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   customerNote?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   expenses?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
+  serviceParts?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureDataUrl?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureName?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   pdfStoragePath?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
@@ -510,6 +520,7 @@ export type ServiceTicketOrderByWithAggregationInput = {
   workDone?: Prisma.SortOrderInput | Prisma.SortOrder
   customerNote?: Prisma.SortOrderInput | Prisma.SortOrder
   expenses?: Prisma.SortOrderInput | Prisma.SortOrder
+  serviceParts?: Prisma.SortOrderInput | Prisma.SortOrder
   signatureDataUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   signatureName?: Prisma.SortOrderInput | Prisma.SortOrder
   pdfStoragePath?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -547,6 +558,7 @@ export type ServiceTicketScalarWhereWithAggregatesInput = {
   workDone?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
   customerNote?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
   expenses?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
+  serviceParts?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
   signatureDataUrl?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
   signatureName?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
   pdfStoragePath?: Prisma.StringNullableWithAggregatesFilter<"ServiceTicket"> | string | null
@@ -572,6 +584,7 @@ export type ServiceTicketCreateInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -611,6 +624,7 @@ export type ServiceTicketUncheckedCreateInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -642,6 +656,7 @@ export type ServiceTicketUpdateInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -681,6 +696,7 @@ export type ServiceTicketUncheckedUpdateInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -716,6 +732,7 @@ export type ServiceTicketCreateManyInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -741,6 +758,7 @@ export type ServiceTicketUpdateManyMutationInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -770,6 +788,7 @@ export type ServiceTicketUncheckedUpdateManyInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -809,6 +828,7 @@ export type ServiceTicketCountOrderByAggregateInput = {
   workDone?: Prisma.SortOrder
   customerNote?: Prisma.SortOrder
   expenses?: Prisma.SortOrder
+  serviceParts?: Prisma.SortOrder
   signatureDataUrl?: Prisma.SortOrder
   signatureName?: Prisma.SortOrder
   pdfStoragePath?: Prisma.SortOrder
@@ -845,6 +865,7 @@ export type ServiceTicketMaxOrderByAggregateInput = {
   workDone?: Prisma.SortOrder
   customerNote?: Prisma.SortOrder
   expenses?: Prisma.SortOrder
+  serviceParts?: Prisma.SortOrder
   signatureDataUrl?: Prisma.SortOrder
   signatureName?: Prisma.SortOrder
   pdfStoragePath?: Prisma.SortOrder
@@ -874,6 +895,7 @@ export type ServiceTicketMinOrderByAggregateInput = {
   workDone?: Prisma.SortOrder
   customerNote?: Prisma.SortOrder
   expenses?: Prisma.SortOrder
+  serviceParts?: Prisma.SortOrder
   signatureDataUrl?: Prisma.SortOrder
   signatureName?: Prisma.SortOrder
   pdfStoragePath?: Prisma.SortOrder
@@ -1186,6 +1208,7 @@ export type ServiceTicketCreateWithoutTenantInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1223,6 +1246,7 @@ export type ServiceTicketUncheckedCreateWithoutTenantInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1287,6 +1311,7 @@ export type ServiceTicketScalarWhereInput = {
   workDone?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   customerNote?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   expenses?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
+  serviceParts?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureDataUrl?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   signatureName?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
   pdfStoragePath?: Prisma.StringNullableFilter<"ServiceTicket"> | string | null
@@ -1312,6 +1337,7 @@ export type ServiceTicketCreateWithoutDeviceInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1349,6 +1375,7 @@ export type ServiceTicketUncheckedCreateWithoutDeviceInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1406,6 +1433,7 @@ export type ServiceTicketCreateWithoutTechnicianInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1443,6 +1471,7 @@ export type ServiceTicketUncheckedCreateWithoutTechnicianInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1500,6 +1529,7 @@ export type ServiceTicketCreateWithoutCustomerInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1537,6 +1567,7 @@ export type ServiceTicketUncheckedCreateWithoutCustomerInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1594,6 +1625,7 @@ export type ServiceTicketCreateWithoutPhotosInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1632,6 +1664,7 @@ export type ServiceTicketUncheckedCreateWithoutPhotosInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1678,6 +1711,7 @@ export type ServiceTicketUpdateWithoutPhotosInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1716,6 +1750,7 @@ export type ServiceTicketUncheckedUpdateWithoutPhotosInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1746,6 +1781,7 @@ export type ServiceTicketCreateWithoutFilterChangesInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1784,6 +1820,7 @@ export type ServiceTicketUncheckedCreateWithoutFilterChangesInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1830,6 +1867,7 @@ export type ServiceTicketUpdateWithoutFilterChangesInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1868,6 +1906,7 @@ export type ServiceTicketUncheckedUpdateWithoutFilterChangesInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1898,6 +1937,7 @@ export type ServiceTicketCreateWithoutDeviceMaintenanceInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1936,6 +1976,7 @@ export type ServiceTicketUncheckedCreateWithoutDeviceMaintenanceInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -1982,6 +2023,7 @@ export type ServiceTicketUpdateWithoutDeviceMaintenanceInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2020,6 +2062,7 @@ export type ServiceTicketUncheckedUpdateWithoutDeviceMaintenanceInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2050,6 +2093,7 @@ export type ServiceTicketCreateWithoutCouponsInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2088,6 +2132,7 @@ export type ServiceTicketUncheckedCreateWithoutCouponsInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2134,6 +2179,7 @@ export type ServiceTicketUpdateWithoutCouponsInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2172,6 +2218,7 @@ export type ServiceTicketUncheckedUpdateWithoutCouponsInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2202,6 +2249,7 @@ export type ServiceTicketCreateWithoutCouponUsagesInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2240,6 +2288,7 @@ export type ServiceTicketUncheckedCreateWithoutCouponUsagesInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2286,6 +2335,7 @@ export type ServiceTicketUpdateWithoutCouponUsagesInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2324,6 +2374,7 @@ export type ServiceTicketUncheckedUpdateWithoutCouponUsagesInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2354,6 +2405,7 @@ export type ServiceTicketCreateWithoutSurveysInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2392,6 +2444,7 @@ export type ServiceTicketUncheckedCreateWithoutSurveysInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2438,6 +2491,7 @@ export type ServiceTicketUpdateWithoutSurveysInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2476,6 +2530,7 @@ export type ServiceTicketUncheckedUpdateWithoutSurveysInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2509,6 +2564,7 @@ export type ServiceTicketCreateManyTenantInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2534,6 +2590,7 @@ export type ServiceTicketUpdateWithoutTenantInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2571,6 +2628,7 @@ export type ServiceTicketUncheckedUpdateWithoutTenantInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2605,6 +2663,7 @@ export type ServiceTicketUncheckedUpdateManyWithoutTenantInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2633,6 +2692,7 @@ export type ServiceTicketCreateManyDeviceInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2658,6 +2718,7 @@ export type ServiceTicketUpdateWithoutDeviceInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2695,6 +2756,7 @@ export type ServiceTicketUncheckedUpdateWithoutDeviceInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2729,6 +2791,7 @@ export type ServiceTicketUncheckedUpdateManyWithoutDeviceInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2757,6 +2820,7 @@ export type ServiceTicketCreateManyTechnicianInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2782,6 +2846,7 @@ export type ServiceTicketUpdateWithoutTechnicianInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2819,6 +2884,7 @@ export type ServiceTicketUncheckedUpdateWithoutTechnicianInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2853,6 +2919,7 @@ export type ServiceTicketUncheckedUpdateManyWithoutTechnicianInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2881,6 +2948,7 @@ export type ServiceTicketCreateManyCustomerInput = {
   workDone?: string | null
   customerNote?: string | null
   expenses?: string | null
+  serviceParts?: string | null
   signatureDataUrl?: string | null
   signatureName?: string | null
   pdfStoragePath?: string | null
@@ -2906,6 +2974,7 @@ export type ServiceTicketUpdateWithoutCustomerInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2943,6 +3012,7 @@ export type ServiceTicketUncheckedUpdateWithoutCustomerInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2977,6 +3047,7 @@ export type ServiceTicketUncheckedUpdateManyWithoutCustomerInput = {
   workDone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expenses?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceParts?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureDataUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   signatureName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pdfStoragePath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3082,6 +3153,7 @@ export type ServiceTicketSelect<ExtArgs extends runtime.Types.Extensions.Interna
   workDone?: boolean
   customerNote?: boolean
   expenses?: boolean
+  serviceParts?: boolean
   signatureDataUrl?: boolean
   signatureName?: boolean
   pdfStoragePath?: boolean
@@ -3122,6 +3194,7 @@ export type ServiceTicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   workDone?: boolean
   customerNote?: boolean
   expenses?: boolean
+  serviceParts?: boolean
   signatureDataUrl?: boolean
   signatureName?: boolean
   pdfStoragePath?: boolean
@@ -3155,6 +3228,7 @@ export type ServiceTicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   workDone?: boolean
   customerNote?: boolean
   expenses?: boolean
+  serviceParts?: boolean
   signatureDataUrl?: boolean
   signatureName?: boolean
   pdfStoragePath?: boolean
@@ -3188,6 +3262,7 @@ export type ServiceTicketSelectScalar = {
   workDone?: boolean
   customerNote?: boolean
   expenses?: boolean
+  serviceParts?: boolean
   signatureDataUrl?: boolean
   signatureName?: boolean
   pdfStoragePath?: boolean
@@ -3196,7 +3271,7 @@ export type ServiceTicketSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ServiceTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "ticketNo" | "customerId" | "deviceId" | "technicianId" | "status" | "issueDesc" | "resolution" | "scheduledAt" | "completedAt" | "tdsBefore" | "tdsAfter" | "pressureBefore" | "pressureAfter" | "leakCheck" | "leakNotes" | "workDone" | "customerNote" | "expenses" | "signatureDataUrl" | "signatureName" | "pdfStoragePath" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["serviceTicket"]>
+export type ServiceTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "ticketNo" | "customerId" | "deviceId" | "technicianId" | "status" | "issueDesc" | "resolution" | "scheduledAt" | "completedAt" | "tdsBefore" | "tdsAfter" | "pressureBefore" | "pressureAfter" | "leakCheck" | "leakNotes" | "workDone" | "customerNote" | "expenses" | "serviceParts" | "signatureDataUrl" | "signatureName" | "pdfStoragePath" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["serviceTicket"]>
 export type ServiceTicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
@@ -3258,6 +3333,7 @@ export type $ServiceTicketPayload<ExtArgs extends runtime.Types.Extensions.Inter
     workDone: string | null
     customerNote: string | null
     expenses: string | null
+    serviceParts: string | null
     signatureDataUrl: string | null
     signatureName: string | null
     pdfStoragePath: string | null
@@ -3717,6 +3793,7 @@ export interface ServiceTicketFieldRefs {
   readonly workDone: Prisma.FieldRef<"ServiceTicket", 'String'>
   readonly customerNote: Prisma.FieldRef<"ServiceTicket", 'String'>
   readonly expenses: Prisma.FieldRef<"ServiceTicket", 'String'>
+  readonly serviceParts: Prisma.FieldRef<"ServiceTicket", 'String'>
   readonly signatureDataUrl: Prisma.FieldRef<"ServiceTicket", 'String'>
   readonly signatureName: Prisma.FieldRef<"ServiceTicket", 'String'>
   readonly pdfStoragePath: Prisma.FieldRef<"ServiceTicket", 'String'>
