@@ -278,17 +278,27 @@ export class ServiceTicketRepository extends BaseRepository {
           // Find matching inventory items by name (case-insensitive)
           const partNames = parts.map(p => p.name.trim()).filter(Boolean);
           if (partNames.length > 0) {
-            const matchingItems = await this.prisma.inventoryItem.findMany({
-              where: {
-                ...this.tenantFilter(),
-                name: { in: partNames, mode: 'insensitive' },
-                quantity: { gt: 0 },
-              },
+            // Fetch all tenant inventory items and fuzzy-match in JS
+            const allItems = await this.prisma.inventoryItem.findMany({
+              where: { ...this.tenantFilter(), quantity: { gt: 0 } },
               select: { id: true, name: true, quantity: true },
             });
 
+            const matchingItems = allItems.filter(item => {
+              const itemName = item.name.toLowerCase();
+              return partNames.some(input => {
+                const inp = input.toLowerCase();
+                return inp === itemName || inp.includes(itemName) || itemName.includes(inp);
+              });
+            });
+
             for (const match of matchingItems) {
-              const part = parts.find(p => p.name.trim().toLowerCase() === match.name.toLowerCase());
+              const part = parts.find(p => {
+                const input = p.name.trim().toLowerCase();
+                const itemName = match.name.toLowerCase();
+                // Exact match or fuzzy: one contains the other
+                return input === itemName || input.includes(itemName) || itemName.includes(input);
+              });
               if (!part || part.quantity < 1) continue;
               const qty = Math.min(part.quantity, match.quantity);
 
