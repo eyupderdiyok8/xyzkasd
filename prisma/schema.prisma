@@ -33,6 +33,7 @@ model Tenant {
   surveyMessage   String? @map("survey_message")     // Özel anket davet mesajı (opsiyonel)
   isActive  Boolean   @default(true)
   plan      String    @default("STARTER") // STARTER | PROFESSIONAL
+  mfaRequired Boolean @default(false) @map("mfa_required") // İki faktörlü kimlik doğrulama zorunlu mu?
   maxUsers  Int       @default(10)
   deletedAt DateTime? // soft delete
   createdAt DateTime  @default(now())

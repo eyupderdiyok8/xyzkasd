@@ -40,7 +40,7 @@ export async function GET() {
     const supabase = createAdminClient();
     const { data: tenant } = await supabase
       .from('tenants')
-      .select('id, name, slug, plan, logo, phone, email, address, reportConfig, google_review_url, survey_message')
+      .select('id, name, slug, plan, logo, phone, email, address, reportConfig, google_review_url, survey_message, mfa_required')
       .eq('id', auth.tenantId)
       .single();
 
@@ -69,6 +69,7 @@ export async function GET() {
         reportConfig: row.reportConfig ?? null,
         googleReviewUrl: row.google_review_url ?? null,
         surveyMessage: row.survey_message ?? null,
+        mfaRequired: (row as any).mfa_required ?? false,
       },
     });
   } catch (err: any) {

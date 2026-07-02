@@ -111,6 +111,7 @@ export const TenantScalarFieldEnum = {
   surveyMessage: 'surveyMessage',
   isActive: 'isActive',
   plan: 'plan',
+  mfaRequired: 'mfaRequired',
   maxUsers: 'maxUsers',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',

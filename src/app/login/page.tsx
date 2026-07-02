@@ -43,6 +43,13 @@ function LoginForm() {
     const { error: girisHatasi } = await supabase.auth.signInWithPassword({ email, password: parola });
     if (girisHatasi) { setHata(translateAuthError(girisHatasi.message)); setYukleniyor(false); return; }
 
+    // Check if MFA is required
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    if (factors?.totp && factors.totp.length > 0) {
+      router.push('/auth/mfa?next=/dashboard');
+      return;
+    }
+
     router.push('/dashboard');
     router.refresh();
   }

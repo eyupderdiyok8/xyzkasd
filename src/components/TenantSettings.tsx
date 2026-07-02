@@ -19,6 +19,7 @@ interface TenantInfo {
   reportConfig: string | null;
   googleReviewUrl: string | null;
   surveyMessage: string | null;
+  mfaRequired: boolean;
 }
 
 interface ReportConfig {
@@ -132,6 +133,9 @@ export default function TenantSettings() {
   const [googleReviewUrl, setGoogleReviewUrl] = useState('');
   const [surveyMessage, setSurveyMessage] = useState('');
 
+  // MFA state
+  const [mfaRequired, setMfaRequired] = useState(false);
+
   const fetchTenant = async () => {
     setLoading(true);
     try {
@@ -149,6 +153,7 @@ export default function TenantSettings() {
       setConfigChanged(false);
       setGoogleReviewUrl(json.data.googleReviewUrl ?? '');
       setSurveyMessage(json.data.surveyMessage ?? '');
+      setMfaRequired(json.data.mfaRequired ?? false);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -192,6 +197,7 @@ export default function TenantSettings() {
     if (configChanged) updates.reportConfig = JSON.stringify(config);
     if (googleReviewUrl.trim() !== (tenant.googleReviewUrl ?? '')) updates.googleReviewUrl = googleReviewUrl.trim() || null;
     if (surveyMessage.trim() !== (tenant.surveyMessage ?? '')) updates.surveyMessage = surveyMessage.trim() || null;
+    if (mfaRequired !== (tenant.mfaRequired ?? false)) updates.mfaRequired = mfaRequired;
 
     if (Object.keys(updates).length === 0) {
       setError('Değişiklik yapılmadı');
@@ -403,6 +409,25 @@ export default function TenantSettings() {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* MFA / Güvenlik */}
+        <div className="border-t pt-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3">🔐 Güvenlik</h3>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={mfaRequired}
+              onChange={e => setMfaRequired(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <div>
+              <span className="text-sm font-medium text-foreground">İki Adımlı Doğrulama Zorunlu</span>
+              <p className="text-xs text-muted-foreground">
+                Tüm kullanıcılar girişte authenticator kodu girmek zorunda kalır. Kullanıcılar önce profillerinden 2FA kurulumu yapmalıdır.
+              </p>
+            </div>
+          </label>
         </div>
 
         <Button onClick={handleSave} disabled={saving} size="sm">

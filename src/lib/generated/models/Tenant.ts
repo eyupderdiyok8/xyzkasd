@@ -47,6 +47,7 @@ export type TenantMinAggregateOutputType = {
   surveyMessage: string | null
   isActive: boolean | null
   plan: string | null
+  mfaRequired: boolean | null
   maxUsers: number | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -66,6 +67,7 @@ export type TenantMaxAggregateOutputType = {
   surveyMessage: string | null
   isActive: boolean | null
   plan: string | null
+  mfaRequired: boolean | null
   maxUsers: number | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -85,6 +87,7 @@ export type TenantCountAggregateOutputType = {
   surveyMessage: number
   isActive: number
   plan: number
+  mfaRequired: number
   maxUsers: number
   deletedAt: number
   createdAt: number
@@ -114,6 +117,7 @@ export type TenantMinAggregateInputType = {
   surveyMessage?: true
   isActive?: true
   plan?: true
+  mfaRequired?: true
   maxUsers?: true
   deletedAt?: true
   createdAt?: true
@@ -133,6 +137,7 @@ export type TenantMaxAggregateInputType = {
   surveyMessage?: true
   isActive?: true
   plan?: true
+  mfaRequired?: true
   maxUsers?: true
   deletedAt?: true
   createdAt?: true
@@ -152,6 +157,7 @@ export type TenantCountAggregateInputType = {
   surveyMessage?: true
   isActive?: true
   plan?: true
+  mfaRequired?: true
   maxUsers?: true
   deletedAt?: true
   createdAt?: true
@@ -258,6 +264,7 @@ export type TenantGroupByOutputType = {
   surveyMessage: string | null
   isActive: boolean
   plan: string
+  mfaRequired: boolean
   maxUsers: number
   deletedAt: Date | null
   createdAt: Date
@@ -300,6 +307,7 @@ export type TenantWhereInput = {
   surveyMessage?: Prisma.StringNullableFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
   plan?: Prisma.StringFilter<"Tenant"> | string
+  mfaRequired?: Prisma.BoolFilter<"Tenant"> | boolean
   maxUsers?: Prisma.IntFilter<"Tenant"> | number
   deletedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -344,6 +352,7 @@ export type TenantOrderByWithRelationInput = {
   surveyMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   plan?: Prisma.SortOrder
+  mfaRequired?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -391,6 +400,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   surveyMessage?: Prisma.StringNullableFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
   plan?: Prisma.StringFilter<"Tenant"> | string
+  mfaRequired?: Prisma.BoolFilter<"Tenant"> | boolean
   maxUsers?: Prisma.IntFilter<"Tenant"> | number
   deletedAt?: Prisma.DateTimeNullableFilter<"Tenant"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -435,6 +445,7 @@ export type TenantOrderByWithAggregationInput = {
   surveyMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   plan?: Prisma.SortOrder
+  mfaRequired?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -462,6 +473,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   surveyMessage?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
   plan?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
+  mfaRequired?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
   maxUsers?: Prisma.IntWithAggregatesFilter<"Tenant"> | number
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tenant"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
@@ -481,6 +493,7 @@ export type TenantCreateInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -525,6 +538,7 @@ export type TenantUncheckedCreateInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -569,6 +583,7 @@ export type TenantUpdateInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -613,6 +628,7 @@ export type TenantUncheckedUpdateInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -657,6 +673,7 @@ export type TenantCreateManyInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -676,6 +693,7 @@ export type TenantUpdateManyMutationInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -695,6 +713,7 @@ export type TenantUncheckedUpdateManyInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -714,6 +733,7 @@ export type TenantCountOrderByAggregateInput = {
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   plan?: Prisma.SortOrder
+  mfaRequired?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -737,6 +757,7 @@ export type TenantMaxOrderByAggregateInput = {
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   plan?: Prisma.SortOrder
+  mfaRequired?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -756,6 +777,7 @@ export type TenantMinOrderByAggregateInput = {
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   plan?: Prisma.SortOrder
+  mfaRequired?: Prisma.SortOrder
   maxUsers?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1171,6 +1193,7 @@ export type TenantCreateWithoutProfilesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1214,6 +1237,7 @@ export type TenantUncheckedCreateWithoutProfilesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1273,6 +1297,7 @@ export type TenantUpdateWithoutProfilesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1316,6 +1341,7 @@ export type TenantUncheckedUpdateWithoutProfilesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1359,6 +1385,7 @@ export type TenantCreateWithoutUsersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1402,6 +1429,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1461,6 +1489,7 @@ export type TenantUpdateWithoutUsersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1504,6 +1533,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1547,6 +1577,7 @@ export type TenantCreateWithoutDevicesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1590,6 +1621,7 @@ export type TenantUncheckedCreateWithoutDevicesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1649,6 +1681,7 @@ export type TenantUpdateWithoutDevicesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1692,6 +1725,7 @@ export type TenantUncheckedUpdateWithoutDevicesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1735,6 +1769,7 @@ export type TenantCreateWithoutDevicePhotosInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1778,6 +1813,7 @@ export type TenantUncheckedCreateWithoutDevicePhotosInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1837,6 +1873,7 @@ export type TenantUpdateWithoutDevicePhotosInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1880,6 +1917,7 @@ export type TenantUncheckedUpdateWithoutDevicePhotosInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1923,6 +1961,7 @@ export type TenantCreateWithoutTdsReadingsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1966,6 +2005,7 @@ export type TenantUncheckedCreateWithoutTdsReadingsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2025,6 +2065,7 @@ export type TenantUpdateWithoutTdsReadingsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2068,6 +2109,7 @@ export type TenantUncheckedUpdateWithoutTdsReadingsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2111,6 +2153,7 @@ export type TenantCreateWithoutTechniciansInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2154,6 +2197,7 @@ export type TenantUncheckedCreateWithoutTechniciansInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2213,6 +2257,7 @@ export type TenantUpdateWithoutTechniciansInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2256,6 +2301,7 @@ export type TenantUncheckedUpdateWithoutTechniciansInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2299,6 +2345,7 @@ export type TenantCreateWithoutCustomersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2342,6 +2389,7 @@ export type TenantUncheckedCreateWithoutCustomersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2401,6 +2449,7 @@ export type TenantUpdateWithoutCustomersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2444,6 +2493,7 @@ export type TenantUncheckedUpdateWithoutCustomersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2487,6 +2537,7 @@ export type TenantCreateWithoutCustomerAddressesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2530,6 +2581,7 @@ export type TenantUncheckedCreateWithoutCustomerAddressesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2589,6 +2641,7 @@ export type TenantUpdateWithoutCustomerAddressesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2632,6 +2685,7 @@ export type TenantUncheckedUpdateWithoutCustomerAddressesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2675,6 +2729,7 @@ export type TenantCreateWithoutCustomerPhonesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2718,6 +2773,7 @@ export type TenantUncheckedCreateWithoutCustomerPhonesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2777,6 +2833,7 @@ export type TenantUpdateWithoutCustomerPhonesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2820,6 +2877,7 @@ export type TenantUncheckedUpdateWithoutCustomerPhonesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2863,6 +2921,7 @@ export type TenantCreateWithoutServiceTicketsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2906,6 +2965,7 @@ export type TenantUncheckedCreateWithoutServiceTicketsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2965,6 +3025,7 @@ export type TenantUpdateWithoutServiceTicketsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3008,6 +3069,7 @@ export type TenantUncheckedUpdateWithoutServiceTicketsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3051,6 +3113,7 @@ export type TenantCreateWithoutServicePhotosInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3094,6 +3157,7 @@ export type TenantUncheckedCreateWithoutServicePhotosInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3153,6 +3217,7 @@ export type TenantUpdateWithoutServicePhotosInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3196,6 +3261,7 @@ export type TenantUncheckedUpdateWithoutServicePhotosInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3239,6 +3305,7 @@ export type TenantCreateWithoutFilterCatalogsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3282,6 +3349,7 @@ export type TenantUncheckedCreateWithoutFilterCatalogsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3341,6 +3409,7 @@ export type TenantUpdateWithoutFilterCatalogsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3384,6 +3453,7 @@ export type TenantUncheckedUpdateWithoutFilterCatalogsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3427,6 +3497,7 @@ export type TenantCreateWithoutFilterChangesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3470,6 +3541,7 @@ export type TenantUncheckedCreateWithoutFilterChangesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3529,6 +3601,7 @@ export type TenantUpdateWithoutFilterChangesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3572,6 +3645,7 @@ export type TenantUncheckedUpdateWithoutFilterChangesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3615,6 +3689,7 @@ export type TenantCreateWithoutDeviceFiltersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3658,6 +3733,7 @@ export type TenantUncheckedCreateWithoutDeviceFiltersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3717,6 +3793,7 @@ export type TenantUpdateWithoutDeviceFiltersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3760,6 +3837,7 @@ export type TenantUncheckedUpdateWithoutDeviceFiltersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3803,6 +3881,7 @@ export type TenantCreateWithoutDeviceMaintenanceInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3846,6 +3925,7 @@ export type TenantUncheckedCreateWithoutDeviceMaintenanceInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3905,6 +3985,7 @@ export type TenantUpdateWithoutDeviceMaintenanceInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3948,6 +4029,7 @@ export type TenantUncheckedUpdateWithoutDeviceMaintenanceInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3991,6 +4073,7 @@ export type TenantCreateWithoutMaintenanceRemindersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4034,6 +4117,7 @@ export type TenantUncheckedCreateWithoutMaintenanceRemindersInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4093,6 +4177,7 @@ export type TenantUpdateWithoutMaintenanceRemindersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4136,6 +4221,7 @@ export type TenantUncheckedUpdateWithoutMaintenanceRemindersInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4179,6 +4265,7 @@ export type TenantCreateWithoutCouponsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4222,6 +4309,7 @@ export type TenantUncheckedCreateWithoutCouponsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4281,6 +4369,7 @@ export type TenantUpdateWithoutCouponsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4324,6 +4413,7 @@ export type TenantUncheckedUpdateWithoutCouponsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4367,6 +4457,7 @@ export type TenantCreateWithoutCouponUsagesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4410,6 +4501,7 @@ export type TenantUncheckedCreateWithoutCouponUsagesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4469,6 +4561,7 @@ export type TenantUpdateWithoutCouponUsagesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4512,6 +4605,7 @@ export type TenantUncheckedUpdateWithoutCouponUsagesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4555,6 +4649,7 @@ export type TenantCreateWithoutInventoryInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4598,6 +4693,7 @@ export type TenantUncheckedCreateWithoutInventoryInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4657,6 +4753,7 @@ export type TenantUpdateWithoutInventoryInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4700,6 +4797,7 @@ export type TenantUncheckedUpdateWithoutInventoryInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4743,6 +4841,7 @@ export type TenantCreateWithoutInventoryTransactionsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4786,6 +4885,7 @@ export type TenantUncheckedCreateWithoutInventoryTransactionsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4845,6 +4945,7 @@ export type TenantUpdateWithoutInventoryTransactionsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4888,6 +4989,7 @@ export type TenantUncheckedUpdateWithoutInventoryTransactionsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4931,6 +5033,7 @@ export type TenantCreateWithoutAutomationRulesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4974,6 +5077,7 @@ export type TenantUncheckedCreateWithoutAutomationRulesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5033,6 +5137,7 @@ export type TenantUpdateWithoutAutomationRulesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5076,6 +5181,7 @@ export type TenantUncheckedUpdateWithoutAutomationRulesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5119,6 +5225,7 @@ export type TenantCreateWithoutAutomationLogsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5162,6 +5269,7 @@ export type TenantUncheckedCreateWithoutAutomationLogsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5221,6 +5329,7 @@ export type TenantUpdateWithoutAutomationLogsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5264,6 +5373,7 @@ export type TenantUncheckedUpdateWithoutAutomationLogsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5307,6 +5417,7 @@ export type TenantCreateWithoutServiceSurveysInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5350,6 +5461,7 @@ export type TenantUncheckedCreateWithoutServiceSurveysInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5409,6 +5521,7 @@ export type TenantUpdateWithoutServiceSurveysInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5452,6 +5565,7 @@ export type TenantUncheckedUpdateWithoutServiceSurveysInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5495,6 +5609,7 @@ export type TenantCreateWithoutMessageTemplatesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5538,6 +5653,7 @@ export type TenantUncheckedCreateWithoutMessageTemplatesInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5597,6 +5713,7 @@ export type TenantUpdateWithoutMessageTemplatesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5640,6 +5757,7 @@ export type TenantUncheckedUpdateWithoutMessageTemplatesInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5683,6 +5801,7 @@ export type TenantCreateWithoutWhatsappSessionsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5726,6 +5845,7 @@ export type TenantUncheckedCreateWithoutWhatsappSessionsInput = {
   surveyMessage?: string | null
   isActive?: boolean
   plan?: string
+  mfaRequired?: boolean
   maxUsers?: number
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5785,6 +5905,7 @@ export type TenantUpdateWithoutWhatsappSessionsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5828,6 +5949,7 @@ export type TenantUncheckedUpdateWithoutWhatsappSessionsInput = {
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   plan?: Prisma.StringFieldUpdateOperationsInput | string
+  mfaRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   maxUsers?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6118,6 +6240,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   surveyMessage?: boolean
   isActive?: boolean
   plan?: boolean
+  mfaRequired?: boolean
   maxUsers?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -6163,6 +6286,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   surveyMessage?: boolean
   isActive?: boolean
   plan?: boolean
+  mfaRequired?: boolean
   maxUsers?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -6182,6 +6306,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   surveyMessage?: boolean
   isActive?: boolean
   plan?: boolean
+  mfaRequired?: boolean
   maxUsers?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -6201,13 +6326,14 @@ export type TenantSelectScalar = {
   surveyMessage?: boolean
   isActive?: boolean
   plan?: boolean
+  mfaRequired?: boolean
   maxUsers?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "phone" | "email" | "address" | "reportConfig" | "googleReviewUrl" | "surveyMessage" | "isActive" | "plan" | "maxUsers" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "phone" | "email" | "address" | "reportConfig" | "googleReviewUrl" | "surveyMessage" | "isActive" | "plan" | "mfaRequired" | "maxUsers" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   profiles?: boolean | Prisma.Tenant$profilesArgs<ExtArgs>
@@ -6281,6 +6407,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     surveyMessage: string | null
     isActive: boolean
     plan: string
+    mfaRequired: boolean
     maxUsers: number
     deletedAt: Date | null
     createdAt: Date
@@ -6745,6 +6872,7 @@ export interface TenantFieldRefs {
   readonly surveyMessage: Prisma.FieldRef<"Tenant", 'String'>
   readonly isActive: Prisma.FieldRef<"Tenant", 'Boolean'>
   readonly plan: Prisma.FieldRef<"Tenant", 'String'>
+  readonly mfaRequired: Prisma.FieldRef<"Tenant", 'Boolean'>
   readonly maxUsers: Prisma.FieldRef<"Tenant", 'Int'>
   readonly deletedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Tenant", 'DateTime'>
