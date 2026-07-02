@@ -1,6 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import "dotenv/config";
+import { PrismaClient } from "../src/lib/generated/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+  max: 5,
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const customers = await prisma.customer.findMany({
