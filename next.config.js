@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   // Fix for Vercel ENOENT error with parenthesized route groups like (dashboard)
   // and Prisma client bundling issues
   experimental: {
