@@ -63,7 +63,7 @@ function PlanCard({
 }: {
   name: string; price: string; period: string; desc: string;
   features: string[]; cta: { text: string; href: string };
-  popular?: boolean; dark?: boolean;
+  popular?: boolean; dark?: boolean; icon?: string;
 }) {
   return (
     <div className={`relative rounded-3xl p-8 transition-all duration-500 hover:-translate-y-2 ${
@@ -78,7 +78,7 @@ function PlanCard({
           EN AVANTAJLI
         </span>
       )}
-      <h3 className={`text-2xl font-bold ${popular || dark ? 'text-white' : 'text-foreground'}`}>{name}</h3>
+      <h3 className={`text-2xl font-bold ${popular || dark ? 'text-white' : 'text-foreground'}`}>{icon && <span className="mr-2">{icon}</span>}{name}</h3>
       <div className="mt-4">
         <span className={`text-5xl font-extrabold ${popular || dark ? 'text-white' : 'text-foreground'}`}>{price}</span>
         <span className={`ml-2 text-sm ${popular || dark ? 'text-gray-400' : 'text-gray-500'}`}>/{period}</span>
@@ -317,6 +317,7 @@ export default function LandingPage() {
               name="Kurucu"
               price="$530"
               period="ömür boyu"
+              icon="🏆"
               desc="Tek seferlik ödeme. Sınırsız her şey, ömür boyu erişim."
               features={FOUNDER_FEATURES}
               cta={{ text: 'Kurucu Olun', href: '/register' }}
