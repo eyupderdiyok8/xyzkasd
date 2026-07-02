@@ -51,7 +51,7 @@ function FeatureCard({ icon, title, desc, color }: { icon: string; title: string
       <div className={`mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-transform duration-500 group-hover:scale-110 ${color}`}>
         {icon}
       </div>
-      <h3 className="mb-3 text-xl font-semibold text-white">{title}</h3>
+      <h3 className="mb-3 text-lg font-semibold text-white">{title}</h3>
       <p className="text-sm leading-relaxed text-gray-400">{desc}</p>
     </div>
   );
@@ -75,7 +75,7 @@ function PlanCard({
     }`}>
       {popular && (
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-4 py-1 text-xs font-bold text-gray-900 shadow-lg">
-          EN AVANTAJLI
+          EN POPÜLER
         </span>
       )}
       <h3 className={`text-2xl font-bold ${popular || dark ? 'text-white' : 'text-foreground'}`}>{icon && <span className="mr-2">{icon}</span>}{name}</h3>
@@ -109,38 +109,32 @@ function PlanCard({
 }
 
 const MONTHLY_FEATURES = [
-  'Sınırsız cihaz ve müşteri',
-  'Servis kaydı ve PDF rapor',
-  'Tahsilat yönetimi (tüm yöntemler)',
-  'Filtre takibi ve ömür hesaplama',
-  'Memnuniyet anketi ve kupon',
-  'Envanter yönetimi',
-  'Temel raporlar ve dashboard',
-  'PWA offline çalışma',
-  'WhatsApp entegrasyonu',
-  'Otomasyon motoru',
-  'Mesaj şablonları',
-  'Öncelikli e-posta desteği',
+  'Sınırsız Cihaz ve Müşteri Yönetimi',
+  'Otomatik WhatsApp Entegrasyonu ve Mesaj Şablonları',
+  'PWA Altyapısı ile %100 Offline (İnternetsiz) Çalışma',
+  'Filtre Takibi ve Akıllı Otomasyon Motoru',
+  'Tahsilat, Stok ve Envanter Yönetimi',
+  'Müşteri Memnuniyet Anketi ve Kupon Sistemi',
+  'Temel Raporlar ve Dashboard Grafikleri',
+  'Öncelikli E-posta Desteği',
 ];
 
 const YEARLY_FEATURES = [
   ...MONTHLY_FEATURES,
-  '2 ay ücretsiz (yıllık ödemede)',
-  'Gelişmiş raporlar',
-  'Teknisyen performans takibi',
+  '2 ay ücretsiz kullanım avantajı',
+  'Gelişmiş Performans Raporları',
+  'Teknisyen Bazlı Saha Performans Takibi',
+  'Yeni modüllere öncelikli erişim hakkı',
 ];
 
 const FOUNDER_FEATURES = [
-  'Ömür boyu erişim — tek seferlik ödeme',
-  'Tüm Aylık + Yıllık özellikleri',
-  'Sınırsız kullanıcı',
-  'Sınırsız depolama',
-  'Öncelikli 7/24 WhatsApp desteği',
-  'Yeni özelliklere erken erişim',
-  'Roadmap oylama hakkı',
-  'Firma logosu ve renk özelleştirme',
-  'API erişimi',
-  'Özel entegrasyon desteği',
+  'Aylık ve Yıllık Planların Tüm Özellikleri Ömür Boyu Açık',
+  'Bir daha asla fatura yok, kur artışından etkilenme yok',
+  'Sınırsız Kullanıcı, Teknisyen ve Depolama',
+  'Öncelikli 7/24 Doğrudan WhatsApp Destek Hattı',
+  'Roadmap\'te Oy Kullanma Hakkı',
+  'Firmaya Özel Logo ve Renk Özelleştirmesi',
+  'API Erişimi ve Özel Entegrasyon Desteği',
 ];
 
 export default function LandingPage() {
@@ -169,13 +163,13 @@ export default function LandingPage() {
           </Link>
           <div className="hidden items-center gap-8 text-sm font-medium text-gray-400 md:flex">
             <a href="#features" className="transition-colors hover:text-white">Özellikler</a>
-            <a href="#plans" className="transition-colors hover:text-white">Planlar</a>
             <a href="#stats" className="transition-colors hover:text-white">Rakamlar</a>
+            <a href="#plans" className="transition-colors hover:text-white">Fiyatlandırma</a>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 transition-colors hover:text-white">Giriş</Link>
+            <Link href="/login" className="text-sm font-medium text-gray-400 transition-colors hover:text-white">Giriş Yap</Link>
             <Link href="/register" className="rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-xl hover:shadow-blue-500/40">
-              Ücretsiz Başlayın
+              Şimdi Başlayın
             </Link>
           </div>
         </div>
@@ -196,32 +190,29 @@ export default function LandingPage() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
               </span>
-              Multi-Tenant SaaS Platform
+              Sınırsız Cihaz ve Müşteri · Gizli Ücret Yok · 3 Katmanlı Güvenlik
             </div>
             <h1 className="mt-8 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
-              Su Arıtma Servisinizi{' '}
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent">Tek Platformdan</span>{' '}
-              Yönetin
+              Su Arıtma Servisinizin{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent">Tüm Gücü</span>{' '}
+              Tek Bir Platformda
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl">
-              Cihaz takibinden WhatsApp bildirimlerine, filtre ömründen müşteri memnuniyetine — su arıtma servis firmaları için ihtiyacınız olan her şey, üç katmanlı güvenlikle tek bir yerde.
+              Cihaz takibinden otomatik WhatsApp bildirimlerine, filtre ömrü hesaplamadan internet yokken bile sahada tahsilat almaya kadar — su arıtma servis firmalarının ihtiyacı olan her şey tek bir yerde.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link href="/register" className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:scale-[1.02]">
-                Hemen Başlayın — Ücretsiz
+                🗓️ Aylık / Yıllık / Lifetime Seçenekleriyle Başlayın
                 <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </Link>
               <a href="#features" className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-300">
-                Neler yapabilirsiniz?
-                <svg className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+                Platformu Keşfedin ↓
               </a>
             </div>
             <p className="mt-8 text-sm text-gray-600">
-              <span className="font-mono text-gray-400">500+</span> cihaz aktif olarak yönetiliyor
+              ⚡ <span className="font-mono text-gray-400">500+</span> aktif cihaz ve servis süreci başarıyla yönetiliyor.
             </p>
           </div>
         </div>
@@ -234,24 +225,49 @@ export default function LandingPage() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-400">Özellikler</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-              Her Şey{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Düşünüldü</span>
+              Her Detay{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Sahadaki İşiniz İçin</span>{' '}
+              Düşünüldü
             </h2>
-            <p className="mt-4 text-lg text-gray-400">Su arıtma servis yönetimini baştan sona kapsayan 10+ entegre modül</p>
+            <p className="mt-4 text-lg text-gray-400">Su arıtma operasyonunuzu baştan sona dijitalleştiren ve kağıt-kalem derdini bitiren tam entegre modüller.</p>
           </div>
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <FeatureCard icon="🏢" title="Multi-Tenant İzolasyon" desc="Her firma kendi verilerini görür. 3 katmanlı güvenlik: RLS + Repository + Middleware. Super admin firmalar arası geçiş yapabilir." color="bg-blue-500/10 text-blue-400" />
-            <FeatureCard icon="💰" title="Tahsilat & Gelir Takibi" desc="Nakit, kredi kartı (taksitli/tek çekim), senet, ileri tarihli ödeme. Gelir-gider dengesi, aylık ciro raporları." color="bg-emerald-500/10 text-emerald-400" />
-            <FeatureCard icon="📱" title="WhatsApp Entegrasyonu" desc="QR kod ile bağlanın. Her tenant kendi numarasından mesaj gönderir. Bakım hatırlatmaları, anketler otomatik." color="bg-green-500/10 text-green-400" />
-            <FeatureCard icon="🔧" title="Servis Kaydı & PDF Rapor" desc="TDS, basınç, kaçak kontrolü, filtre değişimi, müşteri canvas imzası ve otomatik PDF rapor — hepsi tek formda." color="bg-amber-500/10 text-amber-400" />
-            <FeatureCard icon="🔄" title="Filtre Takibi" desc="Takılma tarihi + beklenen ömür = kalan gün. 12 aylık bakım tahmini. Otomatik WhatsApp hatırlatma." color="bg-purple-500/10 text-purple-400" />
-            <FeatureCard icon="📡" title="Offline Çalışma (PWA)" desc="İnternet yokken servis kaydı, fotoğraf, imza, tahsilat. Bağlantı gelince otomatik senkronizasyon." color="bg-cyan-500/10 text-cyan-400" />
-            <FeatureCard icon="⭐" title="Memnuniyet Anketi" desc="Servis sonrası otomatik WhatsApp anketi. 4+ yıldız → kupon + Google Review. Firma özel anket mesajı." color="bg-yellow-500/10 text-yellow-400" />
-            <FeatureCard icon="🤖" title="Otomasyon Motoru" desc="Trigger → Condition → Action. Servis tamamlanınca mesaj gönder, anket başlat, kupon oluştur." color="bg-red-500/10 text-red-400" />
-            <FeatureCard icon="📊" title="Akıllı Raporlar" desc="Dashboard, teknisyen performansı, en çok değişen filtreler, aylık ciro grafiği, ödeme yöntemi dağılımı." color="bg-indigo-500/10 text-indigo-400" />
-            <FeatureCard icon="📦" title="Envanter Yönetimi" desc="Filtre ve parça stoğu. Giriş/çıkış hareketleri. Kritik stok seviyesinde otomatik uyarı." color="bg-orange-500/10 text-orange-400" />
-            <FeatureCard icon="💾" title="Yedekleme & Veri Aktarımı" desc="Tek tıkla tüm verilerinizi JSON olarak yedekleyin. Başka sistemden geçiş için kolay içe aktarma." color="bg-teal-500/10 text-teal-400" />
-            <FeatureCard icon="🎫" title="Kupon & İndirim" desc="Anket puanına göre otomatik kupon. Manuel kampanya. Kod, yüzde, süre ve kullanım limiti." color="bg-pink-500/10 text-pink-400" />
+            <FeatureCard icon="🔒" title="%100 Veri Güvenliği ve Firma İzolasyonu"
+              desc="Verileriniz size özel, kırılması imkansız dijital katmanlarda saklanır. Başka hiçbir firma sizin müşteri listenize veya cihaz verilerinize erişemez."
+              color="bg-blue-500/10 text-blue-400" />
+            <FeatureCard icon="📱" title="Akıllı WhatsApp Entegrasyonu"
+              desc="Kendi WhatsApp numaranızı QR kod ile saniyeler içinde bağlayın. Filtre değişim zamanı gelen müşterilere mesajlar sizin numaranızdan otomatik gitsin."
+              color="bg-green-500/10 text-green-400" />
+            <FeatureCard icon="🔄" title="Akıllı Filtre Takibi ve Bakım Tahmini"
+              desc="Takılma tarihi ve beklenen ömür üzerinden kalan günü hesaplar. 12 aylık bakım takvimini önünüze koyar ve müşteriye otomatik hatırlatır."
+              color="bg-purple-500/10 text-purple-400" />
+            <FeatureCard icon="📡" title="Sahada İnternetsiz Çalışma (PWA)"
+              desc="Bodrum katlarında veya internetin çekmediği yerlerde servis kaydı açın, fotoğraf yükleyin, imza alın. İnternet gelince sistem otomatik senkronize eder."
+              color="bg-cyan-500/10 text-cyan-400" />
+            <FeatureCard icon="🔧" title="Dijital Servis Kaydı & PDF Raporu"
+              desc="TDS, basınç, kaçak testi, filtre değişimi ve dijital imza tek ekranda. Servis bittiği an müşterinin WhatsApp'ına profesyonel PDF raporu ulaşır."
+              color="bg-amber-500/10 text-amber-400" />
+            <FeatureCard icon="💰" title="Gelişmiş Tahsilat & Gelir-Gider Takibi"
+              desc="Nakit, kredi kartı, senet veya ileri tarihli ödemeler. Aylık ciro raporları ve gelir-gider dengesi anlık dashboard'unuzda."
+              color="bg-emerald-500/10 text-emerald-400" />
+            <FeatureCard icon="⭐" title="Otomatik Memnuniyet Anketi & Review"
+              desc="Servis sonrası otomatik WhatsApp anketi. 4+ yıldız veren müşterileriniz Google Haritalar sayfanıza yorum yapmaya yönlendirilir."
+              color="bg-yellow-500/10 text-yellow-400" />
+            <FeatureCard icon="🤖" title="Gelişmiş Otomasyon Motoru"
+              desc="Servis tamamlandı → mesaj at → filtre hatırlatması planla → kupon tanımla. Rutin işleri sisteme bırakın, siz işinizi büyütün."
+              color="bg-red-500/10 text-red-400" />
+            <FeatureCard icon="📊" title="Akıllı Esnaf Raporları"
+              desc="En çok değişen filtreler, teknisyen performansı, ödeme yöntemi dağılımları ve aylık ciro grafikleriyle işletmenizin röntgenini çekin."
+              color="bg-indigo-500/10 text-indigo-400" />
+            <FeatureCard icon="📦" title="Kritik Stok & Envanter Yönetimi"
+              desc="Filtre, membran ve parça stoklarınızı giriş-çıkış hareketleriyle izleyin. Kritik seviyeye düşen parçalar için otomatik uyarı alın."
+              color="bg-orange-500/10 text-orange-400" />
+            <FeatureCard icon="💾" title="Kolay Yedekleme & Veri Aktarımı"
+              desc="Verileriniz tamamen size aittir. Tek tıkla müşteri ve cihaz geçmişinizi JSON/Excel olarak yedekleyin veya kolayca içeri aktarın."
+              color="bg-teal-500/10 text-teal-400" />
+            <FeatureCard icon="🎫" title="Esnek Kupon & Kampanya Sihirbazı"
+              desc="Anket puanına göre otomatik indirim kodları üretin veya manuel kampanyalar düzenleyin. Kod, yüzde ve limit tamamen sizin kontrolünüzde."
+              color="bg-pink-500/10 text-pink-400" />
           </div>
         </div>
       </section>
@@ -264,8 +280,8 @@ export default function LandingPage() {
             {[
               { value: 3, suffix: '', label: 'Katmanlı Güvenlik', sub: 'RLS + Repository + Middleware' },
               { value: 12, suffix: '+', label: 'Entegre Modül', sub: 'Tek platformda her şey' },
-              { value: 1065, suffix: '+', label: 'Otomatik Test', sub: 'Her commit öncesi' },
-              { value: 100, suffix: '%', label: 'PWA Offline', sub: 'İnternetsiz çalışır' },
+              { value: 1065, suffix: '+', label: 'Otomatik Test', sub: 'Her özellik yüzlerce senaryoda test edilir' },
+              { value: 100, suffix: '%', label: 'PWA Altyapısı', sub: 'İnternetsiz tam performans' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-5xl font-extrabold tracking-tight text-white">
@@ -286,43 +302,31 @@ export default function LandingPage() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-400">Planlar</p>
             <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-              İhtiyacınıza Uygun{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Plan</span>
+              İşletmenize Uygun{' '}
+              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Ödeme Planını</span>{' '}
+              Seçin
             </h2>
             <p className="mt-4 text-lg text-gray-400">
-              Küçük başlayın, büyüdükçe yükseltin. Dilediğiniz zaman plan değiştirebilirsiniz.
+              Özellik kısıtlaması yok, cihaz sınırı yok, müşteri limiti yok. Tam paket, tam güç. Sadece size en uygun ödeme periyodunu seçin.
             </p>
           </div>
 
           <div className="mt-16 grid gap-8 lg:grid-cols-3 lg:max-w-5xl lg:mx-auto">
-            <PlanCard
-              name="Aylık"
-              price="$21"
-              period="ay"
-              desc="Esnek, taahhütsüz. İptal etmek istediğiniz zaman kapatın."
+            <PlanCard name="Aylık Plan" price="$21" period="ay"
+              desc="İstediğiniz zaman başlayın, dilediğiniz ay üyeliğinizi kapatın. Operasyonunu sahada test etmek isteyenler için ideal."
               features={MONTHLY_FEATURES}
-              cta={{ text: 'Aylık Başlayın', href: '/register' }}
-              dark
-            />
-            <PlanCard
-              name="Yıllık"
-              price="$17"
-              period="ay"
-              desc="Yıllık ödeyin, 2 ay bedava. En popüler seçenek."
+              cta={{ text: '👉 Aylık Planla Başlayın', href: '/register' }}
+              dark />
+            <PlanCard name="Yıllık Plan" price="$17" period="ay"
+              desc="İşini büyütmekte kararlı, fiyat artışlarından etkilenmek istemeyen profesyonel firmalar için. ($204 tek seferde)"
               features={YEARLY_FEATURES}
-              cta={{ text: 'Yıllık Başlayın', href: '/register' }}
-              popular
-            />
-            <PlanCard
-              name="Kurucu"
-              price="$530"
-              period="ömür boyu"
-              icon="🏆"
-              desc="Tek seferlik ödeme. Sınırsız her şey, ömür boyu erişim."
+              cta={{ text: '👉 Yıllık Planla Avantajlı Başlayın', href: '/register' }}
+              popular />
+            <PlanCard name="Kurucu Üye" price="$530" period="tek seferlik" icon="🏆"
+              desc="Lansman dönemine özel, ilk 50 firmadan biri olun. Bir daha asla abonelik ücreti ödemeyin."
               features={FOUNDER_FEATURES}
-              cta={{ text: 'Kurucu Olun', href: '/register' }}
-              dark
-            />
+              cta={{ text: '👉 Hemen Kurucu Üye Olun', href: '/register' }}
+              dark />
           </div>
         </div>
       </section>
@@ -335,20 +339,20 @@ export default function LandingPage() {
         </div>
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Su Arıtma Servisinizi Büyütmeye Hazır mısınız?
+            Kağıt-Kalem Devrini Kapatmaya Hazır mısınız?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
-            Hemen ücretsiz başlayın. İhtiyacınız olduğunda tek tıkla yükseltin. Kurulum yok, kredi kartı yok.
+            Müşterilerinizi mağdur etmeyin, filtre takibini otomatiğe bağlayın ve sahadaki parayı anında kasanıza yazın. Size en uygun planı seçerek hemen bugün profesyonelleşin.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/register" className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-base font-bold text-blue-700 shadow-2xl transition-all hover:bg-blue-50 hover:scale-[1.02]">
-              Ücretsiz Hesap Oluşturun
+              👉 Hemen Ücretsiz Hesabınızı Oluşturun
               <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
             <Link href="/login" className="text-sm font-medium text-blue-200 transition-colors hover:text-white">
-              Zaten hesabınız var mı? Giriş yapın →
+              Zaten bir hesabınız var mı? Giriş Yapın →
             </Link>
           </div>
         </div>
@@ -364,16 +368,15 @@ export default function LandingPage() {
               </div>
               <span className="font-bold tracking-tight text-white">suaritmaservisyazilimi.com.tr</span>
             </Link>
-            <p className="max-w-md text-sm text-gray-500">
-              suaritmaservisyazilimi.com.tr — Su arıtma servis firmaları için çok kiracılı, kapsamlı ve güvenli yönetim platformu.
-            </p>
+            <p className="max-w-md text-sm text-gray-500">Su arıtma servis firmaları için çok kiracılı, kapsamlı ve güvenli yönetim platformu.</p>
             <div className="flex gap-8 text-sm text-gray-500">
               <a href="#features" className="transition-colors hover:text-gray-300">Özellikler</a>
-              <a href="#plans" className="transition-colors hover:text-gray-300">Planlar</a>
+              <a href="#stats" className="transition-colors hover:text-gray-300">Rakamlar</a>
+              <a href="#plans" className="transition-colors hover:text-gray-300">Fiyatlandırma</a>
               <Link href="/login" className="transition-colors hover:text-gray-300">Giriş</Link>
               <Link href="/register" className="transition-colors hover:text-gray-300">Kayıt</Link>
             </div>
-            <p className="text-xs text-gray-600">© {new Date().getFullYear()} Water ERP. Tüm hakları saklıdır.</p>
+            <p className="text-xs text-gray-600">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr. Tüm hakları saklıdır.</p>
           </div>
         </div>
       </footer>
