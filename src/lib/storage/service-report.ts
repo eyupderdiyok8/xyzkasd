@@ -1,5 +1,11 @@
 import PDFDocument from 'pdfkit/js/pdfkit.standalone';
 import { createClient } from '@supabase/supabase-js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const FONT_REGULAR = path.resolve(__dirname, '../../../assets/fonts/Roboto-Regular.ttf');
+const FONT_BOLD = path.resolve(__dirname, '../../../assets/fonts/Roboto-Bold.ttf');
 
 // ─── Types ──────────────────────────────────────
 
@@ -55,7 +61,7 @@ function parseReportConfig(raw?: string | null): ReportConfigParsed {
   const defaults: ReportConfigParsed = {
     primaryColor: '#1e3a5f',
     accentColor: '#3498db',
-    footerText: 'Bu rapor Water Purifier Service ERP sistemi tarafindan olusturulmustur.',
+    footerText: 'Bu rapor Water Purifier Service ERP sistemi tarafından oluşturulmuştur.',
     sections: { customer: true, device: true, measurements: true, filters: true, signature: true },
   };
   if (!raw) return defaults;
@@ -78,20 +84,9 @@ function parseReportConfig(raw?: string | null): ReportConfigParsed {
   }
 }
 
-// ─── Turkish character conversion for PDFKit Helvetica ───
-
-const TR_MAP: Record<string, string> = {
-  'ı': 'i', 'İ': 'I', 'ş': 's', 'Ş': 'S', 'ğ': 'g', 'Ğ': 'G',
-  'ü': 'u', 'Ü': 'U', 'ö': 'o', 'Ö': 'O', 'ç': 'c', 'Ç': 'C',
-};
-
-function safeText(text: string): string {
-  return text.replace(/[ıİşŞğĞüÜöÖçÇ]/g, (c) => TR_MAP[c] ?? c);
-}
-
 function asValue(v: string | undefined | null): string {
   if (v == null || v === '') return '—';
-  return safeText(String(v));
+  return String(v);
 }
 
 // ═══════════════════════════════════════════════
@@ -163,13 +158,13 @@ function drawKeyValueTable(
     doc.save();
     rect(doc, startX, y, colW, rowH, primaryColor);
     doc.fillColor('#ffffff');
-    doc.fontSize(8).font('Helvetica-Bold');
-    doc.text(safeText(label), startX + 6, y + rowH / 2 - 4, { width: colW - 12, align: 'left', lineBreak: false });
+    doc.fontSize(8).font('Roboto-Bold');
+    doc.text(label, startX + 6, y + rowH / 2 - 4, { width: colW - 12, align: 'left', lineBreak: false });
     doc.restore();
 
     // Value cell
     doc.fillColor('#1a1a2e');
-    doc.fontSize(9).font('Helvetica');
+    doc.fontSize(9).font('Roboto');
     doc.text(value, startX + colW + 8, y + rowH / 2 - 5, { width: valW - 16, lineBreak: false });
 
     // Vertical divider between label and value
@@ -218,8 +213,8 @@ function drawDataTable(
   let cx = startX;
   for (const col of columns) {
     doc.fillColor('#ffffff');
-    doc.fontSize(8).font('Helvetica-Bold');
-    doc.text(safeText(col.header), cx + 4, y + rowH / 2 - 4, { width: col.width - 8, align: 'center', lineBreak: false });
+    doc.fontSize(8).font('Roboto-Bold');
+    doc.text(col.header, cx + 4, y + rowH / 2 - 4, { width: col.width - 8, align: 'center', lineBreak: false });
     cx += col.width;
   }
   y += rowH;
@@ -246,7 +241,7 @@ function drawDataTable(
       }
 
       doc.fillColor('#1a1a2e');
-      doc.fontSize(8.5).font('Helvetica');
+      doc.fontSize(8.5).font('Roboto');
       doc.text(val, cx + 4, y + rowH / 2 - 5, { width: col.width - 8, align: 'center', lineBreak: false });
 
       cx += col.width;
@@ -267,8 +262,8 @@ function drawSectionTitle(doc: Doc, title: string, y: number, color: string): nu
   const barH = 22;
   rect(doc, M, y, PAGE_W, barH, color);
   doc.fillColor('#ffffff');
-  doc.fontSize(11).font('Helvetica-Bold');
-  doc.text(safeText(title), M + 8, y + barH / 2 - 5, { width: PAGE_W - 16, lineBreak: false });
+  doc.fontSize(11).font('Roboto-Bold');
+  doc.text(title, M + 8, y + barH / 2 - 5, { width: PAGE_W - 16, lineBreak: false });
   return y + barH;
 }
 
@@ -293,17 +288,17 @@ function drawHeader(doc: Doc, data: ReportData, logoBuffer?: ArrayBuffer, primar
 
   // Company name
   doc.fillColor(color);
-  doc.fontSize(20).font('Helvetica-Bold');
+  doc.fontSize(20).font('Roboto-Bold');
   doc.text('SERVIS RAPORU', M, M + 14, { align: 'center', width: PAGE_W });
 
   doc.fillColor('#333333');
-  doc.fontSize(11).font('Helvetica');
-  doc.text(safeText(data.tenantName), M, M + 38, { align: 'center', width: PAGE_W });
+  doc.fontSize(11).font('Roboto');
+  doc.text(data.tenantName, M, M + 38, { align: 'center', width: PAGE_W });
 
   // Contact info line
   const contactParts: string[] = [];
-  if (data.tenantPhone) contactParts.push(`Tel: ${safeText(data.tenantPhone)}`);
-  if (data.tenantEmail) contactParts.push(`E-posta: ${safeText(data.tenantEmail)}`);
+  if (data.tenantPhone) contactParts.push(`Tel: ${data.tenantPhone}`);
+  if (data.tenantEmail) contactParts.push(`E-posta: ${data.tenantEmail}`);
   if (contactParts.length > 0) {
     doc.fontSize(8).fillColor('#666666');
     doc.text(contactParts.join('  |  '), M, M + 52, { align: 'center', width: PAGE_W });
@@ -311,18 +306,18 @@ function drawHeader(doc: Doc, data: ReportData, logoBuffer?: ArrayBuffer, primar
 
   if (data.tenantAddress) {
     doc.fontSize(8).fillColor('#666666');
-    doc.text(safeText(data.tenantAddress), M, M + 64, { align: 'center', width: PAGE_W });
+    doc.text(data.tenantAddress, M, M + 64, { align: 'center', width: PAGE_W });
   }
 
   // Ticket info bar
   const infoY = M + 80;
   rect(doc, M, infoY, PAGE_W, 20, '#f0f4f8');
   doc.fillColor('#333333');
-  doc.fontSize(9).font('Helvetica-Bold');
+  doc.fontSize(9).font('Roboto-Bold');
   doc.text(`Fis No: ${data.ticketNo}`, M + 10, infoY + 5, { width: PAGE_W / 2 - 10, lineBreak: false });
-  doc.font('Helvetica');
+  doc.font('Roboto');
   if (data.completedAt) {
-    doc.text(`Tarih: ${safeText(data.completedAt)}`, M + PAGE_W / 2, infoY + 5, { width: PAGE_W / 2 - 10, align: 'right', lineBreak: false });
+    doc.text(`Tarih: ${data.completedAt}`, M + PAGE_W / 2, infoY + 5, { width: PAGE_W / 2 - 10, align: 'right', lineBreak: false });
   }
 
   return infoY + 35;
@@ -358,6 +353,10 @@ export async function generateServiceReport(
       },
     });
 
+    // Register Turkish-compatible fonts
+    doc.registerFont('Roboto', FONT_REGULAR);
+    doc.registerFont('Roboto-Bold', FONT_BOLD);
+
     const chunks: Buffer[] = [];
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(chunks)));
@@ -369,7 +368,7 @@ export async function generateServiceReport(
 
     // ── Customer Info ──────────────────────
     if (s.customer) {
-      y = drawSectionTitle(doc, 'MUSTERI BILGILERI', y, cfg.primaryColor);
+      y = drawSectionTitle(doc, 'MÜŞTERİ BİLGİLERİ', y, cfg.primaryColor);
       y = drawKeyValueTable(doc, [
         ['Ad Soyad', asValue(data.customerName)],
         ['Telefon', asValue(data.customerPhone)],
@@ -379,7 +378,7 @@ export async function generateServiceReport(
 
     // ── Device Info ─────────────────────────
     if (s.device) {
-      y = drawSectionTitle(doc, 'CIHAZ BILGILERI', y, cfg.primaryColor);
+      y = drawSectionTitle(doc, 'CİHAZ BİLGİLERİ', y, cfg.primaryColor);
       y = drawKeyValueTable(doc, [
         ['Marka / Model', asValue(`${data.deviceBrand} ${data.deviceModel}`)],
         ['Seri No', asValue(data.deviceSerial)],
@@ -388,24 +387,24 @@ export async function generateServiceReport(
     }
 
     // ── Issue & Work Details ─────────────────
-    y = drawSectionTitle(doc, 'ISLEM DETAYLARI', y, cfg.primaryColor);
+    y = drawSectionTitle(doc, 'İŞLEM DETAYLARI', y, cfg.primaryColor);
     y = drawKeyValueTable(doc, [
-      ['Ariza', asValue(data.issueDesc)],
-      ['Yapilan Islem', asValue(data.workDone)],
-      ['Cozum', asValue(data.resolution)],
-      ['Musteri Notu', asValue(data.customerNote)],
+      ['Arıza', asValue(data.issueDesc)],
+      ['Yapılan İşlem', asValue(data.workDone)],
+      ['Çözüm', asValue(data.resolution)],
+      ['Müşteri Notu', asValue(data.customerNote)],
     ], M, y, 100, 22, cfg.primaryColor);
 
     // ── Measurements ────────────────────────
     if (s.measurements) {
-      y = drawSectionTitle(doc, 'OLCUM DEGERLERI', y, cfg.primaryColor);
+      y = drawSectionTitle(doc, 'ÖLÇÜM DEĞERLERİ', y, cfg.primaryColor);
 
       const colW = (PAGE_W) / 4;
       y = drawDataTable(doc, [
-        { header: 'TDS Oncesi', width: colW },
-        { header: 'TDS Sonrasi', width: colW },
-        { header: 'Basinc Oncesi', width: colW },
-        { header: 'Basinc Sonrasi', width: colW },
+        { header: 'TDS Öncesi', width: colW },
+        { header: 'TDS Sonrası', width: colW },
+        { header: 'Basınç Öncesi', width: colW },
+        { header: 'Basınç Sonrası', width: colW },
       ], [
         [
           data.tdsBefore != null ? String(data.tdsBefore) : '—',
@@ -417,31 +416,31 @@ export async function generateServiceReport(
 
       // Kaçak row — full width
       if (data.leakCheck != null) {
-        const leakText = data.leakCheck ? '⚠ Kacak Var' : '✓ Kacak Yok';
-        const leakExtra = data.leakNotes ? ` — ${safeText(data.leakNotes)}` : '';
+        const leakText = data.leakCheck ? '⚠ Kaçak Var' : '✓ Kaçak Yok';
+        const leakExtra = data.leakNotes ? ` — ${data.leakNotes}` : '';
         rect(doc, M, y, PAGE_W, 22, lighten(cfg.primaryColor, 0.92));
         doc.fillColor('#1a1a2e');
-        doc.fontSize(9).font('Helvetica-Bold');
-        doc.text('Kacak Kontrolu:', M + 8, y + 5, { continued: true, lineBreak: false });
-        doc.font('Helvetica').text(` ${leakText}${leakExtra}`, { lineBreak: false });
+        doc.fontSize(9).font('Roboto-Bold');
+        doc.text('Kaçak Kontrolü:', M + 8, y + 5, { continued: true, lineBreak: false });
+        doc.font('Roboto').text(` ${leakText}${leakExtra}`, { lineBreak: false });
         y += 30;
       }
     }
 
     // ── Filter Changes ──────────────────────
     if (s.filters && data.filterChanges && data.filterChanges.length > 0) {
-      y = drawSectionTitle(doc, 'DEGISEN FILTRELER', y, cfg.primaryColor);
+      y = drawSectionTitle(doc, 'DEĞİŞEN FİLTRELER', y, cfg.primaryColor);
 
       const stageLabels: Record<string, string> = {
         SEDIMENT: 'Sediment',
         CARBON_BLOCK: 'Karbon Blok',
-        GAC: 'Granul Aktif Karbon',
+        GAC: 'Granül Aktif Karbon',
         MEMBRANE: 'Membran',
         POST_CARBON: 'Son Karbon',
         UV: 'UV',
         ALKALINE: 'Alkali',
         MINERAL: 'Mineral',
-        OTHER: 'Diger',
+        OTHER: 'Diğer',
       };
 
       const nameW = PAGE_W * 0.45;
@@ -449,21 +448,21 @@ export async function generateServiceReport(
       const qtyW = PAGE_W * 0.25;
 
       const filterRows = data.filterChanges.map((f) => [
-        safeText(f.filterName),
-        safeText(stageLabels[f.stage] || f.stage),
+        f.filterName,
+        (stageLabels[f.stage] || f.stage),
         String(f.quantity),
       ]);
 
       y = drawDataTable(doc, [
         { header: 'Filtre', width: nameW },
-        { header: 'Asama', width: stageW },
+        { header: 'Aşama', width: stageW },
         { header: 'Adet', width: qtyW },
       ], filterRows, M, y, 22, cfg.primaryColor);
     }
 
     // ── Signature ───────────────────────────
     if (s.signature) {
-      y = drawSectionTitle(doc, 'MUSTERI IMZASI', y, cfg.primaryColor);
+      y = drawSectionTitle(doc, 'MÜŞTERİ İMZASI', y, cfg.primaryColor);
 
       const sigBoxW = 220;
       const sigBoxH = 70;
@@ -488,19 +487,19 @@ export async function generateServiceReport(
           doc.image(imageInput, sigX + 5, y + 5, { width: sigBoxW - 10, height: sigBoxH - 10 });
         } catch (err) {
           console.error('Signature load error:', err);
-          doc.fontSize(9).fillColor('#999999').font('Helvetica');
-          doc.text('(Imza yuklenemedi)', sigX, y + sigBoxH / 2 - 5, { width: sigBoxW, align: 'center', lineBreak: false });
+          doc.fontSize(9).fillColor('#999999').font('Roboto');
+          doc.text('(İmza yüklenemedi)', sigX, y + sigBoxH / 2 - 5, { width: sigBoxW, align: 'center', lineBreak: false });
         }
       } else {
-        doc.fontSize(9).fillColor('#999999').font('Helvetica');
-        doc.text('(Imza alinmadi)', sigX, y + sigBoxH / 2 - 5, { width: sigBoxW, align: 'center', lineBreak: false });
+        doc.fontSize(9).fillColor('#999999').font('Roboto');
+        doc.text('(İmza alınmadı)', sigX, y + sigBoxH / 2 - 5, { width: sigBoxW, align: 'center', lineBreak: false });
       }
 
       // Signature name below
       if (data.signatureName) {
         doc.fillColor('#333333');
-        doc.fontSize(9).font('Helvetica');
-        doc.text(`Imzalayan: ${safeText(data.signatureName)}`, sigX, y + sigBoxH + 5, { width: sigBoxW, align: 'center', lineBreak: false });
+        doc.fontSize(9).font('Roboto');
+        doc.text(`İmzalayan: ${data.signatureName}`, sigX, y + sigBoxH + 5, { width: sigBoxW, align: 'center', lineBreak: false });
       }
 
       y += sigBoxH + 25;
@@ -509,8 +508,8 @@ export async function generateServiceReport(
     // ── Footer ──────────────────────────────
     const footerY = doc.page.height - M;
     hline(doc, M, footerY - 15, PAGE_W, cfg.primaryColor);
-    doc.fontSize(7).font('Helvetica').fillColor('#888888');
-    doc.text(safeText(cfg.footerText), M, footerY - 10, { width: PAGE_W, align: 'center', lineBreak: false });
+    doc.fontSize(7).font('Roboto').fillColor('#888888');
+    doc.text(cfg.footerText, M, footerY - 10, { width: PAGE_W, align: 'center', lineBreak: false });
 
     doc.end();
   });

@@ -11,6 +11,14 @@ import TenantSelect from '@/components/TenantSelect';
 
 const ALL_ROLES: UserRole[] = ['super_admin', 'tenant_admin', 'manager', 'technician', 'viewer'];
 
+const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
+  super_admin: 'Tüm firmaları yönetir, sistem ayarlarını değiştirir, yeni firma ekleyebilir.',
+  tenant_admin: 'Firmanın tüm ayarlarını yapar, kullanıcı ekler/çıkarır, plan yönetir, WhatsApp bağlar.',
+  manager: 'Servis kayıtlarını inceler, raporları görüntüler, teknisyenleri yönetir, otomasyon kuralları oluşturur.',
+  technician: 'Cihaz kaydı, servis işlemleri, stok giriş/çıkış, müşteri ekleme, filtre takibi yapar.',
+  viewer: 'Sadece gösterge paneli ve müşteri listesini görüntüler, herhangi bir değişiklik yapamaz.',
+};
+
 export default function InviteUserPage() {
   const router = useRouter();
   const [currentUserRole, setCurrentUserRole] = useState<UserRole | null>(null);
@@ -133,6 +141,7 @@ export default function InviteUserPage() {
               <option key={r} value={r}>{ROLE_LABELS[r]}</option>
             ))}
           </select>
+          <p className="mt-1.5 text-xs text-gray-500">{ROLE_DESCRIPTIONS[role]}</p>
         </div>
 
         <Button type="submit" disabled={loading} className="w-full">
