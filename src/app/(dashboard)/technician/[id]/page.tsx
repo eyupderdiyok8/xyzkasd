@@ -295,6 +295,8 @@ function SignaturePad({
 
 // ─── Main Page ──────────────────────────────────
 
+const STATIC_SUGGESTIONS = ['Musluk', 'Tank', 'Shutoff Valf', 'Çekvalf', 'Flow Restrictor', 'Hortum', 'Housing', 'Adaptör', 'Konnektör', 'Diğer'];
+
 export default function ServiceRecordPage() {
   const params = useParams();
   const router = useRouter();
@@ -328,6 +330,7 @@ export default function ServiceRecordPage() {
 
   // Generic parts
   const [serviceParts, setServiceParts] = useState<ServicePart[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<string[]>([]);
 
   // Signature
   const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
@@ -362,9 +365,10 @@ export default function ServiceRecordPage() {
 
     const load = async () => {
       try {
-        const [ticketRes, filterRes] = await Promise.all([
+        const [ticketRes, filterRes, invRes] = await Promise.all([
           fetch(`/api/service-tickets/${ticketId}`),
           fetch('/api/filters'),
+          fetch('/api/inventory'),
         ]);
 
         const ticketJson = await ticketRes.json();
@@ -392,6 +396,12 @@ export default function ServiceRecordPage() {
         const filterJson = await filterRes.json();
         if (!filterJson.error) {
           setFilterCatalog(filterJson.data ?? []);
+        }
+
+        const invJson = await invRes.json();
+        if (invJson.data) {
+          const names = (invJson.data as Array<{ name: string }>).map((i: { name: string }) => i.name);
+          setInventoryItems(names);
         }
 
         // Load existing payment if any
@@ -886,7 +896,7 @@ export default function ServiceRecordPage() {
 
             {/* Diğer Parçalar (serbest giriş) */}
             <p className="text-xs font-medium text-gray-400 mb-2 border-t pt-3">Diğer Parçalar (Musluk, Tank, Valf, Hortum...)</p>
-            <ServicePartsList parts={serviceParts} setParts={setServiceParts} />
+            <ServicePartsList parts={serviceParts} setParts={setServiceParts} inventoryItems={inventoryItems} />
           </div>
 
           {/* Work Done & Resolution */}
@@ -1289,7 +1299,7 @@ function EditableExpenses({ ticketId, initialExpenses }: { ticketId: string; ini
   );
 }
 
-function ServicePartsList({ parts, setParts }: { parts: ServicePart[]; setParts: (p: ServicePart[]) => void }) {
+function ServicePartsList({ parts, setParts, inventoryItems }: { parts: ServicePart[]; setParts: (p: ServicePart[]) => void; inventoryItems: string[] }) {
   const add = () => setParts([...parts, { name: '', quantity: 1 }]);
   const remove = (i: number) => setParts(parts.filter((_, idx) => idx !== i));
   const update = (i: number, field: keyof ServicePart, value: string | number) => {
@@ -1298,7 +1308,7 @@ function ServicePartsList({ parts, setParts }: { parts: ServicePart[]; setParts:
     setParts(next);
   };
 
-  const SUGGESTIONS = ['Musluk', 'Tank', 'Shutoff Valf', 'Çekvalf', 'Flow Restrictor', 'Hortum', 'Housing', 'Adaptör', 'Konnektör', 'Diğer'];
+  const suggestions = [...new Set([...inventoryItems, ...STATIC_SUGGESTIONS])];
 
   return (
     <div className="space-y-2">
@@ -1309,7 +1319,7 @@ function ServicePartsList({ parts, setParts }: { parts: ServicePart[]; setParts:
             placeholder="Parça adı" list="part-suggestions"
             className="flex-1 rounded border border-gray-200 px-2 py-1.5 text-xs" />
           <datalist id="part-suggestions">
-            {SUGGESTIONS.map(s => <option key={s} value={s} />)}
+            {suggestions.map(s => <option key={s} value={s} />)}
           </datalist>
           <input type="number" min="1" value={p.quantity} onChange={(ev) => update(i, 'quantity', parseInt(ev.target.value) || 1)}
             className="w-16 rounded border border-gray-200 px-2 py-1.5 text-xs text-center" />
