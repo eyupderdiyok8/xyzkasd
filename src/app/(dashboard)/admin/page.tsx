@@ -8,6 +8,8 @@ import PlanManagement from './PlanManagement';
 import TenantManagement from '@/components/TenantManagement';
 import TenantSettings from '@/components/TenantSettings';
 import DefaultSurveyMessageEditor from '@/components/DefaultSurveyMessageEditor';
+import BackupExport from '@/components/BackupExport';
+import DataImport from '@/components/DataImport';
 
 export default async function AdminPage() {
   const supabase = await createServerSupabaseClient();
@@ -66,6 +68,8 @@ export default async function AdminPage() {
 
       <UserManagement currentRole={role} />
       <TenantSettings />
+      <BackupExport />
+      <DataImport />
       {role === 'super_admin' && <DefaultSurveyMessageEditor />}
       {role === 'super_admin' && <TenantManagement />}
       <PlanManagement />

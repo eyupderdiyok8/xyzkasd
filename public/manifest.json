@@ -1,6 +1,6 @@
 {
-  "name": "WPS Servis ERP",
-  "short_name": "WPS",
+  "name": "suaritmaservisyazilimi.com.tr",
+  "short_name": "Su Arıtma Yazılımı",
   "description": "Multi-tenant ERP for water purifier service management",
   "start_url": "/dashboard",
   "scope": "/",

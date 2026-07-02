@@ -54,7 +54,7 @@ function LoginForm() {
           <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
             <Droplets className="h-5 w-5 text-primary" />
           </div>
-          <CardTitle className="text-xl">Su Arıtma ERP</CardTitle>
+          <CardTitle className="text-xl">suaritmaservisyazilimi.com.tr</CardTitle>
           <CardDescription>Hesabınıza giriş yapın</CardDescription>
         </CardHeader>
         <CardContent>

@@ -80,7 +80,7 @@ export default function DashboardShell({ children, role, plan, fullName, email }
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
           <Droplets className="h-4 w-4 text-white" />
         </div>
-        {!collapsed && <span className="text-sm font-bold text-slate-900">Su Arıtma ERP</span>}
+        {!collapsed && <span className="text-sm font-bold text-slate-900">suaritmaservisyazilimi.com.tr</span>}
       </div>
 
       {/* Tenant Switcher (super_admin only) */}

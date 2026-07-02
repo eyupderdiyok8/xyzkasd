@@ -6,9 +6,9 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Water Purifier ERP',
+  title: 'suaritmaservisyazilimi.com.tr',
   description: 'Multi-tenant ERP for water purifier service management',
-  appleWebApp: { capable: true, title: 'Su Arıtma ERP' },
+  appleWebApp: { capable: true, title: 'suaritmaservisyazilimi.com.tr' },
   manifest: '/manifest.json',
 };
 
@@ -33,7 +33,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#1e40af" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="WPS Servis" />
+        <meta name="apple-mobile-web-app-title" content="suaritmaservisyazilimi.com.tr" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className={inter.className}>

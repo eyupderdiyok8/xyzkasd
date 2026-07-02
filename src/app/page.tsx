@@ -150,10 +150,12 @@ function PlanCard({
 const STARTER_FEATURES = [
   'Sınırsız cihaz ve müşteri',
   'Servis kaydı ve PDF rapor',
+  'Tahsilat yönetimi (tüm yöntemler)',
   'Filtre takibi ve ömür hesaplama',
   'Memnuniyet anketi ve kupon',
   'Envanter yönetimi',
-  'Temel raporlar',
+  'Temel raporlar ve dashboard',
+  'PWA offline çalışma',
   '3 katmanlı güvenlik (RLS)',
 ];
 
@@ -207,7 +209,7 @@ export default function LandingPage() {
               <Droplet className="h-5 w-5 text-white" />
             </div>
             <span className="text-lg font-bold tracking-tight">
-              Water<span className="text-blue-400">ERP</span>
+              suaritmaservisyazilimi.com.tr
             </span>
           </Link>
           <div className="hidden items-center gap-8 text-sm font-medium text-gray-400 md:flex">
@@ -328,8 +330,14 @@ export default function LandingPage() {
             <FeatureCard
               icon="🏢"
               title="Multi-Tenant İzolasyon"
-              desc="Her firma kendi verilerini görür. 3 katmanlı güvenlik: RLS + Repository + Middleware. Farklı tenant verisine erişim 404 döner."
+              desc="Her firma kendi verilerini görür. 3 katmanlı güvenlik: RLS + Repository + Middleware. Super admin firmalar arası geçiş yapabilir."
               color="bg-blue-500/10 text-blue-400"
+            />
+            <FeatureCard
+              icon="💰"
+              title="Tahsilat & Gelir Takibi"
+              desc="Nakit, kredi kartı (taksitli/tek çekim), senet, ileri tarihli ödeme. Gelir-gider dengesi, aylık ciro raporları."
+              color="bg-emerald-500/10 text-emerald-400"
             />
             <FeatureCard
               icon="📱"
@@ -339,32 +347,38 @@ export default function LandingPage() {
             />
             <FeatureCard
               icon="🔧"
-              title="Servis Kaydı"
-              desc="TDS, basınç, kaçak kontrolü, filtre değişimi, müşteri canvas imzası ve PDF rapor — hepsi tek formda."
+              title="Servis Kaydı & PDF Rapor"
+              desc="TDS, basınç, kaçak kontrolü, filtre değişimi, müşteri canvas imzası ve otomatik PDF rapor — hepsi tek formda."
               color="bg-amber-500/10 text-amber-400"
             />
             <FeatureCard
               icon="🔄"
               title="Filtre Takibi"
-              desc="Takılma tarihi + beklenen ömür = kalan gün, yüzde ve sonraki bakım tarihi otomatik hesaplanır."
+              desc="Takılma tarihi + beklenen ömür = kalan gün. 12 aylık bakım tahmini. Otomatik WhatsApp hatırlatma."
               color="bg-purple-500/10 text-purple-400"
+            />
+            <FeatureCard
+              icon="📡"
+              title="Offline Çalışma (PWA)"
+              desc="İnternet yokken servis kaydı, fotoğraf, imza, tahsilat. Bağlantı gelince otomatik senkronizasyon."
+              color="bg-cyan-500/10 text-cyan-400"
             />
             <FeatureCard
               icon="⭐"
               title="Memnuniyet Anketi"
-              desc="Servis sonrası otomatik WhatsApp anketi. 4+ puan → kupon + Google Review. 2- puan → acil bildirim."
+              desc="Servis sonrası otomatik WhatsApp anketi. 4+ yıldız → kupon + Google Review. Firma özel anket mesajı."
               color="bg-yellow-500/10 text-yellow-400"
             />
             <FeatureCard
               icon="🤖"
               title="Otomasyon Motoru"
-              desc="Trigger → Condition → Action. 'Servis tamamlanınca müşteriye mesaj gönder ve anket başlat' gibi kurallar."
+              desc="Trigger → Condition → Action. 'Servis tamamlanınca müşteriye mesaj gönder, anket başlat, kupon oluştur' gibi kurallar."
               color="bg-red-500/10 text-red-400"
             />
             <FeatureCard
               icon="📊"
               title="Akıllı Raporlar"
-              desc="Dashboard, teknisyen performansı, en çok değişen filtreler, 12 aylık bakım tahmini."
+              desc="Dashboard, teknisyen performansı, en çok değişen filtreler, aylık ciro grafiği, ödeme yöntemi dağılımı."
               color="bg-indigo-500/10 text-indigo-400"
             />
             <FeatureCard
@@ -372,6 +386,12 @@ export default function LandingPage() {
               title="Envanter Yönetimi"
               desc="Filtre ve parça stoğu. Giriş/çıkış hareketleri. Kritik stok seviyesinde otomatik uyarı."
               color="bg-orange-500/10 text-orange-400"
+            />
+            <FeatureCard
+              icon="💾"
+              title="Yedekleme & Veri Aktarımı"
+              desc="Tek tıkla tüm verilerinizi JSON olarak yedekleyin. Başka sistemden geçiş için kolay içe aktarma."
+              color="bg-teal-500/10 text-teal-400"
             />
             <FeatureCard
               icon="🎫"
@@ -390,9 +410,9 @@ export default function LandingPage() {
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { value: 3, suffix: '', label: 'Katmanlı Güvenlik', sub: 'RLS + Repository + Middleware' },
-              { value: 17, suffix: '+', label: 'Entegre Modül', sub: 'Tek platformda' },
-              { value: 337, suffix: '+', label: 'Otomatik Test', sub: 'Her commit öncesi' },
-              { value: 99.9, suffix: '%', label: 'TypeScript Strict', sub: 'Tip güvenliği' },
+              { value: 12, suffix: '+', label: 'Entegre Modül', sub: 'Tek platformda her şey' },
+              { value: 1065, suffix: '+', label: 'Otomatik Test', sub: 'Her commit öncesi' },
+              { value: 100, suffix: '%', label: 'PWA Offline', sub: 'İnternetsiz çalışır' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-5xl font-extrabold tracking-tight text-white">
@@ -500,12 +520,12 @@ export default function LandingPage() {
                 <Droplet className="h-4 w-4 text-white" />
               </div>
               <span className="font-bold tracking-tight text-white">
-                Water<span className="text-blue-400">ERP</span>
+                suaritmaservisyazilimi.com.tr
               </span>
             </Link>
             <p className="max-w-md text-sm text-gray-500">
-              Water Purifier Service ERP — Su arıtma servis firmaları için çok kiracılı,
-              üç katmanlı güvenlikli yönetim platformu.
+              suaritmaservisyazilimi.com.tr — Su arıtma servis firmaları için çok kiracılı,
+              kapsamlı ve güvenli yönetim platformu.
             </p>
             <div className="flex gap-8 text-sm text-gray-500">
               <a href="#features" className="transition-colors hover:text-gray-300">Özellikler</a>
