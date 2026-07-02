@@ -8,6 +8,13 @@ const globalForPrisma = globalThis as unknown as {
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
+  // Limit pool size for Supabase free tier (max 15 connections)
+  // PG connections section: https://supabase.com/docs/guides/platform/pg-bouncer
+  pool: {
+    max: 5,
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 10_000,
+  },
 });
 
 export const prisma =
