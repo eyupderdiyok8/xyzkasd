@@ -151,6 +151,7 @@ export class ServiceTicketRepository extends BaseRepository {
       signatureDataUrl?: string | null;
       signatureName?: string | null;
       resolution?: string | null;
+      expenses?: string | null;
       filterChanges?: Array<{ filterId: string; quantity?: number; notes?: string }>;
     },
   ) {
@@ -171,6 +172,7 @@ export class ServiceTicketRepository extends BaseRepository {
         signatureDataUrl: data.signatureDataUrl ?? null,
         signatureName: data.signatureName ?? null,
         resolution: data.resolution ?? null,
+        expenses: data.expenses ?? null,
         status: 'COMPLETED',
         completedAt: new Date(),
       },

@@ -46,6 +46,7 @@ export type InventoryItemMinAggregateOutputType = {
   quantity: number | null
   minStock: number | null
   unitPrice: number | null
+  photoPath: string | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,6 +60,7 @@ export type InventoryItemMaxAggregateOutputType = {
   quantity: number | null
   minStock: number | null
   unitPrice: number | null
+  photoPath: string | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -72,6 +74,7 @@ export type InventoryItemCountAggregateOutputType = {
   quantity: number
   minStock: number
   unitPrice: number
+  photoPath: number
   deletedAt: number
   createdAt: number
   updatedAt: number
@@ -99,6 +102,7 @@ export type InventoryItemMinAggregateInputType = {
   quantity?: true
   minStock?: true
   unitPrice?: true
+  photoPath?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -112,6 +116,7 @@ export type InventoryItemMaxAggregateInputType = {
   quantity?: true
   minStock?: true
   unitPrice?: true
+  photoPath?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -125,6 +130,7 @@ export type InventoryItemCountAggregateInputType = {
   quantity?: true
   minStock?: true
   unitPrice?: true
+  photoPath?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -225,6 +231,7 @@ export type InventoryItemGroupByOutputType = {
   quantity: number
   minStock: number
   unitPrice: number
+  photoPath: string | null
   deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -261,6 +268,7 @@ export type InventoryItemWhereInput = {
   quantity?: Prisma.IntFilter<"InventoryItem"> | number
   minStock?: Prisma.IntFilter<"InventoryItem"> | number
   unitPrice?: Prisma.FloatFilter<"InventoryItem"> | number
+  photoPath?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"InventoryItem"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
@@ -277,6 +285,7 @@ export type InventoryItemOrderByWithRelationInput = {
   quantity?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  photoPath?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -296,6 +305,7 @@ export type InventoryItemWhereUniqueInput = Prisma.AtLeast<{
   quantity?: Prisma.IntFilter<"InventoryItem"> | number
   minStock?: Prisma.IntFilter<"InventoryItem"> | number
   unitPrice?: Prisma.FloatFilter<"InventoryItem"> | number
+  photoPath?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"InventoryItem"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
@@ -312,6 +322,7 @@ export type InventoryItemOrderByWithAggregationInput = {
   quantity?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  photoPath?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -333,6 +344,7 @@ export type InventoryItemScalarWhereWithAggregatesInput = {
   quantity?: Prisma.IntWithAggregatesFilter<"InventoryItem"> | number
   minStock?: Prisma.IntWithAggregatesFilter<"InventoryItem"> | number
   unitPrice?: Prisma.FloatWithAggregatesFilter<"InventoryItem"> | number
+  photoPath?: Prisma.StringNullableWithAggregatesFilter<"InventoryItem"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"InventoryItem"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"InventoryItem"> | Date | string
@@ -345,6 +357,7 @@ export type InventoryItemCreateInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -361,6 +374,7 @@ export type InventoryItemUncheckedCreateInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -375,6 +389,7 @@ export type InventoryItemUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -391,6 +406,7 @@ export type InventoryItemUncheckedUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -406,6 +422,7 @@ export type InventoryItemCreateManyInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -418,6 +435,7 @@ export type InventoryItemUpdateManyMutationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -431,6 +449,7 @@ export type InventoryItemUncheckedUpdateManyInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -459,6 +478,7 @@ export type InventoryItemCountOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  photoPath?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -478,6 +498,7 @@ export type InventoryItemMaxOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  photoPath?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -491,6 +512,7 @@ export type InventoryItemMinOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   minStock?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  photoPath?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -594,6 +616,7 @@ export type InventoryItemCreateWithoutTenantInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -608,6 +631,7 @@ export type InventoryItemUncheckedCreateWithoutTenantInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -652,6 +676,7 @@ export type InventoryItemScalarWhereInput = {
   quantity?: Prisma.IntFilter<"InventoryItem"> | number
   minStock?: Prisma.IntFilter<"InventoryItem"> | number
   unitPrice?: Prisma.FloatFilter<"InventoryItem"> | number
+  photoPath?: Prisma.StringNullableFilter<"InventoryItem"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"InventoryItem"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"InventoryItem"> | Date | string
@@ -664,6 +689,7 @@ export type InventoryItemCreateWithoutFilterCatalogsInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -679,6 +705,7 @@ export type InventoryItemUncheckedCreateWithoutFilterCatalogsInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -708,6 +735,7 @@ export type InventoryItemUpdateWithoutFilterCatalogsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -723,6 +751,7 @@ export type InventoryItemUncheckedUpdateWithoutFilterCatalogsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -736,6 +765,7 @@ export type InventoryItemCreateWithoutTransactionsInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -751,6 +781,7 @@ export type InventoryItemUncheckedCreateWithoutTransactionsInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -780,6 +811,7 @@ export type InventoryItemUpdateWithoutTransactionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -795,6 +827,7 @@ export type InventoryItemUncheckedUpdateWithoutTransactionsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -808,6 +841,7 @@ export type InventoryItemCreateManyTenantInput = {
   quantity?: number
   minStock?: number
   unitPrice?: number
+  photoPath?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -820,6 +854,7 @@ export type InventoryItemUpdateWithoutTenantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -834,6 +869,7 @@ export type InventoryItemUncheckedUpdateWithoutTenantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -848,6 +884,7 @@ export type InventoryItemUncheckedUpdateManyWithoutTenantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   minStock?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.FloatFieldUpdateOperationsInput | number
+  photoPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -901,6 +938,7 @@ export type InventoryItemSelect<ExtArgs extends runtime.Types.Extensions.Interna
   quantity?: boolean
   minStock?: boolean
   unitPrice?: boolean
+  photoPath?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -918,6 +956,7 @@ export type InventoryItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   quantity?: boolean
   minStock?: boolean
   unitPrice?: boolean
+  photoPath?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -932,6 +971,7 @@ export type InventoryItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   quantity?: boolean
   minStock?: boolean
   unitPrice?: boolean
+  photoPath?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -946,12 +986,13 @@ export type InventoryItemSelectScalar = {
   quantity?: boolean
   minStock?: boolean
   unitPrice?: boolean
+  photoPath?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type InventoryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "sku" | "quantity" | "minStock" | "unitPrice" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryItem"]>
+export type InventoryItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "sku" | "quantity" | "minStock" | "unitPrice" | "photoPath" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["inventoryItem"]>
 export type InventoryItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.InventoryItem$transactionsArgs<ExtArgs>
@@ -980,6 +1021,7 @@ export type $InventoryItemPayload<ExtArgs extends runtime.Types.Extensions.Inter
     quantity: number
     minStock: number
     unitPrice: number
+    photoPath: string | null
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1416,6 +1458,7 @@ export interface InventoryItemFieldRefs {
   readonly quantity: Prisma.FieldRef<"InventoryItem", 'Int'>
   readonly minStock: Prisma.FieldRef<"InventoryItem", 'Int'>
   readonly unitPrice: Prisma.FieldRef<"InventoryItem", 'Float'>
+  readonly photoPath: Prisma.FieldRef<"InventoryItem", 'String'>
   readonly deletedAt: Prisma.FieldRef<"InventoryItem", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"InventoryItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"InventoryItem", 'DateTime'>

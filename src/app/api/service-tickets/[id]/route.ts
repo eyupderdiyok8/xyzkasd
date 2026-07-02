@@ -165,6 +165,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       leakNotes: b.leakNotes ?? null,
       workDone: b.workDone ?? null,
       customerNote: b.customerNote ?? null,
+      expenses: b.expenses ?? null,
       signatureDataUrl: b.signatureDataUrl ?? null,
       signatureName: b.signatureName ?? null,
       resolution: b.resolution ?? null,

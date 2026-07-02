@@ -9,6 +9,7 @@ export interface InventoryItemDTO {
   quantity: number;
   minStock: number;
   unitPrice: number;
+  photoPath: string | null;
   isCritical: boolean;
   createdAt: string;
   updatedAt: string;
@@ -28,6 +29,7 @@ export type ReferenceType = 'PURCHASE' | 'SERVICE' | 'RETURN' | 'ADJUSTMENT' | '
 export interface StockTransactionInput {
   type: TransactionType;
   quantity: number;
+  unitCost?: number;
   referenceType?: ReferenceType;
   referenceId?: string | null;
   notes?: string | null;
@@ -182,6 +184,7 @@ export class InventoryRepository extends BaseRepository {
           tenantId: this.tenantId!,
           type: 'IN',
           quantity: input.quantity,
+          unitCost: input.unitCost != null ? input.unitCost : undefined,
           referenceType: input.referenceType ?? 'OTHER',
           referenceId: input.referenceId ?? null,
           notes: input.notes ?? null,
@@ -312,6 +315,7 @@ export class InventoryRepository extends BaseRepository {
       quantity: item.quantity,
       minStock: item.minStock,
       unitPrice: item.unitPrice,
+      photoPath: item.photoPath ?? null,
       isCritical: item.quantity <= item.minStock,
       createdAt: item.createdAt.toISOString?.() ?? item.createdAt,
       updatedAt: item.updatedAt.toISOString?.() ?? item.updatedAt,

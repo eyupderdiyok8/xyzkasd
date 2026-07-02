@@ -28,10 +28,12 @@ export type AggregateInventoryTransaction = {
 
 export type InventoryTransactionAvgAggregateOutputType = {
   quantity: number | null
+  unitCost: runtime.Decimal | null
 }
 
 export type InventoryTransactionSumAggregateOutputType = {
   quantity: number | null
+  unitCost: runtime.Decimal | null
 }
 
 export type InventoryTransactionMinAggregateOutputType = {
@@ -40,6 +42,7 @@ export type InventoryTransactionMinAggregateOutputType = {
   tenantId: string | null
   type: string | null
   quantity: number | null
+  unitCost: runtime.Decimal | null
   referenceType: string | null
   referenceId: string | null
   notes: string | null
@@ -54,6 +57,7 @@ export type InventoryTransactionMaxAggregateOutputType = {
   tenantId: string | null
   type: string | null
   quantity: number | null
+  unitCost: runtime.Decimal | null
   referenceType: string | null
   referenceId: string | null
   notes: string | null
@@ -68,6 +72,7 @@ export type InventoryTransactionCountAggregateOutputType = {
   tenantId: number
   type: number
   quantity: number
+  unitCost: number
   referenceType: number
   referenceId: number
   notes: number
@@ -80,10 +85,12 @@ export type InventoryTransactionCountAggregateOutputType = {
 
 export type InventoryTransactionAvgAggregateInputType = {
   quantity?: true
+  unitCost?: true
 }
 
 export type InventoryTransactionSumAggregateInputType = {
   quantity?: true
+  unitCost?: true
 }
 
 export type InventoryTransactionMinAggregateInputType = {
@@ -92,6 +99,7 @@ export type InventoryTransactionMinAggregateInputType = {
   tenantId?: true
   type?: true
   quantity?: true
+  unitCost?: true
   referenceType?: true
   referenceId?: true
   notes?: true
@@ -106,6 +114,7 @@ export type InventoryTransactionMaxAggregateInputType = {
   tenantId?: true
   type?: true
   quantity?: true
+  unitCost?: true
   referenceType?: true
   referenceId?: true
   notes?: true
@@ -120,6 +129,7 @@ export type InventoryTransactionCountAggregateInputType = {
   tenantId?: true
   type?: true
   quantity?: true
+  unitCost?: true
   referenceType?: true
   referenceId?: true
   notes?: true
@@ -221,6 +231,7 @@ export type InventoryTransactionGroupByOutputType = {
   tenantId: string
   type: string
   quantity: number
+  unitCost: runtime.Decimal | null
   referenceType: string
   referenceId: string | null
   notes: string | null
@@ -258,6 +269,7 @@ export type InventoryTransactionWhereInput = {
   tenantId?: Prisma.StringFilter<"InventoryTransaction"> | string
   type?: Prisma.StringFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
+  unitCost?: Prisma.DecimalNullableFilter<"InventoryTransaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFilter<"InventoryTransaction"> | string
   referenceId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   notes?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
@@ -274,6 +286,7 @@ export type InventoryTransactionOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrderInput | Prisma.SortOrder
   referenceType?: Prisma.SortOrder
   referenceId?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -293,6 +306,7 @@ export type InventoryTransactionWhereUniqueInput = Prisma.AtLeast<{
   tenantId?: Prisma.StringFilter<"InventoryTransaction"> | string
   type?: Prisma.StringFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
+  unitCost?: Prisma.DecimalNullableFilter<"InventoryTransaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFilter<"InventoryTransaction"> | string
   referenceId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   notes?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
@@ -309,6 +323,7 @@ export type InventoryTransactionOrderByWithAggregationInput = {
   tenantId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrderInput | Prisma.SortOrder
   referenceType?: Prisma.SortOrder
   referenceId?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -331,6 +346,7 @@ export type InventoryTransactionScalarWhereWithAggregatesInput = {
   tenantId?: Prisma.StringWithAggregatesFilter<"InventoryTransaction"> | string
   type?: Prisma.StringWithAggregatesFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntWithAggregatesFilter<"InventoryTransaction"> | number
+  unitCost?: Prisma.DecimalNullableWithAggregatesFilter<"InventoryTransaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringWithAggregatesFilter<"InventoryTransaction"> | string
   referenceId?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransaction"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"InventoryTransaction"> | string | null
@@ -343,6 +359,7 @@ export type InventoryTransactionCreateInput = {
   id?: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -359,6 +376,7 @@ export type InventoryTransactionUncheckedCreateInput = {
   tenantId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -371,6 +389,7 @@ export type InventoryTransactionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -387,6 +406,7 @@ export type InventoryTransactionUncheckedUpdateInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -401,6 +421,7 @@ export type InventoryTransactionCreateManyInput = {
   tenantId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -413,6 +434,7 @@ export type InventoryTransactionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -427,6 +449,7 @@ export type InventoryTransactionUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -451,6 +474,7 @@ export type InventoryTransactionCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   referenceType?: Prisma.SortOrder
   referenceId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -461,6 +485,7 @@ export type InventoryTransactionCountOrderByAggregateInput = {
 
 export type InventoryTransactionAvgOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
 }
 
 export type InventoryTransactionMaxOrderByAggregateInput = {
@@ -469,6 +494,7 @@ export type InventoryTransactionMaxOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   referenceType?: Prisma.SortOrder
   referenceId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -483,6 +509,7 @@ export type InventoryTransactionMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
   referenceType?: Prisma.SortOrder
   referenceId?: Prisma.SortOrder
   notes?: Prisma.SortOrder
@@ -493,6 +520,7 @@ export type InventoryTransactionMinOrderByAggregateInput = {
 
 export type InventoryTransactionSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
 }
 
 export type InventoryTransactionCreateNestedManyWithoutTenantInput = {
@@ -579,10 +607,19 @@ export type InventoryTransactionUncheckedUpdateManyWithoutItemNestedInput = {
   deleteMany?: Prisma.InventoryTransactionScalarWhereInput | Prisma.InventoryTransactionScalarWhereInput[]
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
 export type InventoryTransactionCreateWithoutTenantInput = {
   id?: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -597,6 +634,7 @@ export type InventoryTransactionUncheckedCreateWithoutTenantInput = {
   itemId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -640,6 +678,7 @@ export type InventoryTransactionScalarWhereInput = {
   tenantId?: Prisma.StringFilter<"InventoryTransaction"> | string
   type?: Prisma.StringFilter<"InventoryTransaction"> | string
   quantity?: Prisma.IntFilter<"InventoryTransaction"> | number
+  unitCost?: Prisma.DecimalNullableFilter<"InventoryTransaction"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFilter<"InventoryTransaction"> | string
   referenceId?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
   notes?: Prisma.StringNullableFilter<"InventoryTransaction"> | string | null
@@ -652,6 +691,7 @@ export type InventoryTransactionCreateWithoutItemInput = {
   id?: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -666,6 +706,7 @@ export type InventoryTransactionUncheckedCreateWithoutItemInput = {
   tenantId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -705,6 +746,7 @@ export type InventoryTransactionCreateManyTenantInput = {
   itemId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -717,6 +759,7 @@ export type InventoryTransactionUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -731,6 +774,7 @@ export type InventoryTransactionUncheckedUpdateWithoutTenantInput = {
   itemId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -744,6 +788,7 @@ export type InventoryTransactionUncheckedUpdateManyWithoutTenantInput = {
   itemId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -757,6 +802,7 @@ export type InventoryTransactionCreateManyItemInput = {
   tenantId: string
   type: string
   quantity: number
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: string
   referenceId?: string | null
   notes?: string | null
@@ -769,6 +815,7 @@ export type InventoryTransactionUpdateWithoutItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -783,6 +830,7 @@ export type InventoryTransactionUncheckedUpdateWithoutItemInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -796,6 +844,7 @@ export type InventoryTransactionUncheckedUpdateManyWithoutItemInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   referenceType?: Prisma.StringFieldUpdateOperationsInput | string
   referenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -812,6 +861,7 @@ export type InventoryTransactionSelect<ExtArgs extends runtime.Types.Extensions.
   tenantId?: boolean
   type?: boolean
   quantity?: boolean
+  unitCost?: boolean
   referenceType?: boolean
   referenceId?: boolean
   notes?: boolean
@@ -828,6 +878,7 @@ export type InventoryTransactionSelectCreateManyAndReturn<ExtArgs extends runtim
   tenantId?: boolean
   type?: boolean
   quantity?: boolean
+  unitCost?: boolean
   referenceType?: boolean
   referenceId?: boolean
   notes?: boolean
@@ -844,6 +895,7 @@ export type InventoryTransactionSelectUpdateManyAndReturn<ExtArgs extends runtim
   tenantId?: boolean
   type?: boolean
   quantity?: boolean
+  unitCost?: boolean
   referenceType?: boolean
   referenceId?: boolean
   notes?: boolean
@@ -860,6 +912,7 @@ export type InventoryTransactionSelectScalar = {
   tenantId?: boolean
   type?: boolean
   quantity?: boolean
+  unitCost?: boolean
   referenceType?: boolean
   referenceId?: boolean
   notes?: boolean
@@ -868,7 +921,7 @@ export type InventoryTransactionSelectScalar = {
   createdAt?: boolean
 }
 
-export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "itemId" | "tenantId" | "type" | "quantity" | "referenceType" | "referenceId" | "notes" | "createdBy" | "deletedAt" | "createdAt", ExtArgs["result"]["inventoryTransaction"]>
+export type InventoryTransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "itemId" | "tenantId" | "type" | "quantity" | "unitCost" | "referenceType" | "referenceId" | "notes" | "createdBy" | "deletedAt" | "createdAt", ExtArgs["result"]["inventoryTransaction"]>
 export type InventoryTransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   item?: boolean | Prisma.InventoryItemDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -894,6 +947,7 @@ export type $InventoryTransactionPayload<ExtArgs extends runtime.Types.Extension
     tenantId: string
     type: string
     quantity: number
+    unitCost: runtime.Decimal | null
     referenceType: string
     referenceId: string | null
     notes: string | null
@@ -1330,6 +1384,7 @@ export interface InventoryTransactionFieldRefs {
   readonly tenantId: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly type: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly quantity: Prisma.FieldRef<"InventoryTransaction", 'Int'>
+  readonly unitCost: Prisma.FieldRef<"InventoryTransaction", 'Decimal'>
   readonly referenceType: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly referenceId: Prisma.FieldRef<"InventoryTransaction", 'String'>
   readonly notes: Prisma.FieldRef<"InventoryTransaction", 'String'>

@@ -36,6 +36,7 @@ export async function POST(
     }).stockIn(id, {
       type: 'IN',
       quantity: Number(b.quantity),
+      unitCost: b.unitCost != null ? Number(b.unitCost) : undefined,
       referenceType: b.referenceType ?? 'OTHER',
       referenceId: b.referenceId ? String(b.referenceId) : null,
       notes: b.notes ? String(b.notes) : null,

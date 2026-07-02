@@ -2805,6 +2805,7 @@ export const ServiceTicketScalarFieldEnum = {
   leakNotes: 'leakNotes',
   workDone: 'workDone',
   customerNote: 'customerNote',
+  expenses: 'expenses',
   signatureDataUrl: 'signatureDataUrl',
   signatureName: 'signatureName',
   pdfStoragePath: 'pdfStoragePath',
@@ -2961,6 +2962,7 @@ export const InventoryItemScalarFieldEnum = {
   quantity: 'quantity',
   minStock: 'minStock',
   unitPrice: 'unitPrice',
+  photoPath: 'photoPath',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2975,6 +2977,7 @@ export const InventoryTransactionScalarFieldEnum = {
   tenantId: 'tenantId',
   type: 'type',
   quantity: 'quantity',
+  unitCost: 'unitCost',
   referenceType: 'referenceType',
   referenceId: 'referenceId',
   notes: 'notes',

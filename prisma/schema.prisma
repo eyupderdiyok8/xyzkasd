@@ -329,6 +329,7 @@ model ServiceTicket {
   leakNotes      String?
   workDone       String?
   customerNote   String?
+  expenses       String?   @default("[]") // JSON: [{type, amount, description}] yol, park vb masraflar
 
   signatureDataUrl String?
   signatureName    String?
@@ -580,6 +581,7 @@ model InventoryItem {
   quantity  Int       @default(0)
   minStock  Int       @default(0)
   unitPrice Float     @default(0)
+  photoPath  String?  @map("photo_path") // stok ürün fotoğrafı
   deletedAt DateTime? // soft delete
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -606,6 +608,7 @@ model InventoryTransaction {
   tenant        Tenant        @relation(fields: [tenantId], references: [id])
   type          String // "IN" (giriş) | "OUT" (çıkış)
   quantity      Int // pozitif tam sayı
+  unitCost      Decimal?  @db.Decimal(10, 2) @map("unit_cost") // birim maliyet (sadece girişte)
   referenceType String        @default("OTHER") // PURCHASE | SERVICE | RETURN | ADJUSTMENT | OTHER
   referenceId   String? // Sipariş no, servis fiş no vb.
   notes         String?
