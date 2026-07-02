@@ -84,6 +84,9 @@ function LoginForm() {
             Hesabınız yok mu?{' '}
             <Link href="/register" className="font-medium text-primary hover:underline">Kayıt olun</Link>
           </p>
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            <Link href="/auth/forgot-password" className="font-medium text-primary hover:underline">Şifremi unuttum</Link>
+          </p>
         </CardContent>
       </Card>
     </div>
