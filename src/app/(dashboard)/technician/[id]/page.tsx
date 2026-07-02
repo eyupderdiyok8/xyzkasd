@@ -707,8 +707,14 @@ export default function ServiceRecordPage() {
 
   if (error && !ticket) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-red-700">{error}</p>
+      <div className="space-y-4">
+        <button type="button" onClick={() => router.back()}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 tap-44">
+          ← Geri
+        </button>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+          <p className="text-red-700">{error}</p>
+        </div>
       </div>
     );
   }
@@ -1032,6 +1038,12 @@ export default function ServiceRecordPage() {
       ) : (
         /* ── Completed View ──────────────────────── */
         <div className="space-y-6">
+          {/* Back button */}
+          <button type="button" onClick={() => router.back()}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 tap-44">
+            ← Geri
+          </button>
+
           {/* Summary Cards */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <SummaryCard label="TDS Giriş/Çıkış"
