@@ -1,14 +1,5 @@
 'use client';
 
-// ──────────────────────────────────────────────
-// OfflineBanner — Çevrimdışı durum göstergesi
-//
-// - Çevrimdışı: "📡 Çevrimdışı · X işlem bekliyor" + "Senkronize Et"
-// - Çevrimiçi + bekleyen var: "📶 Çevrimiçi · X bekleyen — senkronize ediliyor..."
-// - Çevrimiçi + bekleyen yok: gizli
-// - Tüm metinler Türkçe
-// ──────────────────────────────────────────────
-
 import { useState, useCallback } from 'react';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import { syncAll } from '@/lib/offline/sync-queue';
@@ -23,54 +14,52 @@ export default function OfflineBanner() {
     try {
       await syncAll();
     } catch {
-      // syncAll hata yönetimini kendi içinde yapar
+      // syncAll handles errors internally
     } finally {
       setSyncing(false);
     }
   }, [syncing]);
 
-  // Çevrimiçi ve bekleyen yok → gizli
-  if (isOnline && pendingCount === 0) {
-    return null;
-  }
+  // Online + nothing pending → completely hidden
+  if (isOnline && pendingCount === 0) return null;
 
-  // Çevrimdışı
-  if (!isOnline) {
-    return (
-      <div className="fixed bottom-0 left-0 right-0 z-[60] bg-amber-500 text-white px-4 py-3 shadow-lg">
-        <div className="mx-auto max-w-4xl flex items-center justify-between gap-3">
-          <span className="text-sm font-medium">
-            📡 Çevrimdışı · {pendingCount} işlem bekliyor
-          </span>
-          {pendingCount > 0 && (
-            <button
-              onClick={handleSync}
-              disabled={syncing}
-              className="shrink-0 rounded-lg bg-white/20 px-4 py-1.5 text-sm font-medium text-white hover:bg-white/30 disabled:opacity-50 transition-colors"
-            >
-              {syncing ? 'Senkronize ediliyor...' : 'Senkronize Et'}
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }
+  const isCompact = pendingCount === 0;
 
-  // Çevrimiçi ama bekleyen işlem var
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[60] bg-blue-600 text-white px-4 py-3 shadow-lg">
-      <div className="mx-auto max-w-4xl flex items-center justify-between gap-3">
-        <span className="text-sm font-medium">
-          📶 Çevrimiçi · {pendingCount} bekleyen — senkronize ediliyor...
-        </span>
-        <button
-          onClick={handleSync}
-          disabled={syncing}
-          className="shrink-0 rounded-lg bg-white/20 px-4 py-1.5 text-sm font-medium text-white hover:bg-white/30 disabled:opacity-50 transition-colors"
-        >
-          {syncing ? 'Senkronize ediliyor...' : 'Şimdi Senkronize Et'}
-        </button>
-      </div>
+    <div
+      className={`
+        fixed left-0 right-0 z-40 shadow-lg transition-all
+        /* Mobile: above bottom nav (h-14 = 56px) */
+        /* Desktop: bottom edge */
+        bottom-14 md:bottom-0
+        ${isCompact ? 'h-7' : 'py-2'}
+        ${!isOnline ? 'bg-amber-500 text-white' : 'bg-blue-600 text-white'}
+      `}
+    >
+      {isCompact ? (
+        /* Compact: thin indicator strip, no text */
+        <div className="h-full flex items-center justify-center">
+          <span className="text-[10px] font-medium opacity-90">
+            {!isOnline ? '📡 Çevrimdışı' : '📶 Senkronize ediliyor...'}
+          </span>
+        </div>
+      ) : (
+        /* Full: pending operations exist */
+        <div className="mx-auto max-w-4xl flex items-center justify-between gap-3 px-4">
+          <span className="text-sm font-medium">
+            {!isOnline
+              ? `📡 Çevrimdışı · ${pendingCount} işlem bekliyor`
+              : `📶 Çevrimiçi · ${pendingCount} işlem senkronize ediliyor...`}
+          </span>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="shrink-0 rounded-lg bg-white/20 px-4 py-1.5 text-sm font-medium text-white hover:bg-white/30 disabled:opacity-50 transition-colors"
+          >
+            {syncing ? 'Senkronize ediliyor...' : 'Şimdi Senkronize Et'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
