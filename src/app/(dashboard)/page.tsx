@@ -14,8 +14,9 @@ const ERROR_MESSAGES: Record<string, string> = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { error?: string; message?: string };
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
+  const sp = await searchParams;
   const supabase = await createServerSupabaseClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -26,7 +27,7 @@ export default async function DashboardPage({
     .single();
 
   const profile = _profile as ProfileRow | null;
-  const errorMessage = searchParams.error ? ERROR_MESSAGES[searchParams.error] ?? null : null;
+  const errorMessage = sp.error ? ERROR_MESSAGES[sp.error] ?? null : null;
 
   return (
     <div className="space-y-6 animate-fade-in">

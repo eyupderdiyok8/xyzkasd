@@ -12,7 +12,7 @@ describe('generateServiceReport', () => {
     vi.resetModules();
     // Mock PDFDocument with a class-based mock for proper constructor behavior
     class MockPDFDocument {
-      private listeners: Record<string, Function[]> = {};
+      private listeners: Record<string, Array<(arg?: unknown) => void>> = {};
       fontSize = vi.fn().mockReturnThis();
       font = vi.fn().mockReturnThis();
       fillColor = vi.fn().mockReturnThis();
@@ -30,7 +30,7 @@ describe('generateServiceReport', () => {
       lineTo = vi.fn().mockReturnThis();
       dash = vi.fn().mockReturnThis();
       roundedRect = vi.fn().mockReturnThis();
-      on = vi.fn((event: string, cb: Function) => {
+      on = vi.fn((event: string, cb: (arg?: unknown) => void) => {
         if (!this.listeners[event]) this.listeners[event] = [];
         this.listeners[event].push(cb);
         return this;

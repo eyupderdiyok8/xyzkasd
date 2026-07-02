@@ -113,7 +113,7 @@ describe('Middleware', () => {
   });
 
   it('allows public routes without auth', async () => {
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const req = createMockRequest('/login');
     const res = await middleware(req);
     expect(res).toBeDefined();
@@ -121,55 +121,55 @@ describe('Middleware', () => {
   });
 
   it('allows /register route', async () => {
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/register'));
     expect(res.status).toBe(200);
   });
 
   it('allows /auth/callback route', async () => {
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/auth/callback'));
     expect(res.status).toBe(200);
   });
 
   it('redirects to login when user is null', async () => {
     mockUserResult = null;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
   });
 
   it('redirects to login when session error occurs', async () => {
     mockUserError = new Error('No session');
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
   });
 
   it('redirects to login when profile not found', async () => {
     mockProfileResult = null;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
   });
 
   it('redirects to login when profile is inactive', async () => {
     mockProfileResult = { role: 'technician', tenant_id: 'tenant-1', is_active: false };
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
   });
 
   it('allows access when role meets minimum requirement', async () => {
     mockMinRole = 'viewer';
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(200);
   });
 
   it('redirects to forbidden when role is insufficient', async () => {
     mockMinRole = 'tenant_admin';
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin'));
     expect(res.status).toBe(307);
   });
@@ -177,7 +177,7 @@ describe('Middleware', () => {
   it('allows super_admin with null tenant to access', async () => {
     mockProfileResult = { role: 'super_admin', tenant_id: null, is_active: true };
     mockMinRole = 'tenant_admin';
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin'));
     expect(res.status).toBe(200);
   });
@@ -187,7 +187,7 @@ describe('Middleware', () => {
     mockRequiredFeature = 'whatsapp';
     mockHasFeatureResult = false;
     mockTenantResult = { plan: 'STARTER' };
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     expect(res.status).toBe(307);
   });
@@ -196,14 +196,14 @@ describe('Middleware', () => {
     mockMinRole = 'viewer';
     mockRequiredFeature = 'whatsapp';
     mockHasFeatureResult = true;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     expect(res.status).toBe(200);
   });
 
   it('skips feature check when no feature is required', async () => {
     mockRequiredFeature = null;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(200);
   });

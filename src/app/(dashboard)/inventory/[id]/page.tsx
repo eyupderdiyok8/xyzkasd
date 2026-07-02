@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
@@ -46,8 +46,9 @@ const TYPE_LABELS: Record<string, string> = {
 export default function InventoryItemDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const [item, setItem] = useState<InventoryItem | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -67,8 +68,8 @@ export default function InventoryItemDetailPage({
   const loadItem = () => {
     setLoading(true);
     Promise.all([
-      fetch(`/api/inventory/${params.id}`).then((r) => r.json()),
-      fetch(`/api/inventory/${params.id}/transactions`).then((r) => r.json()),
+      fetch(`/api/inventory/${id}`).then((r) => r.json()),
+      fetch(`/api/inventory/${id}/transactions`).then((r) => r.json()),
     ])
       .then(([itemJson, txJson]) => {
         if (itemJson.error) {
@@ -88,7 +89,7 @@ export default function InventoryItemDetailPage({
       .then((json) => setRole(json.data?.role ?? null))
       .catch(() => {});
     loadItem();
-  }, [params.id]);
+  }, [id]);
 
   const canEdit = role && hasRole(role, 'technician');
   const canDelete = role && hasRole(role, 'manager');

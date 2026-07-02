@@ -9,7 +9,7 @@ const LOGIN_PAGE = '/login';
 const FORBIDDEN_REDIRECT = '/';
 const UPGRADE_REDIRECT = '/';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public routes unconditionally

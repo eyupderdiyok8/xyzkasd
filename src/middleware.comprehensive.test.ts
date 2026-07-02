@@ -118,7 +118,7 @@ describe('Middleware — edge cases', () => {
   it('allows super_admin with null tenant through restricted routes', async () => {
     mockProfileResult = { role: 'super_admin', tenant_id: null, is_active: true };
     mockMinRole = 'tenant_admin';
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin'));
     expect(res.status).toBe(200);
   });
@@ -129,7 +129,7 @@ describe('Middleware — edge cases', () => {
     mockRequiredFeature = 'whatsapp';
     // super_admin has no tenant → tenantResult null → hasFeature default false
     mockTenantResult = null;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     // super_admin with null tenant skips feature check entirely
     expect(res.status).toBe(200);
@@ -141,7 +141,7 @@ describe('Middleware — edge cases', () => {
     mockHasFeatureResult = false;
     mockProfileResult = { role: 'manager', tenant_id: 'tenant-1', is_active: true };
     mockTenantResult = null; // No tenant row
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     expect(res.status).toBe(307);
   });
@@ -149,7 +149,7 @@ describe('Middleware — edge cases', () => {
   it('handles /admin path with partial match', async () => {
     mockMinRole = 'manager';
     mockProfileResult = { role: 'manager', tenant_id: 'tenant-1', is_active: true };
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin'));
     // manager < tenant_admin, but getMinimumRoleForPath returns what mock returns
     expect(res.status).toBe(200);
@@ -158,14 +158,14 @@ describe('Middleware — edge cases', () => {
   it('strips query params from path for feature check', async () => {
     mockMinRole = 'viewer';
     mockProfileResult = { role: 'viewer', tenant_id: 'tenant-1', is_active: true };
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard?foo=bar'));
     expect(res.status).toBe(200);
   });
 
   it('redirects unauthenticated user to login with error', async () => {
     mockUserResult = null;
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
     const location = res.headers.get('Location') || '';
@@ -175,7 +175,7 @@ describe('Middleware — edge cases', () => {
 
   it('redirects inactive user to login with forbidden', async () => {
     mockProfileResult = { role: 'technician', tenant_id: 'tenant-1', is_active: false };
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/dashboard'));
     expect(res.status).toBe(307);
     const location = res.headers.get('Location') || '';
@@ -186,7 +186,7 @@ describe('Middleware — edge cases', () => {
   it('redirects to forbidden page when role is insufficient', async () => {
     mockProfileResult = { role: 'viewer', tenant_id: 'tenant-1', is_active: true };
     mockMinRole = 'manager';
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/manager'));
     expect(res.status).toBe(307);
     const location = res.headers.get('Location') || '';
@@ -194,19 +194,19 @@ describe('Middleware — edge cases', () => {
   });
 
   it('handles /public device QR routes as public', async () => {
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/public/device/ABC123'));
     expect(res.status).toBe(200);
   });
 
   it('handles /survey routes as public', async () => {
-    const { middleware } = await import('./middleware');
+    const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/survey/ticket-1'));
     expect(res.status).toBe(200);
   });
 
   it('handles /api routes (excluded from middleware)', async () => {
-    const { config } = await import('./middleware');
+    const { config } = await import('./proxy');
     expect(config.matcher[0]).toContain('!api/');
   });
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -17,8 +17,9 @@ interface InventoryItem {
 export default function EditInventoryItemPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -30,7 +31,7 @@ export default function EditInventoryItemPage({
   const [unitPrice, setUnitPrice] = useState('0');
 
   useEffect(() => {
-    fetch(`/api/inventory/${params.id}`)
+    fetch(`/api/inventory/${id}`)
       .then((r) => r.json())
       .then((json) => {
         if (json.error) {
@@ -45,7 +46,7 @@ export default function EditInventoryItemPage({
       })
       .catch(() => setError('Veriler yüklenemedi'))
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +59,7 @@ export default function EditInventoryItemPage({
 
     setSaving(true);
     try {
-      const res = await fetch(`/api/inventory/${params.id}`, {
+      const res = await fetch(`/api/inventory/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -75,7 +76,7 @@ export default function EditInventoryItemPage({
         return;
       }
 
-      router.push(`/inventory/${params.id}`);
+      router.push(`/inventory/${id}`);
     } catch {
       setError('Sunucu hatası');
     } finally {
@@ -92,7 +93,7 @@ export default function EditInventoryItemPage({
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <Link href={`/inventory/${params.id}`} className="text-sm text-blue-600 hover:text-blue-800">
+            <Link href={`/inventory/${id}`} className="text-sm text-blue-600 hover:text-blue-800">
               ← {name}
             </Link>
           </div>

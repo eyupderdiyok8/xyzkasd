@@ -10,8 +10,9 @@ import { Activity, Shield, User } from 'lucide-react';
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: Promise<{ error?: string }>;
 }) {
+  const sp = await searchParams;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: _profile } = await supabase.from('profiles').select('*').eq('id', user!.id).single();
@@ -23,7 +24,7 @@ export default async function DashboardPage({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {searchParams.error === 'forbidden' && (
+      {sp.error === 'forbidden' && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
           Bu sayfaya erişim yetkiniz bulunmuyor.
         </div>
