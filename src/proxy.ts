@@ -109,6 +109,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Match all routes except static files, _next, API routes, and images
-    '/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api/|_next/static|_next/image|favicon.ico|sw\\.js|manifest\\.json|workbox-.*\\.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
