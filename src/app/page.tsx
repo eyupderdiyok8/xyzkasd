@@ -278,7 +278,7 @@ export default function LandingPage() {
         <div className="relative mx-auto max-w-7xl px-6">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { value: 3, suffix: '', label: 'Katmanlı Güvenlik', sub: 'RLS + Repository + Middleware' },
+              { value: 3, suffix: '', label: 'Katmanlı Güvenlik', sub: 'Banka düzeyinde veri koruması' },
               { value: 12, suffix: '+', label: 'Entegre Modül', sub: 'Tek platformda her şey' },
               { value: 1065, suffix: '+', label: 'Otomatik Test', sub: 'Her özellik yüzlerce senaryoda test edilir' },
               { value: 100, suffix: '%', label: 'PWA Altyapısı', sub: 'İnternetsiz tam performans' },
