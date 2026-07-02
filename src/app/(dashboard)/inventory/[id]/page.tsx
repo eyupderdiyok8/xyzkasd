@@ -24,6 +24,7 @@ interface Transaction {
   itemId: string;
   type: 'IN' | 'OUT';
   quantity: number;
+  unitCost: number | null;
   referenceType: string;
   referenceId: string | null;
   notes: string | null;
@@ -322,6 +323,17 @@ export default function InventoryItemDetailPage({
             {item.unitPrice > 0 ? `${item.unitPrice.toFixed(2)} TL` : '—'}
           </p>
         </div>
+        <div className="rounded-lg border border-border bg-white p-4 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Toplam Gider</p>
+          <p className="mt-1 text-lg font-bold text-red-600 font-mono">
+            {(() => {
+              const totalIn = transactions
+                .filter(t => t.type === 'IN' && t.unitCost != null)
+                .reduce((s, t) => s + (t.unitCost ?? 0) * t.quantity, 0);
+              return totalIn > 0 ? `${totalIn.toFixed(2)} ₺` : '—';
+            })()}
+          </p>
+        </div>
       </div>
 
       {/* Critical Stock Alert */}
@@ -350,6 +362,7 @@ export default function InventoryItemDetailPage({
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Tarih</th>
                 <th className="px-4 py-3 text-center font-medium text-gray-500">Tür</th>
                 <th className="px-4 py-3 text-right font-medium text-gray-500">Miktar</th>
+                <th className="px-4 py-3 text-right font-medium text-gray-500">Birim Fiyat</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Referans</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-500">Not</th>
               </tr>
@@ -375,6 +388,9 @@ export default function InventoryItemDetailPage({
                     tx.type === 'IN' ? 'text-green-600' : 'text-red-600'
                   }`}>
                     {tx.type === 'IN' ? '+' : '-'}{tx.quantity}
+                  </td>
+                  <td className="px-4 py-3 text-right font-mono text-xs text-gray-500">
+                    {tx.unitCost != null ? `${(tx.unitCost * tx.quantity).toFixed(2)} ₺` : '—'}
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-muted-foreground">

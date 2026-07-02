@@ -56,6 +56,7 @@ interface TicketDetail {
   signatureDataUrl: string | null;
   signatureName: string | null;
   pdfStoragePath: string | null;
+  expenses: string | null;
   completedAt: string | null;
   createdAt: string;
   customer: {
@@ -1123,6 +1124,37 @@ export default function ServiceRecordPage() {
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">{ticket.workDone}</p>
             </div>
           )}
+
+          {/* Expenses */}
+          {ticket.expenses && (() => {
+            try {
+              const exps: Expense[] = typeof ticket.expenses === 'string' ? JSON.parse(ticket.expenses) : ticket.expenses;
+              if (!Array.isArray(exps) || exps.length === 0) return null;
+              const total = exps.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+              return (
+                <div className="rounded-lg border border-border bg-white p-5">
+                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">🧾 Masraflar</h2>
+                  <div className="space-y-2">
+                    {exps.map((e, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          {EXPENSE_TYPES.find(t => t.key === e.type)?.label ?? e.type}
+                          {e.description ? ` — ${e.description}` : ''}
+                        </span>
+                        <span className="font-mono text-red-600 font-medium">
+                          {Number(e.amount).toFixed(2)} ₺
+                        </span>
+                      </div>
+                    ))}
+                    <div className="border-t pt-2 flex justify-between text-sm font-bold">
+                      <span>Toplam</span>
+                      <span className="font-mono text-red-700">{total.toFixed(2)} ₺</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            } catch { return null; }
+          })()}
 
           {/* Photos */}
           {(ticket.photos?.length ?? 0) > 0 && (
