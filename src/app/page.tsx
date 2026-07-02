@@ -153,7 +153,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       {/* ── Navbar ──────────────────────────── */}
-      <nav className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-white/5 bg-gray-950/80 backdrop-blur-xl' : 'bg-transparent'}`}>
+      <nav className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 border-b ${scrolled ? 'border-white/5 bg-gray-950/80 backdrop-blur-xl' : 'border-transparent'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400">
