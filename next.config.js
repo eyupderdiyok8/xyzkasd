@@ -1,11 +1,17 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
-  // Fix for Vercel ENOENT error with parenthesized route groups like (dashboard)
-  // and Prisma client bundling issues
+  // Fix for Vercel ENOENT lstat error with parenthesized route groups like (dashboard).
+  // Explicitly tells Next.js/Vercel where to root the output file tracing.
+  outputFileTracingRoot: path.join(__dirname),
+
   experimental: {
+    // Prevents Prisma from being bundled into the server bundle, avoiding
+    // manifest generation conflicts in route groups with parentheses.
     serverComponentsExternalPackages: ['@prisma/client', 'prisma'],
   },
+
   async headers() {
     return [
       // Service Worker — allow root scope

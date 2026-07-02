@@ -1,9 +1,8 @@
+import { Suspense } from 'react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ROLE_LABELS } from '@/lib/roles';
 import type { ProfileRow } from '@/lib/supabase/types';
-import MaintenanceReminders from '@/components/MaintenanceReminders';
-import OverdueQueue from '@/components/OverdueQueue';
-import DashboardStats from '@/components/DashboardStats';
+import { DashboardStats, MaintenanceReminders, OverdueQueue } from '@/components/dashboard-client-barrel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -54,7 +53,9 @@ export default async function DashboardPage({
       </div>
 
       {/* Dashboard Stats — bento grid */}
-      <DashboardStats />
+      <Suspense fallback={<div className="h-32 animate-pulse rounded-xl bg-muted" />}>
+        <DashboardStats />
+      </Suspense>
 
       {/* Bento grid: Maintenance + Overdue side by side */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -63,7 +64,9 @@ export default async function DashboardPage({
             <CardTitle className="text-base">Bakım Hatırlatmaları</CardTitle>
           </CardHeader>
           <CardContent>
-            <MaintenanceReminders />
+            <Suspense fallback={<div className="h-20 animate-pulse rounded-lg bg-muted" />}>
+              <MaintenanceReminders />
+            </Suspense>
           </CardContent>
         </Card>
 
@@ -72,7 +75,9 @@ export default async function DashboardPage({
             <CardTitle className="text-base">Gecikmiş Bakım Kuyruğu</CardTitle>
           </CardHeader>
           <CardContent>
-            <OverdueQueue />
+            <Suspense fallback={<div className="h-20 animate-pulse rounded-lg bg-muted" />}>
+              <OverdueQueue />
+            </Suspense>
           </CardContent>
         </Card>
       </div>
