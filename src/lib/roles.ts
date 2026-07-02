@@ -13,11 +13,11 @@ export const ROLE_HIERARCHY: Record<UserRole, number> = {
 };
 
 export const ROLE_LABELS: Record<UserRole, string> = {
-  viewer: 'Viewer',
-  technician: 'Technician',
-  manager: 'Manager',
-  tenant_admin: 'Tenant Admin',
-  super_admin: 'Super Admin',
+  viewer: 'Çalışan',
+  technician: 'Teknisyen',
+  manager: 'Yönetici',
+  tenant_admin: 'Firma Sahibi',
+  super_admin: 'Süper Admin',
 };
 
 export const ROLE_COLORS: Record<UserRole, string> = {

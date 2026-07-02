@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { hasRole } from '@/lib/roles';
+import { ROLE_LABELS } from '@/lib/roles';
 import { hasFeature, type PlanType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 import {
@@ -99,7 +100,7 @@ export default function DashboardShell({ children, role, plan, fullName, email }
         {!collapsed && (
           <div className="px-3 py-1">
             <p className="truncate text-xs font-medium text-slate-700">{fullName ?? email}</p>
-            <p className="text-[10px] text-slate-400">{role === 'super_admin' ? 'Süper Admin' : role === 'tenant_admin' ? 'Firma Admin' : role}</p>
+            <p className="text-[10px] text-slate-400">{ROLE_LABELS[role] ?? role}</p>
           </div>
         )}
 
@@ -164,7 +165,7 @@ export default function DashboardShell({ children, role, plan, fullName, email }
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <div>
             <p className="text-sm font-semibold text-slate-900">{fullName ?? email}</p>
-            <p className="text-xs text-slate-400">{role === 'super_admin' ? 'Süper Admin' : role === 'tenant_admin' ? 'Firma Admin' : role}</p>
+            <p className="text-xs text-slate-400">{ROLE_LABELS[role] ?? role}</p>
           </div>
           <button onClick={() => setMobileMenuOpen(false)} className="p-2 tap-44">
             <X className="h-5 w-5 text-slate-400" />
