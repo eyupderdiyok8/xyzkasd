@@ -12,7 +12,7 @@ import {
   LayoutDashboard, Users, Wrench, Filter, Package, ClipboardList,
   BarChart3, Shield, UserPlus, MessageSquare, FileText, Bot,
   Ticket, ThumbsUp, ChevronLeft, LogOut, Droplets,
-  Menu, X, Home, Settings,
+  Menu, X, Home,
 } from 'lucide-react';
 import TenantSwitcher from '@/components/TenantSwitcher';
 import SidebarNav from './SidebarNav';
@@ -90,26 +90,12 @@ export default function DashboardShell({ children, role, plan, fullName, email }
       </div>
 
       {/* Nav */}
-      <SidebarNav role={role} plan={plan} collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
+      <div className="flex-1 overflow-hidden">
+        <SidebarNav role={role} plan={plan} collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
+      </div>
 
-      {/* User + Collapse */}
+      {/* User */}
       <div className="border-t border-border p-2 space-y-1">
-        <Link
-          href="/settings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-        >
-          <Settings className="h-3.5 w-3.5 shrink-0" />
-          {!collapsed && 'Hesap Ayarları'}
-        </Link>
-
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-        >
-          <ChevronLeft className={cn('h-3.5 w-3.5 shrink-0 transition-transform', collapsed && 'rotate-180')} />
-          {!collapsed && 'Daralt'}
-        </button>
-
         {!collapsed && (
           <div className="px-3 py-1">
             <p className="truncate text-xs font-medium text-slate-700">{fullName ?? email}</p>
