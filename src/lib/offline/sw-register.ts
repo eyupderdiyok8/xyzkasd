@@ -145,21 +145,34 @@ export function registerSW(): void {
 
     // Listen for messages from SW (background sync, refresh)
     navigator.serviceWorker.addEventListener('message', (event) => {
-      const { type } = event.data || {};
+      const { type, tag } = event.data || {};
 
       if (type === 'REFRESH') {
         window.location.reload();
       }
 
       if (type === 'BACKGROUND_SYNC') {
-        // Dispatch a custom event so app code can react
-        window.dispatchEvent(
-          new CustomEvent('sw:background-sync', {
-            detail: { tag: event.data.tag },
-          })
-        );
+        window.dispatchEvent(new CustomEvent('sw:background-sync', { detail: { tag } }));
+      }
+
+      if (type === 'SYNC_TRIGGER') {
+        // SW tells us to sync (e.g., when coming back online)
+        import('./sync-queue').then(({ syncAll }) => {
+          syncAll().then(() => console.log('[SW] Sync completed from SW trigger'));
+        });
       }
     });
+  });
+}
+
+// Sync when page becomes visible after being hidden (e.g., user comes back after going online)
+if (typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && navigator.onLine) {
+      import('./sync-queue').then(({ syncAll }) => {
+        syncAll().catch(() => {});
+      });
+    }
   });
 }
 
