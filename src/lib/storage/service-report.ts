@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import path from 'node:path';
 import fs from 'node:fs';
 
-function resolveFont(name: string): string {
+function resolveFont(name: string): Buffer | null {
   // Try multiple paths: Vercel serverless, local dev, Docker
   const candidates = [
     path.join(process.cwd(), 'public', 'fonts', name),
@@ -12,10 +12,9 @@ function resolveFont(name: string): string {
     path.join(__dirname, '..', '..', '..', '..', '..', 'public', 'fonts', name),
   ];
   for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
+    try { return fs.readFileSync(p); } catch { continue; }
   }
-  // Fallback: copy from a URL at runtime
-  return candidates[0]; // will fail but gives clear error
+  return null;
 }
 
 const FONT_REGULAR = resolveFont('Roboto-Regular.ttf');
@@ -367,9 +366,9 @@ export async function generateServiceReport(
       },
     });
 
-    // Register Turkish-compatible fonts
-    doc.registerFont('Roboto', FONT_REGULAR);
-    doc.registerFont('Roboto-Bold', FONT_BOLD);
+    // Register Turkish-compatible fonts (if available)
+    if (FONT_REGULAR) doc.registerFont('Roboto', FONT_REGULAR);
+    if (FONT_BOLD) doc.registerFont('Roboto-Bold', FONT_BOLD);
 
     const chunks: Buffer[] = [];
     doc.on('data', (chunk: Buffer) => chunks.push(chunk));
