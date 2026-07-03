@@ -175,7 +175,6 @@ export default function QuickServicePage() {
             <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               value={phoneSearch} onChange={e => setPhoneSearch(e.target.value)}
-              onBlur={() => searchCustomer(phoneSearch)}
               onKeyDown={e => e.key === 'Enter' && searchCustomer(phoneSearch)}
               placeholder="05XX XXX XX XX — telefon numarası"
               className="pl-9 bg-white"
@@ -217,7 +216,6 @@ export default function QuickServicePage() {
             <Wrench className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               value={serialSearch} onChange={e => setSerialSearch(e.target.value)}
-              onBlur={() => searchDevice(serialSearch)}
               onKeyDown={e => e.key === 'Enter' && searchDevice(serialSearch)}
               placeholder="Seri numarası"
               className="pl-9 bg-white"
