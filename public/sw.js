@@ -5,7 +5,7 @@
 // ──────────────────────────────────────────────
 
 const CACHE_NAME = 'wps-v1';
-const STATIC_ASSETS = ['/', '/dashboard', '/offline'];
+const STATIC_ASSETS = ['/', '/offline'];
 
 // ──────────────────────────────────────────────
 // Install — ön belleğe kritik statik dosyaları al
@@ -15,7 +15,9 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .then((cache) =>
+        Promise.allSettled(STATIC_ASSETS.map((url) => cache.add(url).catch(() => {})),
+      ))
       .then(() => self.skipWaiting()),
   );
 });
