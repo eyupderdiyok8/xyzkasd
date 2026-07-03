@@ -115,6 +115,7 @@ export default function TenantSettings() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [emptyMessage, setEmptyMessage] = useState<string | null>(null);
 
   // Form state
   const [name, setName] = useState('');
@@ -139,9 +140,25 @@ export default function TenantSettings() {
   const fetchTenant = async () => {
     setLoading(true);
     try {
+      setEmptyMessage(null);
       const res = await fetch('/api/admin/plan');
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message ?? 'Yüklenemedi');
+      if (!res.ok) {
+        if (res.status === 404) {
+          setError(null);
+          setTenant(null);
+          setLoading(false);
+          return;
+        }
+        throw new Error(json.error?.message ?? 'Yüklenemedi');
+      }
+      if (!json.data) {
+        setError(null);
+        setTenant(null);
+        setEmptyMessage(json.meta?.message ?? null);
+        setLoading(false);
+        return;
+      }
       setTenant(json.data);
       setName(json.data.name ?? '');
       setPhone(json.data.phone ?? '');
@@ -229,7 +246,16 @@ export default function TenantSettings() {
   }
 
   if (!tenant) {
-    return <div className="text-center text-sm text-red-500 py-8">{error ?? 'Firma bulunamadı'}</div>;
+    if (error) {
+      return <div className="text-center text-sm text-red-500 py-8">{error}</div>;
+    }
+    return (
+      <div className="rounded-lg border border-blue-100 bg-blue-50 p-6 text-center">
+        <p className="text-sm text-blue-700">
+          {emptyMessage ?? 'Super admin olarak tüm firmaları yönetebilirsiniz. Firma ayarlarını düzenlemek için bir firma seçin.'}
+        </p>
+      </div>
+    );
   }
 
   return (

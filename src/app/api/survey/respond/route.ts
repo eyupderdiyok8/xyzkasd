@@ -9,10 +9,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { SurveyRepository } from '@/repositories/survey.repository';
-import { ServiceTicketRepository } from '@/repositories/service-ticket.repository';
 import { AutomationEngine } from '@/lib/automation';
 import { getWahaManager } from '@/lib/whatsapp/waha-manager';
 import { buildHighScoreThanksText, buildLowScoreNotificationText } from '@/lib/whatsapp/notify';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,9 +36,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Resolve tenant from ticket ───────────────
-    const ticketRepo = new ServiceTicketRepository({ tenantId: null, role: 'super_admin' });
-    const ticket = await ticketRepo.findById(ticketId).catch(() => null);
+    // Rate limit: en fazla 5 anket yanıtı / dakika / IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown';
+    const rl = checkRateLimit(ip, { keyPrefix: 'survey-respond', maxRequests: 5 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: { code: 'RATE_LIMITED', message: `Çok fazla istek. ${rl.retryAfter} saniye sonra tekrar deneyin.` } },
+        { status: 429 },
+      );
+    }
+
+    // ── Resolve tenant from ticket (no auth bypass) ──
+    // Direct prisma query — does NOT use ServiceTicketRepository
+    // with super_admin bypass. Public endpoint, so we look up
+    // the ticket by ID only, then resolve tenant context from it.
+    const ticket = await prisma.serviceTicket.findUnique({
+      where: { id: ticketId, deletedAt: null },
+      include: {
+        customer: { select: { id: true, name: true, phone: true } },
+        device: { select: { id: true, model: true } },
+        technician: { select: { id: true, name: true } },
+      },
+    });
     if (!ticket) {
       return NextResponse.json(
         { error: { code: 'NOT_FOUND', message: 'Servis kaydı bulunamadı' } },
@@ -47,6 +69,12 @@ export async function POST(request: NextRequest) {
 
     const tenantId = ticket.tenantId;
     const surveyRepo = new SurveyRepository({ tenantId, role: 'super_admin' });
+
+    // ── Resolve tenant info directly (no repository bypass) ──
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { id: true, name: true, phone: true, email: true, address: true, logo: true, googleReviewUrl: true },
+    });
 
     // ── Record response ──────────────────────────
     const { survey, action } = await surveyRepo.respond(ticketId, {
@@ -60,8 +88,7 @@ export async function POST(request: NextRequest) {
     // ── High score (>=4): send coupon + Google Review ──
     if (action === 'HIGH_SCORE' && survey.couponCode) {
       // Tenant'ın kendi Google Review linki, yoksa env fallback
-      const tenant = await surveyRepo.getTenant(tenantId);
-      const googleReviewUrl = (tenant as any)?.googleReviewUrl
+      const googleReviewUrl = tenant?.googleReviewUrl
         || process.env.GOOGLE_REVIEW_URL
         || undefined;
       const thankYouText = buildHighScoreThanksText({
@@ -87,7 +114,6 @@ export async function POST(request: NextRequest) {
       });
 
       // Send to tenant admin/manager WhatsApp number
-      const tenant = await surveyRepo.getTenant(tenantId);
       const notifyPhone = tenant?.phone;
       if (notifyPhone) {
         const msgResult = await waManager.sendMessage(tenantId, notifyPhone, notifyText);

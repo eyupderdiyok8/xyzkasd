@@ -31,9 +31,10 @@ model Tenant {
   reportConfig String? @default("{\"primaryColor\":\"#1e40af\",\"footerText\":\"Bu rapor Water Purifier Service ERP sistemi tarafindan olusturulmustur.\",\"sections\":{\"customer\":true,\"device\":true,\"measurements\":true,\"filters\":true,\"signature\":true}}") // JSON: PDF tasarım ayarları
   googleReviewUrl String? @map("google_review_url") // Firma Google Review linki
   surveyMessage   String? @map("survey_message")     // Özel anket davet mesajı (opsiyonel)
-  isActive  Boolean   @default(true)
-  plan      String    @default("STARTER") // STARTER | PROFESSIONAL
-  mfaRequired Boolean @default(false) @map("mfa_required") // İki faktörlü kimlik doğrulama zorunlu mu?
+  isActive   Boolean   @default(true)
+  membershipType       String    @default("MONTHLY") // MONTHLY | YEARLY | FOUNDER
+  membershipExpiresAt  DateTime? // null = FOUNDER (sınırsız) veya henüz atanmamış
+  mfaRequired Boolean  @default(false) @map("mfa_required") // İki faktörlü kimlik doğrulama zorunlu mu?
   maxUsers  Int       @default(10)
   deletedAt DateTime? // soft delete
   createdAt DateTime  @default(now())

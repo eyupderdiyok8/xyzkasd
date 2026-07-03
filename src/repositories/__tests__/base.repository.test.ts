@@ -75,10 +75,10 @@ describe('BaseRepository', () => {
       expect(filter).toEqual({});
     });
 
-    it('returns empty filter for super_admin even with tenantId set', () => {
+    it('returns selected tenant filter for super_admin when tenantId is set', () => {
       const repo = new TestRepository({ tenantId: 'tenant-1', role: 'super_admin' });
       const filter = repo['tenantFilter']();
-      expect(filter).toEqual({});
+      expect(filter).toEqual({ tenantId: 'tenant-1' });
     });
 
     it('throws error when tenantId is null for non-super-admin', () => {
@@ -120,9 +120,14 @@ describe('BaseRepository', () => {
       expect(repo['hasAccess']('any-tenant')).toBe(true);
     });
 
-    it('returns true for super_admin with specific tenant', () => {
+    it('returns false for super_admin with selected tenant mismatch', () => {
       const repo = new TestRepository({ tenantId: 'tenant-1', role: 'super_admin' });
-      expect(repo['hasAccess']('tenant-2')).toBe(true);
+      expect(repo['hasAccess']('tenant-2')).toBe(false);
+    });
+
+    it('returns true for super_admin with selected tenant match', () => {
+      const repo = new TestRepository({ tenantId: 'tenant-1', role: 'super_admin' });
+      expect(repo['hasAccess']('tenant-1')).toBe(true);
     });
 
     it('returns false for viewer with mismatched tenant', () => {

@@ -25,13 +25,17 @@ export abstract class BaseRepository {
   }
 
   protected tenantFilter(): { tenantId?: string } {
-    if (this.role === 'super_admin') return {};
+    if (this.role === 'super_admin') {
+      return this.tenantId ? { tenantId: this.tenantId } : {};
+    }
     if (!this.tenantId) throw new Error('Tenant gerekli');
     return { tenantId: this.tenantId };
   }
 
   protected hasAccess(resourceTenantId: string): boolean {
-    if (this.role === 'super_admin') return true;
+    if (this.role === 'super_admin') {
+      return !this.tenantId || this.tenantId === resourceTenantId;
+    }
     return this.tenantId === resourceTenantId;
   }
 

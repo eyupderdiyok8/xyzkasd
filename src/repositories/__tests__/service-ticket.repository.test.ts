@@ -62,7 +62,9 @@ vi.mock('../base.repository', () => {
       }
 
       protected tenantFilter(): { tenantId?: string } {
-        if (this.role === 'super_admin') return {};
+        if (this.role === 'super_admin') {
+          return this.tenantId ? { tenantId: this.tenantId } : {};
+        }
         if (!this.tenantId) throw new Error('Tenant gerekli');
         return { tenantId: this.tenantId };
       }
@@ -602,6 +604,11 @@ describe('ServiceTicketRepository', () => {
     it('does not filter for super_admin', () => {
       const r = new ServiceTicketRepository({ tenantId: null, role: 'super_admin' });
       expect(r['tenantFilter']()).toEqual({});
+    });
+
+    it('filters by selected tenant for super_admin', () => {
+      const r = new ServiceTicketRepository({ tenantId: 'tenant-b', role: 'super_admin' });
+      expect(r['tenantFilter']()).toEqual({ tenantId: 'tenant-b' });
     });
 
     it('throws if tenantId is missing for non-super-admin', () => {

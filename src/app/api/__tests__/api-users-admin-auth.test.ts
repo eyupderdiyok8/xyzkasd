@@ -22,7 +22,16 @@ const { mockSupabase } = vi.hoisted(() => ({
           const chain: any = {};
           chain.order = vi.fn(() => chain);
           chain.eq = vi.fn(() => chain);
-          chain.single = vi.fn().mockResolvedValue({ data: { id: 'tenant-1', name: 'Test', slug: 'test', plan: 'PROFESSIONAL' }, error: null });
+          chain.single = vi.fn().mockResolvedValue({
+            data: {
+              id: 'tenant-1',
+              name: 'Test',
+              slug: 'test',
+              membershipType: 'YEARLY',
+              membershipExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            },
+            error: null,
+          });
           chain.limit = vi.fn().mockResolvedValue({ data: [{ id: 'user-1', email: 'admin@test.com', role: 'tenant_admin', tenant_id: 'tenant-1', is_active: true, full_name: 'Admin', created_at: new Date().toISOString() }], error: null });
           return chain;
         }),
@@ -140,14 +149,14 @@ describe('Admin Plan', () => {
     const body = await res.json();
     expect(res.status).toBe(200);
     expect(body.data).toBeDefined();
-    expect(body.data.plan).toBeDefined();
+    expect(body.data.membershipType).toBeDefined();
   });
-  it('PATCH switches plan', async () => {
+  it('PATCH updates tenant settings', async () => {
     const { PATCH } = await import('../admin/plan/route');
-    const res = await PATCH(mockReq({ plan: 'STARTER' }));
+    const res = await PATCH(mockReq({ name: 'Güncel Firma' }));
     const body = await res.json();
     expect(res.status).toBe(200);
-    expect(body.data.plan).toBe('STARTER');
+    expect(body.data.name).toBe('Güncel Firma');
   });
   it('PATCH returns 400 for invalid plan', async () => {
     const { PATCH } = await import('../admin/plan/route');

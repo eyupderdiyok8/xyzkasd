@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { hasRole } from '@/lib/roles';
-import { hasFeature, type PlanType } from '@/lib/features';
+import { isMembershipActive, type MembershipType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 import {
   LayoutDashboard, Users, Wrench, Filter, Package, ClipboardList,
@@ -66,13 +66,15 @@ const SECTIONS: NavSection[] = [
 
 interface SidebarNavProps {
   role: UserRole;
-  plan: PlanType | null;
+  membershipType: MembershipType | null;
+  membershipExpiresAt: string | null;
   collapsed: boolean;
   onToggleCollapse: () => void;
 }
 
-export default function SidebarNav({ role, plan, collapsed, onToggleCollapse }: SidebarNavProps) {
+export default function SidebarNav({ role, membershipType, membershipExpiresAt, collapsed, onToggleCollapse }: SidebarNavProps) {
   const pathname = usePathname();
+  const membershipActive = isMembershipActive(membershipType, membershipExpiresAt);
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     // Auto-expand sections containing the active route
     const init: Record<string, boolean> = {};
@@ -89,7 +91,7 @@ export default function SidebarNav({ role, plan, collapsed, onToggleCollapse }: 
     ...section,
     items: section.items.filter(item =>
       hasRole(role, item.minRole) &&
-      (!item.requiredFeature || hasFeature(plan, item.requiredFeature))
+      (!item.requiredFeature || membershipActive)
     ),
   })).filter(s => s.items.length > 0);
 

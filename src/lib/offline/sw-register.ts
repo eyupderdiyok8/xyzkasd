@@ -196,6 +196,30 @@ export async function registerBackgroundSync(tag: string): Promise<void> {
 }
 
 /**
+ * Unregisters the service worker.
+ * Useful in dev mode to avoid stale cache issues.
+ */
+export function unregisterSW(): void {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    return;
+  }
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    for (const reg of regs) {
+      reg.unregister();
+    }
+  });
+  if ('caches' in window) {
+    caches.keys().then((keys) => {
+      keys
+        .filter((key) => key.startsWith('wps-'))
+        .forEach((key) => {
+          caches.delete(key);
+        });
+    });
+  }
+}
+
+/**
  * Returns the current service worker registration, if any.
  */
 export function getRegistration(): ServiceWorkerRegistration | null {

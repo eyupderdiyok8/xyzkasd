@@ -84,8 +84,21 @@ export async function POST(request: NextRequest) {
       ? auth.tenantId
       : body.tenantId ?? null;
 
-  // Create auth user via admin client (bypasses RLS)
+  // Check for duplicate email before attempting user creation
   const adminClient = createAdminClient();
+  const { data: existingProfile } = await (adminClient.from('profiles') as any)
+    .select('id, email')
+    .eq('email', body.email)
+    .maybeSingle();
+
+  if (existingProfile) {
+    return NextResponse.json(
+      { error: { code: 'CONFLICT', message: 'Bu e-posta adresi zaten kayıtlı.' } },
+      { status: 409 },
+    );
+  }
+
+  // Create auth user via admin client (bypasses RLS)
   const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
     email: body.email,
     password: body.password,
@@ -97,8 +110,9 @@ export async function POST(request: NextRequest) {
   });
 
   if (createError) {
+    console.error('[invite] Kullanıcı oluşturma hatası:', createError.message);
     return NextResponse.json(
-      { error: { code: 'INTERNAL_ERROR', message: createError.message } },
+      { error: { code: 'INTERNAL_ERROR', message: 'Kullanıcı oluşturulamadı. Lütfen daha sonra tekrar deneyin.' } },
       { status: 500 },
     );
   }
@@ -106,12 +120,17 @@ export async function POST(request: NextRequest) {
   // Ensure the profile exists. The DB trigger should auto-create it, but
   // if the trigger is missing or failed, fall back to an explicit upsert
   // using the admin client (bypasses RLS so it always works).
+  // Note: trigger already sets id, email, full_name, role, is_active.
+  // We only need to ensure tenant_id is set correctly.
+  const now = new Date().toISOString();
   const profileData: any = {
     id: newUser.user.id,
     email: body.email,
     full_name: body.fullName,
     role: body.role,
     is_active: true,
+    created_at: now,
+    updated_at: now,
   };
   if (effectiveTenantId) {
     profileData.tenant_id = effectiveTenantId;
@@ -124,8 +143,9 @@ export async function POST(request: NextRequest) {
   if (profileError) {
     // Roll back auth user creation on profile failure
     await adminClient.auth.admin.deleteUser(newUser.user.id);
+    console.error('[invite] Profil oluşturma hatası:', profileError.message);
     return NextResponse.json(
-      { error: { code: 'INTERNAL_ERROR', message: `Profil oluşturulamadı: ${profileError.message}` } },
+      { error: { code: 'INTERNAL_ERROR', message: 'Profil oluşturulamadı. Lütfen daha sonra tekrar deneyin.' } },
       { status: 500 },
     );
   }

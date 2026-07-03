@@ -4,17 +4,19 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Building, Check, X } from 'lucide-react';
+import { Plus, Building, Check, Star } from 'lucide-react';
+import { MEMBERSHIP_LABELS, MEMBERSHIP_COLORS, FOUNDER_BADGE, formatRemainingDays, getRemainingDays, type MembershipType } from '@/lib/features';
 
 interface Tenant {
   id: string;
   name: string;
   slug: string;
-  plan: string;
+  membershipType: string;
+  membershipExpiresAt: string | null;
   isActive: boolean;
 }
 
-const PLAN_OPTIONS = ['STARTER', 'PROFESSIONAL'];
+const MEMBERSHIP_OPTIONS: MembershipType[] = ['MONTHLY', 'YEARLY', 'FOUNDER'];
 
 export default function TenantManagement() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -23,7 +25,8 @@ export default function TenantManagement() {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [plan, setPlan] = useState('STARTER');
+  const [membershipType, setMembershipType] = useState<MembershipType>('MONTHLY');
+  const [membershipExpiresAt, setMembershipExpiresAt] = useState('');
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -50,7 +53,12 @@ export default function TenantManagement() {
     const res = await fetch('/api/tenants', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name.trim(), slug: slug.trim(), plan }),
+      body: JSON.stringify({
+        name: name.trim(),
+        slug: slug.trim(),
+        membershipType,
+        membershipExpiresAt: membershipExpiresAt || undefined,
+      }),
     });
 
     const json = await res.json();
@@ -63,7 +71,8 @@ export default function TenantManagement() {
     setSuccess(`"${json.data.name}" firması oluşturuldu`);
     setName('');
     setSlug('');
-    setPlan('STARTER');
+    setMembershipType('MONTHLY');
+    setMembershipExpiresAt('');
     setShowForm(false);
     setSending(false);
     fetchTenants();
@@ -95,7 +104,6 @@ export default function TenantManagement() {
           </div>
         )}
 
-        {/* Create form */}
         {showForm && (
           <form onSubmit={handleCreate} className="space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -108,15 +116,32 @@ export default function TenantManagement() {
                 <Input required value={slug} onChange={e => setSlug(e.target.value)} placeholder="ana-su" />
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">Plan</label>
-              <select
-                value={plan}
-                onChange={e => setPlan(e.target.value)}
-                className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none"
-              >
-                {PLAN_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1">Üyelik Tipi</label>
+                <select
+                  value={membershipType}
+                  onChange={e => setMembershipType(e.target.value as MembershipType)}
+                  className="h-10 w-full rounded-md border border-gray-300 bg-white px-3 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  {MEMBERSHIP_OPTIONS.map(t => (
+                    <option key={t} value={t}>
+                      {t === 'FOUNDER' ? `${FOUNDER_BADGE} ${MEMBERSHIP_LABELS[t]}` : MEMBERSHIP_LABELS[t]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1">
+                  Bitiş Tarihi {membershipType === 'FOUNDER' ? '(opsiyonel)' : ''}
+                </label>
+                <Input
+                  type="date"
+                  value={membershipExpiresAt}
+                  onChange={e => setMembershipExpiresAt(e.target.value)}
+                  placeholder={membershipType === 'FOUNDER' ? 'Boş bırak = sınırsız' : 'YYYY-AA-GG'}
+                />
+              </div>
             </div>
             <Button type="submit" disabled={sending} size="sm">
               {sending ? 'Oluşturuluyor...' : 'Firma Oluştur'}
@@ -134,17 +159,32 @@ export default function TenantManagement() {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {tenants.map(t => (
-              <div key={t.id} className="flex items-center justify-between py-2.5">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{t.name}</p>
-                  <p className="text-xs text-gray-400">{t.slug}</p>
+            {tenants.map(t => {
+              const mt = (t.membershipType as MembershipType) || 'MONTHLY';
+              const remainingDays = mt === 'FOUNDER' ? Infinity : getRemainingDays(t.membershipExpiresAt);
+              const colors = remainingDays > 0
+                ? (MEMBERSHIP_COLORS[mt] ?? 'bg-gray-100 text-gray-800')
+                : 'bg-red-100 text-red-800';
+              return (
+                <div key={t.id} className="flex items-center justify-between py-2.5">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {t.name}
+                      {mt === 'FOUNDER' && <Star className="ml-1 inline h-3 w-3 text-amber-500" />}
+                    </p>
+                    <p className="text-xs text-gray-400">{t.slug}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">
+                      {remainingDays === Infinity ? 'Sınırsız' : formatRemainingDays(remainingDays)}
+                    </span>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${colors}`}>
+                      {mt === 'FOUNDER' ? `${FOUNDER_BADGE} ${MEMBERSHIP_LABELS[mt]}` : MEMBERSHIP_LABELS[mt]}
+                    </span>
+                  </div>
                 </div>
-                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
-                  {t.plan}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>

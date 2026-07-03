@@ -99,6 +99,13 @@ describe('BaseRepository — hasAccess edge cases', () => {
     expect(repo['hasAccess']('')).toBe(true);
   });
 
+  it('super_admin with selected tenant can only access that tenant', () => {
+    const repo = new TestRepository({ tenantId: 'tenant-a', role: 'super_admin' });
+    expect(repo['tenantFilter']()).toEqual({ tenantId: 'tenant-a' });
+    expect(repo['hasAccess']('tenant-a')).toBe(true);
+    expect(repo['hasAccess']('tenant-b')).toBe(false);
+  });
+
   it('case-sensitive tenant comparison', () => {
     const repo = new TestRepository({ tenantId: 'Tenant-A', role: 'manager' });
     expect(repo['hasAccess']('tenant-a')).toBe(false); // lowercase different

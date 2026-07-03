@@ -36,7 +36,9 @@ vi.mock('../base.repository', () => {
       }
 
       protected tenantFilter(): { tenantId?: string } {
-        if (this.role === 'super_admin') return {};
+        if (this.role === 'super_admin') {
+          return this.tenantId ? { tenantId: this.tenantId } : {};
+        }
         if (!this.tenantId) throw new Error('Tenant gerekli');
         return { tenantId: this.tenantId };
       }
@@ -418,6 +420,11 @@ describe('InventoryRepository', () => {
     it('should not filter for super_admin', () => {
       const r = new InventoryRepository({ tenantId: null, role: 'super_admin' });
       expect((r as any).tenantFilter()).toEqual({});
+    });
+
+    it('should filter by selected tenant for super_admin', () => {
+      const r = new InventoryRepository({ tenantId: 'tenant-b', role: 'super_admin' });
+      expect((r as any).tenantFilter()).toEqual({ tenantId: 'tenant-b' });
     });
 
     it('should throw if tenantId is missing for non-super-admin', () => {

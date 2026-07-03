@@ -9,6 +9,7 @@
 // ──────────────────────────────────────────────
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requireRole } from '@/lib/supabase/require-role';
 import { getSetting } from '@/lib/system-settings';
 
 interface PushSubscriptionRecord {
@@ -159,6 +160,11 @@ async function encryptPushPayload(
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await requireRole('manager');
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
+  }
+
   let body: { title?: string; body?: string };
   try {
     body = await req.json();

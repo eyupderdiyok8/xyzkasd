@@ -4,7 +4,7 @@
 // Phase 3: Push notifications + Background Sync
 // ──────────────────────────────────────────────
 
-const CACHE_NAME = 'wps-v1';
+const CACHE_NAME = 'wps-v2';
 const STATIC_ASSETS = ['/', '/offline'];
 
 // ──────────────────────────────────────────────
@@ -45,9 +45,15 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Tarayıcının Google Fonts gibi dış origin isteklerini kendi akışında
+  // yönetmesine izin ver; SW fetch'i CSP connect-src'e takılabilir.
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
   // API istekleri: network-first
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(networkFirst(request));
+    event.respondWith(request.method === 'GET' ? networkFirst(request) : fetch(request));
     return;
   }
 

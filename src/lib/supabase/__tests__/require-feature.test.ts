@@ -60,7 +60,7 @@ describe('requireFeature', () => {
     mockSupabase = createMockSupabase(
       { data: { user: { id: 'user-1' } }, error: null },
       { data: { role: 'manager', tenant_id: 'tenant-1', is_active: true }, error: null },
-      { data: { plan: 'PROFESSIONAL' }, error: null },
+      { data: { membershipType: 'MONTHLY', membershipExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() }, error: null },
     );
 
     vi.doMock('@/lib/supabase/server', () => ({
@@ -77,7 +77,7 @@ describe('requireFeature', () => {
       const viewerSupabase = createMockSupabase(
         { data: { user: { id: 'user-1' } }, error: null },
         { data: { role: 'viewer', tenant_id: 'tenant-1', is_active: true }, error: null },
-        { data: { plan: 'PROFESSIONAL' }, error: null },
+        { data: { membershipType: 'MONTHLY', membershipExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() }, error: null },
       );
       vi.doMock('@/lib/supabase/server', () => ({
         createServerSupabaseClient: vi.fn(() => viewerSupabase),
@@ -86,23 +86,23 @@ describe('requireFeature', () => {
       const result = await rf('manager', 'whatsapp');
       expect(result.ok).toBe(false);
       expect(result.error?.status).toBe(403);
-      expect(result.plan).toBeNull();
+      expect(result.membershipType).toBeNull();
     });
   });
 
   describe('tenant plan checks', () => {
-    it('allows PROFESSIONAL feature on PROFESSIONAL plan', async () => {
+    it('allows features with active membership', async () => {
       const result = await requireFeature('viewer', 'whatsapp');
       expect(result.ok).toBe(true);
-      expect(result.plan).toBe('PROFESSIONAL');
+      expect(result.membershipType).toBe('MONTHLY');
     });
 
-    it('blocks PROFESSIONAL feature on STARTER plan', async () => {
+    it('blocks features on expired membership (expired)', async () => {
       vi.resetModules();
       const starterSupabase = createMockSupabase(
         { data: { user: { id: 'user-1' } }, error: null },
         { data: { role: 'manager', tenant_id: 'tenant-1', is_active: true }, error: null },
-        { data: { plan: 'STARTER' }, error: null },
+        { data: { membershipType: 'MONTHLY', membershipExpiresAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() }, error: null },
       );
       vi.doMock('@/lib/supabase/server', () => ({
         createServerSupabaseClient: vi.fn(() => starterSupabase),
@@ -111,32 +111,32 @@ describe('requireFeature', () => {
       const result = await rf('viewer', 'whatsapp');
       expect(result.ok).toBe(false);
       expect(result.error?.status).toBe(403);
-      expect(result.error?.message).toContain('Professional plana yükseltmek');
-      expect(result.plan).toBe('STARTER');
+      expect(result.error?.message).toContain('Üyeliğinizin süresi dolmuş');
+      expect(result.membershipType).toBe('MONTHLY');
     });
 
-    it('allows STARTER feature on STARTER plan', async () => {
+    it('allows features with active (future) membership', async () => {
       vi.resetModules();
-      const starterSupabase = createMockSupabase(
+      const activeSupabase = createMockSupabase(
         { data: { user: { id: 'user-1' } }, error: null },
         { data: { role: 'technician', tenant_id: 'tenant-1', is_active: true }, error: null },
-        { data: { plan: 'STARTER' }, error: null },
+        { data: { membershipType: 'MONTHLY', membershipExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() }, error: null },
       );
       vi.doMock('@/lib/supabase/server', () => ({
-        createServerSupabaseClient: vi.fn(() => starterSupabase),
+        createServerSupabaseClient: vi.fn(() => activeSupabase),
       }));
       const { requireFeature: rf } = await import('../require-feature');
       const result = await rf('viewer', 'coupons');
       expect(result.ok).toBe(true);
-      expect(result.plan).toBe('STARTER');
+      expect(result.membershipType).toBe('MONTHLY');
     });
 
-    it('blocks automation on STARTER plan', async () => {
+    it('blocks features on expired membership', async () => {
       vi.resetModules();
       const starterSupabase = createMockSupabase(
         { data: { user: { id: 'user-1' } }, error: null },
         { data: { role: 'manager', tenant_id: 'tenant-1', is_active: true }, error: null },
-        { data: { plan: 'STARTER' }, error: null },
+        { data: { membershipType: 'MONTHLY', membershipExpiresAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() }, error: null },
       );
       vi.doMock('@/lib/supabase/server', () => ({
         createServerSupabaseClient: vi.fn(() => starterSupabase),
@@ -165,7 +165,7 @@ describe('requireFeature', () => {
       expect(result.error?.code).toBe('FORBIDDEN');
     });
 
-    it('defaults to STARTER when no tenant plan found', async () => {
+    it('returns blocked when no tenant membership found', async () => {
       vi.resetModules();
       const noPlanSupabase = createMockSupabase(
         { data: { user: { id: 'user-1' } }, error: null },
@@ -177,21 +177,24 @@ describe('requireFeature', () => {
       }));
       const { requireFeature: rf } = await import('../require-feature');
       const result = await rf('viewer', 'whatsapp');
-      // No tenant row → defaults to STARTER → blocks whatsapp
+      // No tenant row → no membership info → blocks
       expect(result.ok).toBe(false);
-      expect(result.plan).toBe('STARTER');
+      expect(result.membershipType).toBe('MONTHLY');
     });
   });
 
   describe('return shape', () => {
-    it('returns FeatureCheckResult extending RoleCheckResult with plan', async () => {
+    it('returns FeatureCheckResult extending RoleCheckResult with membership info', async () => {
       const result = await requireFeature('viewer', 'surveys');
       expect(result).toHaveProperty('ok');
       expect(result).toHaveProperty('userId');
       expect(result).toHaveProperty('role');
       expect(result).toHaveProperty('tenantId');
       expect(result).toHaveProperty('error');
-      expect(result).toHaveProperty('plan');
+      expect(result).toHaveProperty('membershipType');
+      expect(result).toHaveProperty('expiresAt');
+      expect(result).toHaveProperty('isActive');
     });
   });
 });
+

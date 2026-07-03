@@ -155,7 +155,7 @@ export default function DeviceDetailPage() {
   useEffect(() => {
     if (device?.qrCode) {
       const origin = typeof window !== 'undefined' ? window.location.origin : '';
-      const qrUrl = `${origin}/public/device/${encodeURIComponent(device.qrCode)}`;
+      const qrUrl = `${origin}/qr/${encodeURIComponent(device.qrCode)}`;
       QRCode.toDataURL(qrUrl, {
         width: 200,
         margin: 2,

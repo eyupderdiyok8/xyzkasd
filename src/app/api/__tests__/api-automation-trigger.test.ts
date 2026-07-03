@@ -8,7 +8,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockAuth = {
-  ok: true, userId: 'user-1', role: 'manager' as const, tenantId: 'tenant-1', plan: 'PROFESSIONAL', error: null as any,
+  ok: true, userId: 'user-1', role: 'manager' as const, tenantId: 'tenant-1', membershipType: 'MONTHLY', expiresAt: new Date(Date.now() + 365 * 86400000).toISOString(), isActive: true, error: null as any,
 };
 
 vi.mock('@/lib/supabase/require-feature', () => ({
@@ -154,7 +154,7 @@ describe('POST /api/automation/trigger', () => {
   it('returns 401 when not authenticated', async () => {
     const { requireFeature } = await import('@/lib/supabase/require-feature');
     vi.mocked(requireFeature).mockResolvedValueOnce({
-      ok: false, userId: null, role: null, tenantId: null, plan: null,
+      ok: false, userId: null, role: null, tenantId: null, membershipType: null, expiresAt: null, isActive: false,
       error: { status: 401, code: 'UNAUTHORIZED', message: '' },
     });
 

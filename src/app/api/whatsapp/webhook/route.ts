@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getWahaManager } from '@/lib/whatsapp/waha-manager';
+import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 /**
  * POST /api/whatsapp/webhook
@@ -29,6 +31,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Rate limit: en fazla 60 webhook çağrısı / dakika / IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown';
+    const rl = checkRateLimit(ip, { keyPrefix: 'whatsapp-webhook', maxRequests: 60 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: { code: 'RATE_LIMITED', message: `Çok fazla istek. ${rl.retryAfter} saniye sonra tekrar deneyin.` } },
+        { status: 429 },
+      );
+    }
+
+    // Verify webhook secret to prevent unauthorized event injection
+    const dbSession = await prisma.whatsAppSession.findFirst({
+      where: { sessionName: body.session },
+      select: { webhookSecret: true, id: true },
+    });
+
+    if (!dbSession) {
+      console.warn(`[webhook] Unknown session: ${body.session}`);
+      return NextResponse.json({ received: true, error: 'Unknown session' });
+    }
+
+    const incomingSecret = request.headers.get('x-webhook-secret')
+      ?? request.headers.get('x-waha-webhook-secret');
+
+    if (dbSession.webhookSecret && incomingSecret !== dbSession.webhookSecret) {
+      console.warn(`[webhook] Secret mismatch for session ${body.session}`);
+      return NextResponse.json(
+        { error: { code: 'UNAUTHORIZED', message: 'Geçersiz webhook secret' } },
+        { status: 401 },
+      );
+    }
+
     const manager = getWahaManager();
     await manager.handleWebhookEvent({
       session: body.session,
@@ -37,9 +73,10 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ received: true });
-  } catch (err: any) {
-    // WAHA expects 200 even on errors — it will retry otherwise
-    console.error('WAHA webhook hatası:', err.message);
-    return NextResponse.json({ received: true, error: err.message });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Bilinmeyen webhook hatası';
+    console.error('[webhook] WAHA webhook hatası:', message);
+    // Return 200 so WAHA doesn't retry, but include the error for observability
+    return NextResponse.json({ received: true, error: message });
   }
 }

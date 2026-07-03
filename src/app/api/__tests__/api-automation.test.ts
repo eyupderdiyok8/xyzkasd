@@ -6,7 +6,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockAuth = {
-  ok: true, userId: 'user-1', role: 'manager' as const, tenantId: 'tenant-1', error: null, plan: 'PROFESSIONAL',
+  ok: true, userId: 'user-1', role: 'manager' as const, tenantId: 'tenant-1', error: null, membershipType: 'MONTHLY', expiresAt: new Date(Date.now() + 365 * 86400000).toISOString(), isActive: true,
 };
 
 vi.mock('@/lib/supabase/require-feature', () => ({
@@ -60,7 +60,7 @@ describe('GET /api/automation/rules', () => {
   });
   it('returns 403 when feature not available', async () => {
     const { requireFeature } = await import('@/lib/supabase/require-feature');
-    vi.mocked(requireFeature).mockResolvedValueOnce({ ok: false, userId: null, role: null, tenantId: null, error: { status: 403, code: 'FORBIDDEN', message: '' }, plan: 'STARTER' });
+    vi.mocked(requireFeature).mockResolvedValueOnce({ ok: false, userId: null, role: null, tenantId: null, error: { status: 403, code: 'FORBIDDEN', message: '' }, membershipType: 'MONTHLY', expiresAt: null, isActive: false });
     const { GET } = await import('../automation/rules/route');
     const res = await GET(mockReq());
     expect(res.status).toBe(403);

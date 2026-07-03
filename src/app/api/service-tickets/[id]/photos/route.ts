@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ServiceTicketRepository } from '@/repositories/service-ticket.repository';
 import { ServicePhotoStorage } from '@/lib/storage/service-photos';
-import type { ProfileRow } from '@/lib/supabase/types';
 import { requireRole } from '@/lib/supabase/require-role';
 
 async function getRepo() {
-  const su = await createServerSupabaseClient();
-  const { data: { user } } = await su.auth.getUser();
-  if (!user) return null;
-  const { data: _p } = await su.from('profiles').select('*').eq('id', user.id).single();
-  const p = _p as ProfileRow | null;
-  if (!p || !p.tenant_id) return null;
-  const profile = p as ProfileRow & { tenant_id: string };
+  const auth = await requireRole('technician');
+  if (!auth.ok || !auth.tenantId) return null;
   return {
-    repo: new ServiceTicketRepository({ tenantId: profile.tenant_id, role: profile.role, userId: user.id }),
-    profile,
+    repo: new ServiceTicketRepository({ tenantId: auth.tenantId, role: auth.role!, userId: auth.userId }),
+    tenantId: auth.tenantId,
   };
 }
 
@@ -34,12 +27,6 @@ export async function POST(
     return NextResponse.json({ error: { code: 'UNAUTHORIZED' } }, { status: 401 });
   }
 
-  // Require minimum technician role for uploading photos
-  const roleCheck = await requireRole('technician');
-  if (!roleCheck.ok) {
-    return NextResponse.json({ error: roleCheck.error }, { status: roleCheck.error!.status });
-  }
-
   let b;
   try { b = await req.json(); } catch {
     return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Geçersiz JSON' } }, { status: 400 });
@@ -54,7 +41,7 @@ export async function POST(
   try {
     const storage = new ServicePhotoStorage();
     const { uploadUrl, publicUrl, storagePath } = await storage.getUploadUrl(
-      ctx.profile.tenant_id,
+      ctx.tenantId,
       id,
       String(b.fileName),
       String(b.contentType),
@@ -63,7 +50,7 @@ export async function POST(
     // Record photo metadata in DB
     const photo = await ctx.repo.addPhoto({
       ticketId: id,
-      tenantId: ctx.profile.tenant_id,
+      tenantId: ctx.tenantId,
       storagePath,
       fileName: String(b.fileName),
       mimeType: String(b.contentType),

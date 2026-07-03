@@ -4,7 +4,7 @@
 // Basit in-memory cache, 60 saniye TTL.
 // ──────────────────────────────────────────────
 
-import { prismaClient } from '@/repositories/base.repository';
+import { prisma } from '@/lib/prisma';
 
 const cache = new Map<string, { value: string; ts: number }>();
 const CACHE_TTL_MS = 60_000; // 1 dakika
@@ -17,21 +17,22 @@ export async function getSetting(key: string): Promise<string | null> {
   }
 
   try {
-    const row = await (prismaClient as any).systemSetting.findUnique({ where: { key } });
+    const row = await prisma.systemSetting.findUnique({ where: { key } });
     const value = row?.value ?? null;
     if (value !== null) {
       cache.set(key, { value, ts: Date.now() });
     }
     return value;
-  } catch {
+  } catch (err) {
     // Tablo yoksa veya DB hatası varsa null dön
+    console.warn('[system-settings] getSetting failed for key=%s: %s', key, err instanceof Error ? err.message : String(err));
     return null;
   }
 }
 
 /** Bir ayarın değerini güncelle. */
 export async function setSetting(key: string, value: string, updatedBy?: string): Promise<void> {
-  await (prismaClient as any).systemSetting.upsert({
+  await prisma.systemSetting.upsert({
     where: { key },
     create: { key, value, updatedBy },
     update: { value, updatedBy },

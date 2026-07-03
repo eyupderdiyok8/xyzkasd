@@ -13,6 +13,12 @@ export async function POST(
   const { id } = await params;
   const auth = await requireRole('technician');
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
+  if (!auth.tenantId) {
+    return NextResponse.json(
+      { error: { code: 'FORBIDDEN', message: 'Lütfen üst menüden bir firma seçin.' } },
+      { status: 403 },
+    );
+  }
 
   let b;
   try { b = await req.json(); } catch {
@@ -27,7 +33,7 @@ export async function POST(
   // Store the photo path in DB (just the path reference — we'll embed the base64 directly)
   try {
     const item = await prisma.inventoryItem.update({
-      where: { id, tenantId: auth.tenantId! },
+      where: { id, tenantId: auth.tenantId },
       data: { photoPath: photo },
     });
     return NextResponse.json({ data: { photoPath: item.photoPath } });

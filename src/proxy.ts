@@ -1,13 +1,16 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { getMinimumRoleForPath, ROLE_HIERARCHY } from '@/lib/roles';
-import { getRequiredFeatureForPath, hasFeature, type PlanType } from '@/lib/features';
+import { getRequiredFeatureForPath, getMembershipStatus, type MembershipType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/auth/callback', '/auth/logout', '/auth/forgot-password', '/auth/reset-password', '/auth/mfa', '/public', '/survey', '/neden', '/nasil-calisir', '/fiyat', '/ogren'];
+const PUBLIC_ROUTES = ['/', '/login', '/register', '/auth/callback', '/auth/logout', '/auth/forgot-password', '/auth/reset-password', '/auth/mfa', '/public', '/qr', '/survey', '/neden', '/nasil-calisir', '/fiyat', '/ogren', '/upgrade'];
 const LOGIN_PAGE = '/login';
 const FORBIDDEN_REDIRECT = '/';
-const UPGRADE_REDIRECT = '/';
+const UPGRADE_REDIRECT = '/upgrade';
+
+/** Üyelik süresi tamamen dolduğunda bile erişilebilen sayfalar */
+const ALWAYS_ALLOWED = ['/dashboard', '/settings', '/upgrade', '/auth/logout', '/']; 
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -82,24 +85,42 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // Plan-based feature gating
-  // Block Professional-only routes if tenant is on Starter plan
+  // Membership-based feature gating
+  // GRACE period: full access + warning banner (frontend handles)
+  // EXPIRED: only dashboard/settings/upgrade allowed
   const requiredFeature = getRequiredFeatureForPath(pathname);
   if (requiredFeature && profile.tenant_id) {
     const { data: tenantRow } = await supabase
       .from('tenants')
-      .select('plan')
+      .select('membershipType, membershipExpiresAt')
       .eq('id', profile.tenant_id)
       .single();
 
-    const tenantPlan: PlanType = ((tenantRow as { plan: string } | null)?.plan as PlanType) ?? 'STARTER';
-    if (!hasFeature(tenantPlan, requiredFeature)) {
+    const row = tenantRow as { membershipType?: string; membershipExpiresAt?: string | null } | null;
+    const membershipType = (row?.membershipType as MembershipType) ?? 'MONTHLY';
+    const expiresAt = row?.membershipExpiresAt ?? null;
+
+    const status = getMembershipStatus(membershipType, expiresAt);
+
+    if (status === 'EXPIRED') {
+      // Süresi tamamen doldu — sadece temel sayfalara izin ver
+      if (ALWAYS_ALLOWED.some(r => pathname === r || pathname.startsWith(r + '/'))) {
+        return supabaseResponse;
+      }
       const url = request.nextUrl.clone();
       url.pathname = UPGRADE_REDIRECT;
       url.search = '';
-      url.searchParams.set('error', 'plan_upgrade');
-      url.searchParams.set('feature', requiredFeature);
+      url.searchParams.set('error', 'membership_expired');
       return NextResponse.redirect(url);
+    }
+
+    // GRACE period: erişime izin ver ama cookie set et (frontend banner göstersin)
+    if (status === 'GRACE') {
+      supabaseResponse.cookies.set('membership_grace', '1', {
+        path: '/',
+        maxAge: 60 * 60 * 24, // 1 gün
+        httpOnly: false,
+      });
     }
   }
 

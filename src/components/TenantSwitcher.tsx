@@ -8,7 +8,20 @@ interface Tenant {
   id: string;
   name: string;
   slug: string;
-  plan: string;
+  membershipType?: string;
+  membershipExpiresAt?: string | null;
+}
+
+/** Güvenli JSON parse — boş/geçersiz yanıtta hata fırlatmaz */
+async function safeJson(res: Response): Promise<any> {
+  if (!res.ok) return null;
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
 export default function TenantSwitcher() {
@@ -21,15 +34,20 @@ export default function TenantSwitcher() {
   useEffect(() => {
     // Only load for super_admin
     fetch('/api/auth/me')
-      .then((r) => r.json())
+      .then(safeJson)
       .then((j) => {
-        setRole(j.data?.role ?? null);
-        if (j.data?.role !== 'super_admin') return;
+        if (!j?.data) { setLoading(false); return; }
+        setRole(j.data.role ?? null);
+        setSelectedId(j.data.effectiveTenantId ?? 'all');
+        if (j.data.role !== 'super_admin') { setLoading(false); return; }
         // Load tenants
         fetch('/api/tenants')
-          .then((r) => r.json())
-          .then((tj) => setTenants(tj.data ?? []))
-          .finally(() => setLoading(false));
+          .then(safeJson)
+          .then((tj) => {
+            setTenants(tj?.data ?? []);
+            setLoading(false);
+          })
+          .catch(() => setLoading(false));
       })
       .catch(() => setLoading(false));
   }, []);
@@ -42,15 +60,13 @@ export default function TenantSwitcher() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tenantId: tenantId === 'all' ? null : tenantId }),
       });
-      router.refresh(); // Re-render server components with new cookie
+      router.refresh();
     } catch {
       // ignore
     }
   }, [router]);
 
   if (role !== 'super_admin' || loading) return null;
-
-  const selectedTenant = tenants.find((t) => t.id === selectedId);
 
   return (
     <div className="relative">
@@ -67,12 +83,6 @@ export default function TenantSwitcher() {
         ))}
       </select>
       <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      {selectedTenant && (
-        <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
-          <Building2 className="h-3 w-3" />
-          {selectedTenant.name}
-        </span>
-      )}
     </div>
   );
 }

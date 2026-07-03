@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { ProfileRow } from '@/lib/supabase/types';
+import { cookies } from 'next/headers';
 
 /**
  * GET /api/auth/me
@@ -31,6 +32,13 @@ export async function GET() {
     );
   }
 
+  let effectiveTenantId = profile.tenant_id;
+  if (profile.role === 'super_admin') {
+    const cookieStore = await cookies();
+    const tenantCtx = cookieStore.get('tenant_ctx')?.value;
+    effectiveTenantId = tenantCtx && tenantCtx !== 'all' ? tenantCtx : null;
+  }
+
   return NextResponse.json({
     data: {
       id: profile.id,
@@ -38,6 +46,7 @@ export async function GET() {
       fullName: profile.full_name,
       role: profile.role,
       tenantId: profile.tenant_id,
+      effectiveTenantId,
       isActive: profile.is_active,
     },
   });

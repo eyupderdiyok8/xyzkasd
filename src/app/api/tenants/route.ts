@@ -14,7 +14,11 @@ export async function GET() {
 
   const tenants = await prismaClient.tenant.findMany({
     where: { isActive: true },
-    select: { id: true, name: true, slug: true, plan: true, isActive: true },
+    select: {
+      id: true, name: true, slug: true,
+      membershipType: true, membershipExpiresAt: true,
+      isActive: true,
+    },
     orderBy: { name: 'asc' },
   });
 
@@ -23,7 +27,7 @@ export async function GET() {
 
 /**
  * POST /api/tenants
- * Body: { name, slug, plan? }
+ * Body: { name, slug, membershipType?, membershipExpiresAt? }
  * Creates a new tenant — super_admin only.
  */
 export async function POST(request: NextRequest) {
@@ -32,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
   }
 
-  let body: { name: string; slug: string; plan?: string };
+  let body: { name: string; slug: string; membershipType?: string; membershipExpiresAt?: string };
   try {
     body = await request.json();
   } catch {
@@ -49,12 +53,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const validTypes = ['MONTHLY', 'YEARLY', 'FOUNDER'];
+  const type = body.membershipType && validTypes.includes(body.membershipType)
+    ? body.membershipType
+    : 'MONTHLY';
+
   try {
     const tenant = await prismaClient.tenant.create({
       data: {
         name: body.name.trim(),
         slug: body.slug.trim().toLowerCase(),
-        plan: (body.plan as any) ?? 'STARTER',
+        membershipType: type,
+        membershipExpiresAt: body.membershipExpiresAt
+          ? new Date(body.membershipExpiresAt)
+          : null,
         isActive: true,
       },
     });

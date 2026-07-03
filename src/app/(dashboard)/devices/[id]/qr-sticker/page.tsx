@@ -42,7 +42,7 @@ export default function QrStickerPage() {
 
         if (d.qrCode) {
           const origin = typeof window !== 'undefined' ? window.location.origin : '';
-          const qrUrl = `${origin}/public/device/${encodeURIComponent(d.qrCode)}`;
+          const qrUrl = `${origin}/qr/${encodeURIComponent(d.qrCode)}`;
           const dataUrl = await QRCode.toDataURL(qrUrl, {
             width: 300,
             margin: 2,

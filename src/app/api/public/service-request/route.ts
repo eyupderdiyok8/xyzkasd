@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { AuditService } from '@/lib/audit.service';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 function generateTicketNo(): string {
   const date = new Date();
   const y = date.getFullYear().toString().slice(-2);
   const m = (date.getMonth() + 1).toString().padStart(2, '0');
   const d = date.getDate().toString().padStart(2, '0');
-  const seq = Math.random().toString(36).slice(2, 6).toUpperCase();
+  const seq = crypto.randomUUID().replace(/-/g, '').slice(0, 4).toUpperCase();
   return `SRV-${y}${m}${d}-${seq}`;
 }
 
@@ -52,6 +53,18 @@ export async function POST(req: Request) {
         },
       },
       { status: 400 },
+    );
+  }
+
+  // Rate limit: en fazla 3 servis talebi / dakika / IP
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    ?? req.headers.get('x-real-ip')
+    ?? 'unknown';
+  const rl = checkRateLimit(ip, { keyPrefix: 'service-request', maxRequests: 3 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: { code: 'RATE_LIMITED', message: `Çok fazla istek. ${rl.retryAfter} saniye sonra tekrar deneyin.` } },
+      { status: 429 },
     );
   }
 

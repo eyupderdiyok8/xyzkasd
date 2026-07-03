@@ -33,12 +33,10 @@ async function saveSubscriptions(subs: PushSubscriptionRecord[]): Promise<void> 
 }
 
 export async function POST(req: NextRequest) {
-  // Kimlik doğrulama: giriş yapmış herhangi bir kullanıcı
+  // Kimlik doğrulama: giriş yapmış herhangi bir kullanıcı zorunlu
   const auth = await requireRole('viewer');
-  if (!auth.ok && auth.error?.status === 401) {
-    // Kimlik doğrulama başarısız — ancak push aboneliği
-    // istemci tarafında yapıldıysa auth gerekmeyebilir.
-    // Bu durumda oturum olmadan da kabul edelim (anonim push).
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
   }
 
   let body: { endpoint?: string; keys?: { p256dh: string; auth: string } };
@@ -91,6 +89,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  // Kimlik doğrulama zorunlu
+  const auth = await requireRole('viewer');
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
+  }
+
   let body: { endpoint?: string };
   try {
     body = await req.json();

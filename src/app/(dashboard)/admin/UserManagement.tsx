@@ -12,6 +12,7 @@ interface User {
   role: UserRole;
   tenant_id: string | null;
   is_active: boolean;
+  tenantName?: string;
 }
 
 const ROLES: UserRole[] = ['super_admin', 'tenant_admin', 'manager', 'technician', 'viewer'];
@@ -19,9 +20,12 @@ const ROLES: UserRole[] = ['super_admin', 'tenant_admin', 'manager', 'technician
 export default function UserManagement({ currentRole }: { currentRole: UserRole }) {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
+  const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const isSuperAdmin = currentRole === 'super_admin';
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -29,12 +33,21 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
       const json = await res.json();
       if (!res.ok) throw new Error(json.error?.message ?? 'Failed to fetch');
       setUsers(json.data ?? []);
-    } catch (err: any) {
-      setError(err.message);
+
+      // Super admin için tenant listesini yükle
+      if (currentRole === 'super_admin') {
+        const tRes = await fetch('/api/tenants');
+        const tJson = await tRes.json();
+        if (tJson.data) {
+          setTenants(tJson.data);
+        }
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentRole]);
 
   useEffect(() => {
     fetchUsers();
@@ -77,8 +90,31 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
           u.id === userId ? { ...u, is_active: !currentActive } : u,
         ),
       );
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Güncelleme başarısız');
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function handleTenantChange(userId: string, newTenantId: string) {
+    setUpdatingId(userId);
+    setError(null);
+    try {
+      const res = await fetch('/api/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: userId, tenant_id: newTenantId || null }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error?.message ?? 'Güncelleme başarısız');
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId ? { ...u, tenant_id: newTenantId || null } : u,
+        ),
+      );
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Güncelleme başarısız');
     } finally {
       setUpdatingId(null);
     }
@@ -123,8 +159,8 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
               <th className="px-4 py-3 text-left font-medium text-gray-500">E-posta</th>
               <th className="px-4 py-3 text-left font-medium text-gray-500">Ad Soyad</th>
               <th className="px-4 py-3 text-left font-medium text-gray-500">Rol</th>
+              {isSuperAdmin && <th className="px-4 py-3 text-left font-medium text-gray-500">Firma</th>}
               <th className="px-4 py-3 text-left font-medium text-gray-500">Durum</th>
-              <th className="px-4 py-3 text-left font-medium text-gray-500">İşlem</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -148,6 +184,21 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
                     ))}
                   </select>
                 </td>
+                {isSuperAdmin && (
+                  <td className="px-4 py-3">
+                    <select
+                      value={u.tenant_id || ''}
+                      disabled={updatingId === u.id}
+                      onChange={(e) => handleTenantChange(u.id, e.target.value)}
+                      className="rounded-md border border-gray-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 max-w-[140px]"
+                    >
+                      <option value="">— Firma seç —</option>
+                      {tenants.map((t) => (
+                        <option key={t.id} value={t.id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </td>
+                )}
                 <td className="px-4 py-3">
                   <button
                     onClick={() => handleToggleActive(u.id, u.is_active)}
@@ -161,14 +212,11 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
                     {u.is_active ? 'Aktif' : 'Pasif'}
                   </button>
                 </td>
-                <td className="px-4 py-3 text-xs text-gray-400">
-                  {updatingId === u.id ? 'Güncelleniyor…' : u.tenant_id ?? '—'}
-                </td>
               </tr>
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
+                <td colSpan={isSuperAdmin ? 5 : 4} className="px-4 py-8 text-center text-gray-400">
                   Henüz kullanıcı bulunmuyor
                 </td>
               </tr>

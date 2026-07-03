@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { hasRole } from '@/lib/roles';
 import { ROLE_LABELS } from '@/lib/roles';
-import { hasFeature, type PlanType } from '@/lib/features';
+import { isMembershipActive, type MembershipType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 import {
   LayoutDashboard, Users, Wrench, Filter, Package, ClipboardList,
@@ -57,18 +57,21 @@ const BOTTOM_TABS: Array<{ href: string; label: string; icon: React.ElementType 
 interface DashboardShellProps {
   children: React.ReactNode;
   role: UserRole;
-  plan: PlanType;
+  membershipType: MembershipType | null;
+  membershipExpiresAt: string | null;
   fullName: string | null;
   email: string | null;
 }
 
-export default function DashboardShell({ children, role, plan, fullName, email }: DashboardShellProps) {
+export default function DashboardShell({ children, role, membershipType, membershipExpiresAt, fullName, email }: DashboardShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const membershipActive = isMembershipActive(membershipType, membershipExpiresAt);
+
   const visibleItems = NAV_ITEMS.filter(
-    (item) => hasRole(role, item.minRole) && (!item.requiredFeature || hasFeature(plan, item.requiredFeature)),
+    (item) => hasRole(role, item.minRole) && (!item.requiredFeature || membershipActive),
   );
 
   // ── Desktop Sidebar (md+) ──────────────────
@@ -86,13 +89,15 @@ export default function DashboardShell({ children, role, plan, fullName, email }
       </div>
 
       {/* Tenant Switcher (super_admin only) */}
-      <div className={cn('px-3 py-2 border-b border-border', collapsed && 'flex justify-center')}>
-        <TenantSwitcher />
-      </div>
+      {role === 'super_admin' && (
+        <div className={cn('px-3 py-2 border-b border-border', collapsed && 'flex justify-center')}>
+          <TenantSwitcher />
+        </div>
+      )}
 
       {/* Nav */}
       <div className="flex-1 overflow-hidden">
-        <SidebarNav role={role} plan={plan} collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
+        <SidebarNav role={role} membershipType={membershipType} membershipExpiresAt={membershipExpiresAt} collapsed={collapsed} onToggleCollapse={() => setCollapsed(!collapsed)} />
       </div>
 
       {/* User */}

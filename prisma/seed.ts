@@ -33,19 +33,19 @@ async function main() {
     data: {
       name: 'Su Arıtma A.Ş.',
       slug: 'suaritma',
-      plan: 'PROFESSIONAL',
+      membershipType: 'YEARLY',
     },
   });
-  console.log(`  ✓ Tenant: ${tenant.name} (${tenant.plan})`);
+  console.log(`  ✓ Tenant: ${tenant.name} (${tenant.membershipType})`);
 
   const starterTenant = await prisma.tenant.create({
     data: {
       name: 'Minik Filtre Ltd.',
       slug: 'minikfiltre',
-      plan: 'STARTER',
+      membershipType: 'MONTHLY',
     },
   });
-  console.log(`  ✓ Tenant: ${starterTenant.name} (${starterTenant.plan})`);
+  console.log(`  ✓ Tenant: ${starterTenant.name} (${starterTenant.membershipType})`);
 
   // Create Customers
   const customer1 = await prisma.customer.create({

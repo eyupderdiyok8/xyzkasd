@@ -1,16 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 /**
  * GET /api/public/qr/[code]
- * Public endpoint — no auth required.
- * Returns device info + service history by QR code.
+ * Public endpoint — no auth required (by design).
+ *
+ * QR codes are generated as QR-XXXXXXXXXXXX (16 random hex chars = 64 bits).
+ * Rate-limited to 20 req/min per IP. Brute-force is computationally infeasible.
+ *
+ * Returns device info + service history for customer self-service.
  */
 export async function GET(
-  _: unknown,
+  request: NextRequest,
   { params }: { params: { code: string } },
 ) {
   try {
+    // Rate limit: en fazla 20 QR taraması / dakika / IP
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      ?? request.headers.get('x-real-ip')
+      ?? 'unknown';
+    const rl = checkRateLimit(ip, { keyPrefix: 'qr-lookup', maxRequests: 20 });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: { code: 'RATE_LIMITED', message: `Çok fazla istek. ${rl.retryAfter} saniye sonra tekrar deneyin.` } },
+        { status: 429 },
+      );
+    }
+
     const device = await prisma.device.findUnique({
       where: { qrCode: params.code },
       include: {
