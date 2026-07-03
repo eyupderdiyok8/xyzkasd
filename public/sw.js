@@ -76,7 +76,7 @@ async function cacheFirst(request) {
       const offlinePage = await caches.match('/offline');
       if (offlinePage) return offlinePage;
     }
-    return new Response('Çevrimdışı', { status: 503, statusText: 'Çevrimdışı' });
+    return new Response('Çevrimdışı', { status: 503 });
   }
 }
 
