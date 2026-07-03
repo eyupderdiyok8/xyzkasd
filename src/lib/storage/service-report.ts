@@ -1,9 +1,25 @@
 import PDFDocument from 'pdfkit/js/pdfkit.standalone';
 import { createClient } from '@supabase/supabase-js';
 import path from 'node:path';
+import fs from 'node:fs';
 
-const FONT_REGULAR = path.join(process.cwd(), 'public', 'fonts', 'Roboto-Regular.ttf');
-const FONT_BOLD = path.join(process.cwd(), 'public', 'fonts', 'Roboto-Bold.ttf');
+function resolveFont(name: string): string {
+  // Try multiple paths: Vercel serverless, local dev, Docker
+  const candidates = [
+    path.join(process.cwd(), 'public', 'fonts', name),
+    path.join(process.cwd(), 'fonts', name),
+    path.join(__dirname, '..', '..', '..', '..', 'public', 'fonts', name),
+    path.join(__dirname, '..', '..', '..', '..', '..', 'public', 'fonts', name),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  // Fallback: copy from a URL at runtime
+  return candidates[0]; // will fail but gives clear error
+}
+
+const FONT_REGULAR = resolveFont('Roboto-Regular.ttf');
+const FONT_BOLD = resolveFont('Roboto-Bold.ttf');
 
 // ─── Types ──────────────────────────────────────
 
