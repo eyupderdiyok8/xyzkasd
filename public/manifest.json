@@ -1,13 +1,13 @@
 {
-  "name": "suaritmaservisyazilimi.com.tr",
-  "short_name": "Su Arıtma Yazılımı",
-  "description": "Multi-tenant ERP for water purifier service management",
-  "start_url": "/dashboard",
+  "name": "Su Arıtma Servis Yazılımı",
+  "short_name": "Su Arıtma ERP",
+  "description": "Su arıtma servis firmaları için çok kiracılı, kapsamlı ve güvenli yönetim platformu.",
+  "start_url": "/login",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "theme_color": "#1e40af",
-  "background_color": "#ffffff",
+  "background_color": "#030712",
   "lang": "tr",
   "dir": "ltr",
   "icons": [
