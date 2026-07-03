@@ -1,57 +1,30 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ServiceTicketRepository } from '@/repositories/service-ticket.repository';
 import { generateServiceReport, saveReportToStorage } from '@/lib/storage/service-report';
-import type { ProfileRow } from '@/lib/supabase/types';
 import { requireRole } from '@/lib/supabase/require-role';
-
-async function getRepo() {
-  const su = await createServerSupabaseClient();
-  const { data: { user } } = await su.auth.getUser();
-  if (!user) return null;
-  const { data: _p } = await su.from('profiles').select('*').eq('id', user.id).single();
-  const p = _p as ProfileRow | null;
-  if (!p || !p.tenant_id) return null;
-  const profile = p as ProfileRow & { tenant_id: string };
-  return { repo: new ServiceTicketRepository({ tenantId: profile.tenant_id, role: profile.role, userId: user.id }), profile };
-}
 
 /**
  * POST /api/service-tickets/:id/report
  * Generates a PDF service report for the completed ticket and saves to Supabase Storage.
- * Updates the ticket with the pdfStoragePath.
  */
 export async function POST(_: unknown, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const ctx = await getRepo();
-  if (!ctx) return NextResponse.json({ error: { code: 'UNAUTHORIZED' } }, { status: 401 });
+  const auth = await requireRole('technician');
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
+  if (!auth.tenantId) return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Lütfen üst menüden bir firma seçin.' } }, { status: 403 });
 
-  // Require minimum technician role for generating reports
-  const roleCheck = await requireRole('technician');
-  if (!roleCheck.ok) {
-    return NextResponse.json({ error: roleCheck.error }, { status: roleCheck.error!.status });
-  }
+  const repo = new ServiceTicketRepository({ tenantId: auth.tenantId, role: auth.role!, userId: auth.userId });
 
   try {
-    const ticket = await ctx.repo.findById(id);
-
+    const ticket = await repo.findById(id);
     if (ticket.status !== 'COMPLETED') {
-      return NextResponse.json({
-        error: { code: 'VALIDATION_ERROR', message: 'Rapor sadece tamamlanmış servis kayıtları için oluşturulabilir' },
-      }, { status: 400 });
+      return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Rapor sadece tamamlanmış servis kayıtları için oluşturulabilir' } }, { status: 400 });
     }
 
-    // Get tenant info
-    const tenant = await ctx.repo.getTenant(ctx.profile.tenant_id);
+    const tenant = await repo.getTenant(auth.tenantId);
+    const filterChanges = ticket.filterChanges.map((fc: any) => ({ filterName: fc.filter.name, stage: fc.filter.stage, quantity: fc.quantity }));
 
-    // Convert filter changes to report format
-    const filterChanges = ticket.filterChanges.map((fc) => ({
-      filterName: fc.filter.name,
-      stage: fc.filter.stage,
-      quantity: fc.quantity,
-    }));
-
-    const reportData = {
+    const pdfBuffer = await generateServiceReport({
       ticketNo: ticket.ticketNo,
       tenantName: tenant?.name ?? '',
       tenantLogo: (tenant as any)?.logo ?? undefined,
@@ -60,11 +33,7 @@ export async function POST(_: unknown, { params }: { params: Promise<{ id: strin
       tenantAddress: tenant?.address ?? undefined,
       customerName: ticket.customer.name,
       customerPhone: ticket.customer.phone ?? undefined,
-      customerAddress: [
-        ticket.customer.district,
-        ticket.customer.city,
-        ticket.customer.address,
-      ].filter(Boolean).join(', ') || undefined,
+      customerAddress: [ticket.customer.district, ticket.customer.city, ticket.customer.address].filter(Boolean).join(', ') || undefined,
       deviceBrand: ticket.device.brand,
       deviceModel: ticket.device.model,
       deviceSerial: ticket.device.serialNo,
@@ -84,24 +53,12 @@ export async function POST(_: unknown, { params }: { params: Promise<{ id: strin
       filterChanges,
       completedAt: ticket.completedAt?.toLocaleDateString('tr-TR'),
       reportConfig: (tenant as any)?.reportConfig ?? undefined,
-    };
+    });
 
-    // Generate PDF
-    const pdfBuffer = await generateServiceReport(reportData);
+    const { publicUrl, storagePath } = await saveReportToStorage(auth.tenantId, ticket.ticketNo, pdfBuffer);
+    await repo.updatePdfStoragePath(id, storagePath);
 
-    // Save to Supabase Storage
-    const { publicUrl, storagePath } = await saveReportToStorage(
-      ctx.profile.tenant_id!,
-      ticket.ticketNo,
-      pdfBuffer,
-    );
-
-    // Update ticket with PDF storage path
-    await ctx.repo.updatePdfStoragePath(id, storagePath);
-
-    return NextResponse.json({
-      data: { publicUrl, storagePath },
-    }, { status: 201 });
+    return NextResponse.json({ data: { publicUrl, storagePath } }, { status: 201 });
   } catch (e: any) {
     return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: e.message } }, { status: 500 });
   }
