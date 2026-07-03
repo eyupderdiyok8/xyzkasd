@@ -162,9 +162,10 @@ export default function LandingPage() {
             <span className="hidden sm:inline text-lg font-bold tracking-tight">suaritmaservisyazilimi.com.tr</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm font-medium text-gray-400 md:flex">
-            <a href="#features" className="transition-colors hover:text-white">Özellikler</a>
-            <a href="#stats" className="transition-colors hover:text-white">Rakamlar</a>
-            <a href="#plans" className="transition-colors hover:text-white">Fiyatlandırma</a>
+            <a href="/neden" className="transition-colors hover:text-white">Neden</a>
+            <a href="/nasil-calisir" className="transition-colors hover:text-white">Nasıl Çalışır</a>
+            <a href="/fiyat" className="transition-colors hover:text-white">Fiyat</a>
+            <a href="/ogren" className="transition-colors hover:text-white">Öğren</a>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link href="/login" className="text-xs sm:text-sm font-medium text-gray-400 transition-colors hover:text-white">Giriş Yap</Link>
