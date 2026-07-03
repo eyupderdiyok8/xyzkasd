@@ -184,36 +184,65 @@ export default function LandingPage() {
           <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`, backgroundSize: '64px 64px' }} />
         </div>
         <div className="relative mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-4 py-1.5 text-sm text-blue-300 backdrop-blur-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
-              </span>
-              Sınırsız Cihaz ve Müşteri · Gizli Ücret Yok · 3 Katmanlı Güvenlik
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left — Text */}
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/5 px-4 py-1.5 text-sm text-blue-300 backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-400" />
+                </span>
+                Sınırsız Cihaz ve Müşteri · Gizli Ücret Yok · 3 Katmanlı Güvenlik
+              </div>
+              <h1 className="mt-8 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+                Su Arıtma Servisinizin{' '}
+                <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent">Tüm Gücü</span>{' '}
+                Tek Bir Platformda
+              </h1>
+              <p className="mt-6 text-lg leading-relaxed text-gray-400 sm:text-xl">
+                Cihaz takibinden otomatik WhatsApp bildirimlerine, filtre ömrü hesaplamadan internet yokken bile sahada tahsilat almaya kadar — su arıtma servis firmalarının ihtiyacı olan her şey tek bir yerde.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Link href="/register" className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:scale-[1.02]">
+                  🗓️ Hemen Başlayın
+                  <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                <a href="#features" className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-300">
+                  Platformu Keşfedin ↓
+                </a>
+              </div>
+              <p className="mt-8 text-sm text-gray-600">
+                ⚡ <span className="font-mono text-gray-400">500+</span> aktif cihaz ve servis süreci başarıyla yönetiliyor.
+              </p>
             </div>
-            <h1 className="mt-8 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
-              Su Arıtma Servisinizin{' '}
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300 bg-clip-text text-transparent">Tüm Gücü</span>{' '}
-              Tek Bir Platformda
-            </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl">
-              Cihaz takibinden otomatik WhatsApp bildirimlerine, filtre ömrü hesaplamadan internet yokken bile sahada tahsilat almaya kadar — su arıtma servis firmalarının ihtiyacı olan her şey tek bir yerde.
-            </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/register" className="group inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-4 text-base font-bold text-white shadow-2xl shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:scale-[1.02]">
-                🗓️ Aylık / Yıllık / Lifetime Seçenekleriyle Başlayın
-                <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-              <a href="#features" className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-gray-300">
-                Platformu Keşfedin ↓
-              </a>
+
+            {/* Right — Video / Demo */}
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-blue-500/10">
+                {/* Placeholder video — replace src with your own */}
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  poster="/demo-poster.jpg"
+                  className="w-full aspect-[4/3] object-cover bg-gray-900"
+                >
+                  <source src="/demo.mp4" type="video/mp4" />
+                </video>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-gray-950/40 to-transparent pointer-events-none" />
+                {/* Play badge */}
+                <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-sm px-4 py-2 text-xs text-white">
+                  <span className="flex h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                  Demo Video
+                </div>
+              </div>
+              {/* Decorative glow behind video */}
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-blue-500/10 to-cyan-500/10 blur-2xl -z-10" />
             </div>
-            <p className="mt-8 text-sm text-gray-600">
-              ⚡ <span className="font-mono text-gray-400">500+</span> aktif cihaz ve servis süreci başarıyla yönetiliyor.
-            </p>
           </div>
         </div>
       </section>
