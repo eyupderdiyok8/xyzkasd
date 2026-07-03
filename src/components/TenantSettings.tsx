@@ -1,10 +1,18 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Upload, X, Check } from 'lucide-react';
+import { Settings, Upload, X, Check, Palette } from 'lucide-react';
+import {
+  APP_THEME_PRESETS,
+  DEFAULT_APP_THEME,
+  parseAppThemeConfig,
+  stringifyAppThemeConfig,
+  type AppThemePresetId,
+} from '@/lib/app-theme';
 
 interface TenantInfo {
   id: string;
@@ -17,6 +25,7 @@ interface TenantInfo {
   email: string | null;
   address: string | null;
   reportConfig: string | null;
+  themeConfig: string | null;
   googleReviewUrl: string | null;
   surveyMessage: string | null;
   mfaRequired: boolean;
@@ -130,6 +139,10 @@ export default function TenantSettings() {
   const [config, setConfig] = useState<ReportConfig>({ ...DEFAULT_CONFIG });
   const [configChanged, setConfigChanged] = useState(false);
 
+  // App theme state
+  const [appTheme, setAppTheme] = useState<AppThemePresetId>(DEFAULT_APP_THEME.preset);
+  const [appThemeChanged, setAppThemeChanged] = useState(false);
+
   // Survey settings state
   const [googleReviewUrl, setGoogleReviewUrl] = useState('');
   const [surveyMessage, setSurveyMessage] = useState('');
@@ -168,6 +181,8 @@ export default function TenantSettings() {
       setLogoChanged(false);
       setConfig(parseConfig(json.data.reportConfig));
       setConfigChanged(false);
+      setAppTheme(parseAppThemeConfig(json.data.themeConfig).preset);
+      setAppThemeChanged(false);
       setGoogleReviewUrl(json.data.googleReviewUrl ?? '');
       setSurveyMessage(json.data.surveyMessage ?? '');
       setMfaRequired(json.data.mfaRequired ?? false);
@@ -212,6 +227,7 @@ export default function TenantSettings() {
     if (address.trim() !== (tenant.address ?? '')) updates.address = address.trim() || null;
     if (logoChanged) updates.logo = logo;
     if (configChanged) updates.reportConfig = JSON.stringify(config);
+    if (appThemeChanged) updates.themeConfig = stringifyAppThemeConfig({ preset: appTheme });
     if (googleReviewUrl.trim() !== (tenant.googleReviewUrl ?? '')) updates.googleReviewUrl = googleReviewUrl.trim() || null;
     if (surveyMessage.trim() !== (tenant.surveyMessage ?? '')) updates.surveyMessage = surveyMessage.trim() || null;
     if (mfaRequired !== (tenant.mfaRequired ?? false)) updates.mfaRequired = mfaRequired;
@@ -233,6 +249,7 @@ export default function TenantSettings() {
 
       setSuccess('Firma bilgileri güncellendi');
       setLogoChanged(false);
+      setAppThemeChanged(false);
       fetchTenant();
     } catch (err: any) {
       setError(err.message);
@@ -284,7 +301,7 @@ export default function TenantSettings() {
             {/* Preview */}
             <div className="flex h-20 w-40 items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 overflow-hidden">
               {logo ? (
-                <img src={logo} alt="Logo" className="max-h-full max-w-full object-contain" />
+                <NextImage src={logo} alt="Logo" width={160} height={80} className="max-h-full max-w-full object-contain" unoptimized />
               ) : (
                 <span className="text-xs text-gray-400">Logo yok</span>
               )}
@@ -377,6 +394,45 @@ export default function TenantSettings() {
                 Boş bırakılırsa varsayılan mesaj kullanılır: "Sayın {'{müşteri}'}, servis işleminiz başarıyla tamamlandı..."
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Uygulama Teması */}
+        <div className="border-t pt-5">
+          <div className="mb-4 flex items-center gap-2">
+            <Palette className="h-4 w-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">Uygulama Teması</h3>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {APP_THEME_PRESETS.map((preset) => {
+              const selected = appTheme === preset.id;
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => {
+                    setAppTheme(preset.id);
+                    setAppThemeChanged(true);
+                  }}
+                  className={`rounded-lg border p-3 text-left transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                      : 'border-border bg-card hover:border-primary/40'
+                  }`}
+                >
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <span className="text-sm font-medium text-foreground">{preset.name}</span>
+                    {selected && <Check className="h-4 w-4 text-primary" />}
+                  </div>
+                  <div className="mb-3 flex h-8 overflow-hidden rounded-md border border-border">
+                    {preset.swatches.map((color) => (
+                      <span key={color} className="flex-1" style={{ backgroundColor: color }} />
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{preset.description}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
 

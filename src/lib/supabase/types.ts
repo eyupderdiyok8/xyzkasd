@@ -65,6 +65,7 @@ export interface Database {
           isActive: boolean;
           plan: string;
           reportConfig: string | null;
+          themeConfig: string | null;
           google_review_url: string | null;
           survey_message: string | null;
           mfa_required: boolean;
@@ -87,6 +88,7 @@ export interface Database {
           isActive?: boolean;
           plan?: string;
           reportConfig?: string | null;
+          themeConfig?: string | null;
           google_review_url?: string | null;
           survey_message?: string | null;
           mfa_required?: boolean;
@@ -109,6 +111,7 @@ export interface Database {
           isActive?: boolean;
           plan?: string;
           reportConfig?: string | null;
+          themeConfig?: string | null;
           google_review_url?: string | null;
           survey_message?: string | null;
           mfa_required?: boolean;

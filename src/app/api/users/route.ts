@@ -86,6 +86,16 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
+  if (
+    target.id === auth.userId &&
+    (body.role !== undefined || body.is_active !== undefined || body.tenant_id !== undefined)
+  ) {
+    return NextResponse.json(
+      { error: { code: 'FORBIDDEN', message: 'Kendi rolünüzü, firma atamanızı veya aktiflik durumunuzu buradan değiştiremezsiniz.' } },
+      { status: 403 },
+    );
+  }
+
   // Permission checks
   if (auth.role === 'tenant_admin') {
     // tenant_admin can only manage users in their own tenant
@@ -124,7 +134,6 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error: updateError } = await (supabase.from('profiles') as any)
     .update(update)
     .eq('id', body.id);

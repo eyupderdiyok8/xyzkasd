@@ -29,6 +29,9 @@
     --success: oklch(62% 0.19 160);
     --warning: oklch(72% 0.16 80);
     --danger: oklch(55% 0.2 25);
+    --app-shell-bg: oklch(98% 0.01 250);
+    --app-sidebar-bg: oklch(100% 0 0);
+    --app-sidebar-border: oklch(92% 0.01 270);
   }
 
   .dark {
@@ -55,6 +58,9 @@
     --success: oklch(62% 0.19 160);
     --warning: oklch(72% 0.16 80);
     --danger: oklch(55% 0.15 25);
+    --app-shell-bg: oklch(20% 0.02 270);
+    --app-sidebar-bg: oklch(24% 0.02 270);
+    --app-sidebar-border: oklch(30% 0.02 270);
   }
 }
 

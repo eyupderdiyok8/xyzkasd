@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import type { DashboardStatsData } from '@/lib/dashboard-data';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Wrench, Clock, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, Clock, Wrench } from 'lucide-react';
 
 const SL: Record<string, string> = { PENDING: 'Bekliyor', ASSIGNED: 'Atandı', IN_PROGRESS: 'İşlemde', COMPLETED: 'Tamamlandı', CANCELLED: 'İptal' };
 const SV: Record<string, 'secondary' | 'default' | 'success' | 'destructive' | 'outline'> = { PENDING: 'secondary', ASSIGNED: 'default', IN_PROGRESS: 'default', COMPLETED: 'success', CANCELLED: 'destructive' };
@@ -23,62 +23,66 @@ export default function DashboardStats({ initialData }: { initialData?: Dashboar
   }, [initialData]);
 
   if (loading) return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {[1,2,3].map(i => <div key={i} className="rounded-lg border border-slate-200 bg-white p-5"><Skeleton className="h-3 w-20 mb-3" /><Skeleton className="h-8 w-12" /></div>)}
+    <div className="rounded-lg border border-border bg-card p-5 shadow-card">
+      <Skeleton className="mb-4 h-5 w-40" />
+      <div className="space-y-2">
+        {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
+      </div>
     </div>
   );
   if (error) return <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>;
   if (!data) return null;
 
+  const todayServices = data.todayServices ?? [];
+
   return (
-    <div className="space-y-4">
-      {/* KPI cards */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Kpi title="Bugünkü Servisler" value={data.todayServiceCount} icon={Wrench} color="blue" />
-        <Kpi title="Yaklaşan (30 gün)" value={data.upcomingMaintenanceCount} icon={Clock} color="emerald" />
-        <Kpi title="Gecikmiş Bakım" value={data.overdueMaintenanceCount} icon={AlertTriangle} color="red" />
+    <section className="rounded-lg border border-border bg-card shadow-card">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-4">
+        <div>
+          <h2 className="text-sm font-semibold text-card-foreground">Bugünkü Servis Akışı</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Planlanan ve işlemde olan servisleri hızlıca takip edin.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <SummaryChip icon={Wrench} label="Servis" count={data.todayServiceCount} />
+          <SummaryChip icon={Clock} label="30 gün" count={data.upcomingMaintenanceCount} />
+        </div>
       </div>
 
-      {/* Today's services */}
-      <div className="rounded-lg border border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-5 py-3">
-          <h3 className="text-sm font-semibold text-slate-900">Bugünkü Servisler</h3>
-        </div>
-        {(data.todayServices ?? []).length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-slate-400">Bugün henüz servis kaydı yok</div>
+      <div>
+        {todayServices.length === 0 ? (
+          <div className="flex items-center justify-center gap-2 px-5 py-10 text-sm text-success">
+            <CheckCircle2 className="h-4 w-4" />
+            Bugün henüz servis kaydı yok
+          </div>
         ) : (
-          <div className="divide-y divide-slate-100">
-            {(data.todayServices ?? []).map(s => (
-              <div key={s.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-50">
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs font-semibold text-blue-600">{s.ticketNo}</span>
-                  <span className="text-sm text-slate-700">{s.customer.name}</span>
+          <div className="divide-y divide-border">
+            {todayServices.map(s => (
+              <div key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-muted/50">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs font-semibold text-primary">{s.ticketNo}</span>
+                    <span className="truncate text-sm font-medium text-card-foreground">{s.customer.name}</span>
+                  </div>
+                  {s.technician && <p className="mt-1 text-xs text-muted-foreground">{s.technician.name}</p>}
                 </div>
-                <div className="flex items-center gap-3">
-                  {s.technician && <span className="text-xs text-slate-400">{s.technician.name}</span>}
-                  <Badge variant={SV[s.status] ?? 'outline'} className="text-[10px]">{SL[s.status] ?? s.status}</Badge>
-                </div>
+                <Badge variant={SV[s.status] ?? 'outline'} className="text-[10px]">{SL[s.status] ?? s.status}</Badge>
               </div>
             ))}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
-function Kpi({ title, value, icon: Icon, color }: { title: string; value: number; icon: React.ElementType; color: 'blue' | 'emerald' | 'red' }) {
-  const c = { blue: 'bg-blue-50 text-blue-600', emerald: 'bg-emerald-50 text-emerald-600', red: 'bg-red-50 text-red-600' }[color];
-  const tc = { blue: 'text-blue-700', emerald: 'text-emerald-700', red: 'text-red-700' }[color];
+function SummaryChip({ icon: Icon, label, count }: { icon: React.ElementType; label: string; count: number }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5">
-      <div className="flex items-center gap-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${c}`}><Icon className="h-4 w-4" /></div>
-        <div>
-          <p className="text-xs text-slate-500">{title}</p>
-          <p className={`text-2xl font-bold tabular-nums ${tc}`}>{value}</p>
-        </div>
-      </div>
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground">
+      <Icon className="h-3.5 w-3.5" />
+      <span>{label}</span>
+      <span className="font-semibold text-foreground">{count}</span>
     </div>
   );
 }

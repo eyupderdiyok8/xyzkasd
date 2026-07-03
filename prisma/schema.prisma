@@ -29,6 +29,7 @@ model Tenant {
   email     String?
   address   String?
   reportConfig String? @default("{\"primaryColor\":\"#1e40af\",\"footerText\":\"Bu rapor Water Purifier Service ERP sistemi tarafindan olusturulmustur.\",\"sections\":{\"customer\":true,\"device\":true,\"measurements\":true,\"filters\":true,\"signature\":true}}") // JSON: PDF tasarım ayarları
+  themeConfig  String? // JSON: Uygulama arayüz teması
   googleReviewUrl String? @map("google_review_url") // Firma Google Review linki
   surveyMessage   String? @map("survey_message")     // Özel anket davet mesajı (opsiyonel)
   isActive   Boolean   @default(true)

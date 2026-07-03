@@ -58,12 +58,12 @@ export default function MaintenanceReminders({ initialData }: { initialData?: Ma
 }
 
 function Chip({ icon: Icon, label, count, color }: { icon: React.ElementType; label: string; count: number; color: 'red' | 'amber' | 'blue' }) {
-  const c = { red: 'bg-red-50 text-red-700', amber: 'bg-amber-50 text-amber-700', blue: 'bg-blue-50 text-blue-700' }[color];
+  const c = { red: 'bg-destructive/10 text-destructive', amber: 'bg-warning/10 text-warning', blue: 'bg-primary/10 text-primary' }[color];
   return <div className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium ${c}`}><Icon className="h-3 w-3" />{label} <span className="font-bold">{count}</span></div>;
 }
 
 function Section({ title, count, children, color }: { title: string; count: number; children: React.ReactNode; color: 'red' | 'amber' | 'blue' }) {
-  const tc = { red: 'text-red-600', amber: 'text-amber-600', blue: 'text-blue-600' }[color];
+  const tc = { red: 'text-destructive', amber: 'text-warning', blue: 'text-primary' }[color];
   return (
     <div>
       <p className={`mb-1.5 text-[11px] font-semibold uppercase tracking-wider ${tc}`}>{title} ({count})</p>
@@ -73,13 +73,12 @@ function Section({ title, count, children, color }: { title: string; count: numb
 }
 
 function Row({ item, color }: { item: MaintenanceItemData; color: 'red' | 'amber' | 'blue' }) {
-  const b = { red: 'border-red-300', amber: 'border-amber-300', blue: 'border-blue-300' }[color];
-  const bg = { red: 'bg-red-50', amber: 'bg-amber-50', blue: 'bg-blue-50' }[color];
+  const b = { red: 'border-destructive/40', amber: 'border-warning/40', blue: 'border-primary/40' }[color];
   return (
-    <Link href={`/devices/${item.deviceId}`} className={`flex items-center justify-between rounded border-l-2 bg-slate-50 px-3 py-2 text-xs transition-colors hover:${bg} ${b}`}>
+    <Link href={`/devices/${item.deviceId}`} className={`flex items-center justify-between gap-3 rounded border-l-2 bg-muted/50 px-3 py-2 text-xs transition-colors hover:bg-muted ${b}`}>
       <div>
-        <p className="font-medium text-slate-700">{item.brand} {item.model}</p>
-        <p className="text-slate-400">{item.customerName ?? '—'}{item.filterName && ` · ${item.filterName}`}</p>
+        <p className="font-medium text-foreground">{item.brand} {item.model}</p>
+        <p className="text-muted-foreground">{item.customerName ?? '—'}{item.filterName && ` · ${item.filterName}`}</p>
       </div>
       {item.daysOverdue != null && <Badge variant="destructive" className="text-[10px]">{item.daysOverdue} gün</Badge>}
       {item.daysUntilDue != null && !item.daysOverdue && <Badge variant="outline" className="text-[10px]">{item.daysUntilDue} gün</Badge>}

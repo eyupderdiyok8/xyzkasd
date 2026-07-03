@@ -7,6 +7,7 @@
 -- Eksik sütunları ekle
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "membershipType" TEXT NOT NULL DEFAULT 'MONTHLY';
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "membershipExpiresAt" TIMESTAMPTZ;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "themeConfig" TEXT;
 
 -- Eski plan → membershipType dönüşümü (plan sütunu varsa)
 DO $$

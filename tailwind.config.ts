@@ -10,38 +10,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        border: 'oklch(92% 0.01 270 / <alpha-value>)',
-        input: 'oklch(92% 0.01 270 / <alpha-value>)',
-        ring: 'oklch(58% 0.16 270 / <alpha-value>)',
-        background: 'oklch(98% 0.01 250 / <alpha-value>)',
-        foreground: 'oklch(28% 0.02 270 / <alpha-value>)',
+        border: 'color-mix(in oklch, var(--border) calc(<alpha-value> * 100%), transparent)',
+        input: 'color-mix(in oklch, var(--input) calc(<alpha-value> * 100%), transparent)',
+        ring: 'color-mix(in oklch, var(--ring) calc(<alpha-value> * 100%), transparent)',
+        background: 'color-mix(in oklch, var(--background) calc(<alpha-value> * 100%), transparent)',
+        foreground: 'color-mix(in oklch, var(--foreground) calc(<alpha-value> * 100%), transparent)',
         primary: {
-          DEFAULT: 'oklch(58% 0.16 270 / <alpha-value>)',
-          foreground: 'oklch(100% 0 0 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--primary) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--primary-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         secondary: {
-          DEFAULT: 'oklch(96% 0.01 270 / <alpha-value>)',
-          foreground: 'oklch(35% 0.02 270 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--secondary) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--secondary-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         destructive: {
-          DEFAULT: 'oklch(55% 0.2 25 / <alpha-value>)',
-          foreground: 'oklch(100% 0 0 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--destructive) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--destructive-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         muted: {
-          DEFAULT: 'oklch(96% 0.01 270 / <alpha-value>)',
-          foreground: 'oklch(54% 0.03 270 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--muted) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--muted-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         accent: {
-          DEFAULT: 'oklch(72% 0.16 35 / <alpha-value>)',
-          foreground: 'oklch(100% 0 0 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--accent) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--accent-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         popover: {
-          DEFAULT: 'oklch(100% 0 0 / <alpha-value>)',
-          foreground: 'oklch(28% 0.02 270 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--popover) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--popover-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         card: {
-          DEFAULT: 'oklch(100% 0 0 / <alpha-value>)',
-          foreground: 'oklch(28% 0.02 270 / <alpha-value>)',
+          DEFAULT: 'color-mix(in oklch, var(--card) calc(<alpha-value> * 100%), transparent)',
+          foreground: 'color-mix(in oklch, var(--card-foreground) calc(<alpha-value> * 100%), transparent)',
         },
         success: 'oklch(62% 0.19 160 / <alpha-value>)',
         warning: 'oklch(72% 0.16 80 / <alpha-value>)',
@@ -57,7 +57,7 @@ const config: Config = {
         sans: ['Poppins', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        kit: '0 6px 16px oklch(58% 0.16 270 / 0.12)',
+        kit: '0 6px 16px color-mix(in oklch, var(--primary) 12%, transparent)',
         card: '0 1px 3px oklch(0% 0 0 / 0.06), 0 1px 2px oklch(0% 0 0 / 0.04)',
       },
       keyframes: {

@@ -73,7 +73,7 @@ export default function TenantSwitcher() {
       <select
         value={selectedId}
         onChange={(e) => handleSwitch(e.target.value)}
-        className="h-9 rounded-lg border border-slate-200 bg-white pl-3 pr-8 text-sm font-medium text-slate-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer"
+        className="h-9 rounded-lg border border-border bg-card pl-3 pr-8 text-sm font-medium text-card-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
       >
         <option value="all">🏢 Tüm Firmalar</option>
         {tenants.map((t) => (
@@ -82,7 +82,7 @@ export default function TenantSwitcher() {
           </option>
         ))}
       </select>
-      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+      <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
     </div>
   );
 }

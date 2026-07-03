@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { hasRole } from '@/lib/roles';
@@ -591,11 +592,14 @@ export default function DeviceDetailPage() {
         {device.photos.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 p-6 sm:grid-cols-3 md:grid-cols-4">
             {device.photos.map((photo) => (
-              <div key={photo.id} className="group relative">
-                <img
+              <div key={photo.id} className="group relative h-32">
+                <Image
                   src={getPhotoUrl(photo)}
                   alt={photo.fileName}
-                  className="h-32 w-full rounded-lg object-cover shadow-sm"
+                  fill
+                  sizes="(min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+                  className="rounded-lg object-cover shadow-sm"
+                  unoptimized
                 />
                 {photo.isPrimary && (
                   <span className="absolute left-1 top-1 rounded bg-primary px-1.5 py-0.5 text-xs text-white">

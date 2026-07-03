@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { MembershipType } from '@/lib/features';
 import type { ProfileRow } from '@/lib/supabase/types';
@@ -17,16 +18,36 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   let membershipType: MembershipType | null = null;
   let membershipExpiresAt: string | null = null;
-  if (profile.tenant_id) {
-    const { data: _tenant } = await supabase
+  let themeConfig: string | null = null;
+  let effectiveTenantId = profile.tenant_id;
+
+  if (profile.role === 'super_admin') {
+    const cookieStore = await cookies();
+    const tenantCtx = cookieStore.get('tenant_ctx')?.value;
+    effectiveTenantId = tenantCtx && tenantCtx !== 'all' ? tenantCtx : null;
+  }
+
+  if (effectiveTenantId) {
+    let { data: _tenant, error: tenantError } = await supabase
       .from('tenants')
-      .select('membershipType, membershipExpiresAt')
-      .eq('id', profile.tenant_id)
+      .select('membershipType, membershipExpiresAt, themeConfig')
+      .eq('id', effectiveTenantId)
       .single();
+
+    if (tenantError && String(tenantError.message).includes('themeConfig')) {
+      const retry = await supabase
+        .from('tenants')
+        .select('membershipType, membershipExpiresAt')
+        .eq('id', effectiveTenantId)
+        .single();
+      _tenant = retry.data;
+    }
+
     if (_tenant) {
-      const row = _tenant as { membershipType?: string; membershipExpiresAt?: string | null };
+      const row = _tenant as { membershipType?: string; membershipExpiresAt?: string | null; themeConfig?: string | null };
       membershipType = (row.membershipType as MembershipType) ?? 'MONTHLY';
       membershipExpiresAt = row.membershipExpiresAt ?? null;
+      themeConfig = row.themeConfig ?? null;
     }
   }
 
@@ -36,6 +57,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         role={profile.role}
         membershipType={membershipType}
         membershipExpiresAt={membershipExpiresAt}
+        themeConfig={themeConfig}
         fullName={profile.full_name}
         email={profile.email}
       >

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -111,7 +112,7 @@ export default function MfaSetup() {
           <div className="space-y-4 rounded-lg border p-5">
             <div className="flex flex-col items-center gap-4">
               <div className="rounded-xl border-4 border-primary/20 p-3 bg-white">
-                <img src={qrCode} alt="MFA QR Code" className="h-48 w-48" />
+                <Image src={qrCode} alt="MFA QR Code" width={192} height={192} className="h-48 w-48" unoptimized />
               </div>
               <div className="text-center space-y-1">
                 <p className="text-sm font-medium">1. Authenticator uygulamanızla QR kodu tarayın</p>

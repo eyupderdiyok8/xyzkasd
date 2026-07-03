@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import Image from 'next/image';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 
@@ -72,7 +73,7 @@ export default async function QrPage({ params }: Props) {
         {/* Tenant Header */}
         {device.tenant.logo && (
           <div className="mb-6 flex justify-center">
-            <img src={device.tenant.logo} alt={device.tenant.name} className="h-16 object-contain" />
+            <Image src={device.tenant.logo} alt={device.tenant.name} width={192} height={64} className="h-16 w-auto object-contain" unoptimized />
           </div>
         )}
         <h2 className="text-center text-sm font-medium text-slate-500">{device.tenant.name}</h2>

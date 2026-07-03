@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import NextImage from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import {
@@ -949,8 +950,8 @@ export default function ServiceRecordPage() {
             {(ticket.photos?.length ?? 0) > 0 && (
               <div className="grid grid-cols-3 gap-3">
                 {ticket.photos.map((photo) => (
-                  <div key={photo.id} className="relative group">
-                    <img src={getPhotoUrl(photo)} alt={photo.fileName} className="h-24 w-full rounded-lg object-cover" />
+                  <div key={photo.id} className="relative group h-24">
+                    <NextImage src={getPhotoUrl(photo)} alt={photo.fileName} fill sizes="33vw" className="rounded-lg object-cover" unoptimized />
                     <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-xs text-white">
                       {photo.photoType === 'BEFORE' ? 'Öncesi' : photo.photoType === 'AFTER' ? 'Sonrası' : 'Genel'}
                     </span>
@@ -1175,7 +1176,9 @@ export default function ServiceRecordPage() {
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Fotoğraflar</h2>
               <div className="grid grid-cols-3 gap-3">
                 {ticket.photos.map((photo) => (
-                  <img key={photo.id} src={getPhotoUrl(photo)} alt={photo.fileName} className="h-32 w-full rounded-lg object-cover" />
+                  <div key={photo.id} className="relative h-32">
+                    <NextImage src={getPhotoUrl(photo)} alt={photo.fileName} fill sizes="33vw" className="rounded-lg object-cover" unoptimized />
+                  </div>
                 ))}
               </div>
             </div>
@@ -1185,7 +1188,7 @@ export default function ServiceRecordPage() {
           {signatureDataUrl && (
             <div className="rounded-lg border border-border bg-white p-5">
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Müşteri İmzası</h2>
-              <img src={signatureDataUrl} alt="Müşteri imzası" className="h-20 rounded border border-border" />
+              <NextImage src={signatureDataUrl} alt="Müşteri imzası" width={320} height={80} className="h-20 w-auto rounded border border-border" unoptimized />
               {signatureName && <p className="mt-2 text-sm text-gray-600">İmzalayan: {signatureName}</p>}
             </div>
           )}

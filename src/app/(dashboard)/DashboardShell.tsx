@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -8,6 +9,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { hasRole } from '@/lib/roles';
 import { ROLE_LABELS } from '@/lib/roles';
 import { isMembershipActive, type MembershipType } from '@/lib/features';
+import { getAppThemeStyle } from '@/lib/app-theme';
 import type { UserRole } from '@/lib/supabase/types';
 import {
   LayoutDashboard, Users, Wrench, Filter, Package, ClipboardList,
@@ -59,14 +61,16 @@ interface DashboardShellProps {
   role: UserRole;
   membershipType: MembershipType | null;
   membershipExpiresAt: string | null;
+  themeConfig: string | null;
   fullName: string | null;
   email: string | null;
 }
 
-export default function DashboardShell({ children, role, membershipType, membershipExpiresAt, fullName, email }: DashboardShellProps) {
+export default function DashboardShell({ children, role, membershipType, membershipExpiresAt, themeConfig, fullName, email }: DashboardShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const themeStyle = getAppThemeStyle(themeConfig) as CSSProperties;
 
   const membershipActive = isMembershipActive(membershipType, membershipExpiresAt);
 
@@ -77,7 +81,7 @@ export default function DashboardShell({ children, role, membershipType, members
   // ── Desktop Sidebar (md+) ──────────────────
   const sidebar = (
     <aside className={cn(
-      'hidden md:flex flex-col border-r border-border bg-white transition-all duration-200 shrink-0',
+      'hidden md:flex flex-col border-r bg-[var(--app-sidebar-bg)] border-[var(--app-sidebar-border)] transition-all duration-200 shrink-0',
       collapsed ? 'w-[64px]' : 'w-60',
     )}>
       {/* Logo */}
@@ -85,7 +89,7 @@ export default function DashboardShell({ children, role, membershipType, members
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
           <Droplets className="h-4 w-4 text-white" />
         </div>
-        {!collapsed && <span className="text-sm font-bold text-slate-900">suaritmaservisyazilimi.com.tr</span>}
+        {!collapsed && <span className="text-sm font-bold text-foreground">suaritmaservisyazilimi.com.tr</span>}
       </div>
 
       {/* Tenant Switcher (super_admin only) */}
@@ -104,8 +108,8 @@ export default function DashboardShell({ children, role, membershipType, members
       <div className="border-t border-border p-2 space-y-1">
         {!collapsed && (
           <div className="px-3 py-1">
-            <p className="truncate text-xs font-medium text-slate-700">{fullName ?? email}</p>
-            <p className="text-[10px] text-slate-400">{ROLE_LABELS[role] ?? role}</p>
+            <p className="truncate text-xs font-medium text-foreground">{fullName ?? email}</p>
+            <p className="text-[10px] text-muted-foreground">{ROLE_LABELS[role] ?? role}</p>
           </div>
         )}
 
@@ -122,7 +126,7 @@ export default function DashboardShell({ children, role, membershipType, members
 
   // ── Mobile Bottom Tab Bar ──────────────────
   const bottomBar = (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border safe-bottom">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--app-sidebar-bg)] border-t border-[var(--app-sidebar-border)] safe-bottom">
       <div className="flex items-center justify-around h-14 px-1">
         {BOTTOM_TABS.map((tab) => {
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/');
@@ -160,7 +164,7 @@ export default function DashboardShell({ children, role, membershipType, members
       <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
 
       {/* Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl safe-bottom animate-fade-up max-h-[70vh] overflow-y-auto">
+      <div className="absolute bottom-0 left-0 right-0 bg-card rounded-t-2xl shadow-2xl safe-bottom animate-fade-up max-h-[70vh] overflow-y-auto">
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-slate-300" />
@@ -169,8 +173,8 @@ export default function DashboardShell({ children, role, membershipType, members
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <div>
-            <p className="text-sm font-semibold text-slate-900">{fullName ?? email}</p>
-            <p className="text-xs text-slate-400">{ROLE_LABELS[role] ?? role}</p>
+            <p className="text-sm font-semibold text-card-foreground">{fullName ?? email}</p>
+            <p className="text-xs text-muted-foreground">{ROLE_LABELS[role] ?? role}</p>
           </div>
           <button onClick={() => setMobileMenuOpen(false)} className="p-2 tap-44">
             <X className="h-5 w-5 text-slate-400" />
@@ -190,8 +194,8 @@ export default function DashboardShell({ children, role, membershipType, members
                 className={cn(
                   'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors tap-44',
                   isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-slate-600 hover:bg-slate-50',
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-muted',
                 )}
               >
                 <Icon className="h-5 w-5 shrink-0" />
@@ -216,11 +220,11 @@ export default function DashboardShell({ children, role, membershipType, members
   );
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen" style={themeStyle}>
       {sidebar}
 
       {/* Main */}
-      <main className="flex-1 overflow-auto bg-slate-50 pb-16 md:pb-0">
+      <main className="flex-1 overflow-auto bg-[var(--app-shell-bg)] pb-16 md:pb-0">
         <ErrorBoundary>
           <div className="animate-slide-in p-4 md:p-6 lg:p-8" key={pathname}>
             {children}

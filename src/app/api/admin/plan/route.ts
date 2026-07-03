@@ -17,6 +17,7 @@ import {
   formatRemainingDays,
   type MembershipType,
 } from '@/lib/features';
+import { parseAppThemeConfig, stringifyAppThemeConfig } from '@/lib/app-theme';
 
 const VALID_TYPES: MembershipType[] = ['MONTHLY', 'YEARLY', 'FOUNDER'];
 const SELECT_TENANT_MESSAGE = 'Firma ayarlarını görüntülemek için üstteki firma seçiciden bir firma seçin.';
@@ -63,15 +64,29 @@ export async function GET() {
 
   try {
     const supabase = createAdminClient();
-    const { data: tenant } = await supabase
+    let { data: tenant, error: tenantError } = await supabase
       .from('tenants')
-      .select('id, name, slug, membershipType, membershipExpiresAt, logo, phone, email, address, reportConfig, google_review_url, survey_message, mfa_required')
+      .select('id, name, slug, membershipType, membershipExpiresAt, logo, phone, email, address, reportConfig, themeConfig, google_review_url, survey_message, mfa_required')
       .eq('id', auth.tenantId)
       .single();
 
+    if (tenantError && String(tenantError.message).includes('themeConfig')) {
+      const retry = await supabase
+        .from('tenants')
+        .select('id, name, slug, membershipType, membershipExpiresAt, logo, phone, email, address, reportConfig, google_review_url, survey_message, mfa_required')
+        .eq('id', auth.tenantId)
+        .single();
+      tenant = retry.data;
+      tenantError = retry.error;
+    }
+
+    if (tenantError) {
+      throw new Error(tenantError.message);
+    }
+
     const row = tenant as unknown as (TenantRow & {
       logo?: string | null; phone?: string | null; email?: string | null;
-      address?: string | null; reportConfig?: string | null;
+      address?: string | null; reportConfig?: string | null; themeConfig?: string | null;
       google_review_url?: string | null; survey_message?: string | null;
       mfa_required?: boolean;
     }) | null;
@@ -104,6 +119,7 @@ export async function GET() {
         email: row.email ?? null,
         address: row.address ?? null,
         reportConfig: row.reportConfig ?? null,
+        themeConfig: row.themeConfig ?? null,
         googleReviewUrl: row.google_review_url ?? null,
         surveyMessage: row.survey_message ?? null,
         mfaRequired: row.mfa_required ?? false,
@@ -139,6 +155,7 @@ export async function PATCH(request: Request) {
       address?: string | null;
       logo?: string | null;
       reportConfig?: string | null;
+      themeConfig?: string | null;
       googleReviewUrl?: string | null;
       surveyMessage?: string | null;
       mfaRequired?: boolean;
@@ -178,6 +195,14 @@ export async function PATCH(request: Request) {
       } else if (typeof body.reportConfig === 'string') {
         try { JSON.parse(body.reportConfig); updates.reportConfig = body.reportConfig; }
         catch { /* ignore invalid JSON */ }
+      }
+    }
+
+    if (body.themeConfig !== undefined) {
+      if (body.themeConfig === null) {
+        updates.themeConfig = null;
+      } else if (typeof body.themeConfig === 'string') {
+        updates.themeConfig = stringifyAppThemeConfig(parseAppThemeConfig(body.themeConfig));
       }
     }
 

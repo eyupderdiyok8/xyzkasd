@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import { ROLE_LABELS, ROLE_HIERARCHY } from '@/lib/roles';
 import { MEMBERSHIP_LABELS, MEMBERSHIP_COLORS, FOUNDER_BADGE, isMembershipActive, formatRemainingDays, getRemainingDays, type MembershipType } from '@/lib/features';
 import { redirect } from 'next/navigation';
@@ -12,6 +13,7 @@ import BackupExport from '@/components/BackupExport';
 import DataImport from '@/components/DataImport';
 import MembershipAssigner from '@/components/MembershipAssigner';
 import WidgetSettings from '@/components/WidgetSettings';
+import AdminTabs, { type AdminSection } from './AdminTabs';
 
 export default async function AdminPage() {
   const supabase = await createServerSupabaseClient();
@@ -34,9 +36,15 @@ export default async function AdminPage() {
     redirect('/dashboard?error=forbidden');
   }
   const roleLabel = ROLE_LABELS[role] ?? role;
+  const isSuperAdmin = role === 'super_admin';
+  let effectiveTenantId = profile.tenant_id;
+  if (isSuperAdmin) {
+    const cookieStore = await cookies();
+    const tenantCtx = cookieStore.get('tenant_ctx')?.value;
+    effectiveTenantId = tenantCtx && tenantCtx !== 'all' ? tenantCtx : null;
+  }
 
   // Tenant bilgisi yoksa erken dön — super_admin için sorun değil, tenant_admin için uyarı
-  const isSuperAdmin = role === 'super_admin';
   if (!profile.tenant_id && !isSuperAdmin) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -59,18 +67,18 @@ export default async function AdminPage() {
   // Fetch tenant membership info
   let membershipType: MembershipType | null = null;
   let membershipExpiresAt: string | null = null;
-  let membershipLabel = 'Aylık';
+  let membershipLabel = isSuperAdmin && !effectiveTenantId ? 'Tüm firmalar' : 'Aylık';
   let membershipActive = false;
   let remainingLabel = '';
   let membershipColorClass = 'bg-gray-100 text-foreground';
 
   let tenantName = '';
   let tenantSlug = '';
-  if (profile.tenant_id) {
+  if (effectiveTenantId) {
     const { data: _tenant } = await supabase
       .from('tenants')
       .select('name, slug, membershipType, membershipExpiresAt')
-      .eq('id', profile.tenant_id)
+      .eq('id', effectiveTenantId)
       .single();
     if (_tenant) {
       const row = _tenant as { name?: string; slug?: string; membershipType?: string; membershipExpiresAt?: string | null };
@@ -91,50 +99,99 @@ export default async function AdminPage() {
     }
   }
 
+  const sections: AdminSection[] = [
+    {
+      id: 'users',
+      title: 'Kullanıcılar',
+      description: 'Ekip üyelerini, rollerini ve erişimlerini yönetin.',
+      children: <UserManagement currentRole={role} />,
+    },
+    {
+      id: 'company',
+      title: 'Firma Ayarları',
+      description: 'Firma bilgileri, logo, uygulama teması, PDF rapor ve güvenlik ayarları.',
+      children: <TenantSettings />,
+    },
+    {
+      id: 'widget',
+      title: 'Widget',
+      description: 'Web sitenizde görünen servis talep widget ayarları ve önizlemesi.',
+      children: <WidgetSettings />,
+    },
+    {
+      id: 'data',
+      title: 'Veri İşlemleri',
+      description: 'Yedek alma ve veri içe aktarma işlemlerini buradan yapın.',
+      children: (
+        <>
+          <BackupExport />
+          <DataImport />
+        </>
+      ),
+    },
+    {
+      id: 'membership',
+      title: 'Üyelik',
+      description: 'Firmanın üyelik durumunu ve plan bilgisini yönetin.',
+      children: (
+        <>
+          {role === 'super_admin' && <MembershipAssigner />}
+          <PlanManagement
+            tenantId={effectiveTenantId}
+            tenantName={tenantName}
+            tenantSlug={tenantSlug}
+            membershipType={membershipType}
+            membershipLabel={membershipLabel}
+            membershipExpiresAt={membershipExpiresAt}
+            isActive={membershipActive}
+            remainingLabel={remainingLabel}
+          />
+        </>
+      ),
+    },
+  ];
+
+  if (role === 'super_admin') {
+    sections.push({
+      id: 'system',
+      title: 'Sistem',
+      description: 'Tüm firmalar ve varsayılan sistem mesajları.',
+      children: (
+        <>
+          <TenantManagement />
+          <DefaultSurveyMessageEditor />
+        </>
+      ),
+    });
+  }
+
   return (
-    <div className="space-y-10">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Admin Panel</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Kullanıcıları, rolleri ve firmaları yönetin
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${membershipColorClass}`}>
-            {membershipLabel}
-          </span>
-          {membershipActive && membershipType !== 'FOUNDER' && (
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-              {remainingLabel}
+    <div className="mx-auto max-w-7xl space-y-6">
+      <div className="rounded-lg border border-border bg-card p-5 shadow-card">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Admin Paneli</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {tenantName ? `${tenantName} ayarlarını yönetiyorsunuz.` : 'Kullanıcıları, firma ayarlarını ve sistem işlemlerini yönetin.'}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-full px-3 py-1 text-xs font-medium ${membershipColorClass}`}>
+              {membershipLabel}
             </span>
-          )}
-          <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800">
-            {roleLabel}
-          </span>
+            {membershipActive && membershipType !== 'FOUNDER' && (
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                {remainingLabel}
+              </span>
+            )}
+            <span className="rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive">
+              {roleLabel}
+            </span>
+          </div>
         </div>
       </div>
 
-      <UserManagement currentRole={role} />
-      {(profile.tenant_id || isSuperAdmin) && <TenantSettings />}
-      <BackupExport />
-      <DataImport />
-      {role === 'super_admin' && <DefaultSurveyMessageEditor />}
-      {role === 'super_admin' && <TenantManagement />}
-      {role === 'super_admin' && <MembershipAssigner />}
-      <WidgetSettings />
-      {(profile.tenant_id || isSuperAdmin) && (
-        <PlanManagement
-          tenantId={profile.tenant_id}
-          tenantName={tenantName}
-          tenantSlug={tenantSlug}
-          membershipType={membershipType}
-          membershipLabel={membershipLabel}
-          membershipExpiresAt={membershipExpiresAt}
-          isActive={membershipActive}
-          remainingLabel={remainingLabel}
-        />
-      )}
+      <AdminTabs sections={sections} />
     </div>
   );
 }

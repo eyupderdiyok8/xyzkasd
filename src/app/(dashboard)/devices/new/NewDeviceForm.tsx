@@ -139,8 +139,6 @@ export default function NewDeviceForm() {
           <p className="mb-3 text-xs text-muted-foreground">
             Süper admin olarak cihazı hangi firmaya eklemek istediğinizi seçin.
           </p>
-          {/* Inline import via dynamic require would be ideal, but keep it simple: */}
-          {/* eslint-disable-next-line @next/next/no-async-client-component */}
           <TenantSelect value={tenantId} onChange={setTenantId} />
         </section>
       )}

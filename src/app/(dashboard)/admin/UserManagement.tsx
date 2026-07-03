@@ -21,6 +21,7 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -33,6 +34,10 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
       const json = await res.json();
       if (!res.ok) throw new Error(json.error?.message ?? 'Failed to fetch');
       setUsers(json.data ?? []);
+
+      const meRes = await fetch('/api/auth/me');
+      const meJson = await meRes.json();
+      if (meJson.data?.id) setCurrentUserId(meJson.data.id);
 
       // Super admin için tenant listesini yükle
       if (currentRole === 'super_admin') {
@@ -121,8 +126,9 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
   }
 
   // Determine which roles the current user can assign
-  const currentUserLevel = ROLE_HIERARCHY[currentRole] ?? -1;
-  const assignableRoles = ROLES.filter((r) => ROLE_HIERARCHY[r] <= currentUserLevel);
+  const assignableRoles = isSuperAdmin
+    ? ROLES
+    : ROLES.filter((r) => ['manager', 'technician', 'viewer'].includes(r));
 
   if (loading) {
     return (
@@ -164,25 +170,36 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {users.map((u) => (
+            {users.map((u) => {
+              const isSelf = currentUserId === u.id;
+              const canEditRole = (isSuperAdmin || !isSelf) && assignableRoles.includes(u.role);
+              const canToggleActive = !isSelf;
+
+              return (
               <tr key={u.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 text-foreground">{u.email ?? '—'}</td>
                 <td className="px-4 py-3 text-muted-foreground">{u.full_name ?? '—'}</td>
                 <td className="px-4 py-3">
-                  <select
-                    value={u.role}
-                    disabled={updatingId === u.id}
-                    onChange={(e) =>
-                      handleRoleChange(u.id, e.target.value as UserRole)
-                    }
-                    className="rounded-md border border-gray-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-                  >
-                    {assignableRoles.map((r) => (
-                      <option key={r} value={r}>
-                        {ROLE_LABELS[r]}
-                      </option>
-                    ))}
-                  </select>
+                  {canEditRole ? (
+                    <select
+                      value={u.role}
+                      disabled={updatingId === u.id}
+                      onChange={(e) =>
+                        handleRoleChange(u.id, e.target.value as UserRole)
+                      }
+                      className="rounded-md border border-gray-300 px-2 py-1 text-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+                    >
+                      {assignableRoles.map((r) => (
+                        <option key={r} value={r}>
+                          {ROLE_LABELS[r]}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className="inline-flex rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                      {ROLE_LABELS[u.role]}
+                    </span>
+                  )}
                 </td>
                 {isSuperAdmin && (
                   <td className="px-4 py-3">
@@ -202,7 +219,7 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
                 <td className="px-4 py-3">
                   <button
                     onClick={() => handleToggleActive(u.id, u.is_active)}
-                    disabled={updatingId === u.id}
+                    disabled={updatingId === u.id || !canToggleActive}
                     className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium disabled:opacity-50 ${
                       u.is_active
                         ? 'bg-green-100 text-green-800'
@@ -213,7 +230,8 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
                   </button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
             {users.length === 0 && (
               <tr>
                 <td colSpan={isSuperAdmin ? 5 : 4} className="px-4 py-8 text-center text-gray-400">

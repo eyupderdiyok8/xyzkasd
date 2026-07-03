@@ -136,7 +136,6 @@ export async function POST(request: NextRequest) {
     profileData.tenant_id = effectiveTenantId;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error: profileError } = await (adminClient.from('profiles') as any)
     .upsert(profileData, { onConflict: 'id' });
 

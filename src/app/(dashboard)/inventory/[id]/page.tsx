@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
@@ -233,7 +234,7 @@ export default function InventoryItemDetailPage({
       <div className="mt-4 flex items-start gap-4">
         {item.photoPath ? (
           <div className="relative rounded-lg border border-border overflow-hidden w-32 h-32">
-            <img src={item.photoPath} alt={item.name} className="w-full h-full object-cover" />
+            <Image src={item.photoPath} alt={item.name} fill sizes="128px" className="object-cover" unoptimized />
             <button
               onClick={async () => {
                 if (!confirm('Fotoğrafı silmek istediğinize emin misiniz?')) return;
