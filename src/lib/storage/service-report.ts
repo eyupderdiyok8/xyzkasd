@@ -1,11 +1,9 @@
 import PDFDocument from 'pdfkit/js/pdfkit.standalone';
 import { createClient } from '@supabase/supabase-js';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FONT_REGULAR = path.resolve(__dirname, '../../../assets/fonts/Roboto-Regular.ttf');
-const FONT_BOLD = path.resolve(__dirname, '../../../assets/fonts/Roboto-Bold.ttf');
+const FONT_REGULAR = path.join(process.cwd(), 'public', 'fonts', 'Roboto-Regular.ttf');
+const FONT_BOLD = path.join(process.cwd(), 'public', 'fonts', 'Roboto-Bold.ttf');
 
 // ─── Types ──────────────────────────────────────
 
