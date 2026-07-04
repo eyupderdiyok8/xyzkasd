@@ -93,6 +93,17 @@ export class ServiceTicketRepository extends BaseRepository {
       if (attempts > 10) throw new Error('TicketNo generation failed');
     }
 
+    // Validate technicianId belongs to the same tenant
+    if (input.technicianId) {
+      const tech = await this.prisma.technician.findFirst({
+        where: { id: input.technicianId, tenantId: input.tenantId, deletedAt: null },
+        select: { id: true },
+      });
+      if (!tech) {
+        throw new Error('Seçilen teknisyen bulunamadı veya bu firmaya ait değil.');
+      }
+    }
+
     const ticket = await this.prisma.serviceTicket.create({
       data: {
         ticketNo,
