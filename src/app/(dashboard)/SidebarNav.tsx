@@ -27,7 +27,7 @@ const SECTIONS: NavSection[] = [
   {
     key: 'main', label: 'Ana', minRole: 'viewer', items: [
       { href: '/dashboard', label: 'Gösterge Paneli', icon: LayoutDashboard, minRole: 'viewer' },
-      { href: '/hizli-servis', label: 'Hızlı Servis', icon: Zap, minRole: 'technician' },
+      { href: '/hizli-servis', label: 'Hızlı Servis', icon: Zap, minRole: 'manager' },
     ],
   },
   {

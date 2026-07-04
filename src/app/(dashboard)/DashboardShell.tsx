@@ -32,7 +32,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard', label: 'Gösterge Paneli', icon: LayoutDashboard, minRole: 'viewer' },
-  { href: '/hizli-servis', label: '⚡ Hızlı Servis', icon: ClipboardList, minRole: 'technician' },
+  { href: '/hizli-servis', label: '⚡ Hızlı Servis', icon: ClipboardList, minRole: 'manager' },
   { href: '/customers', label: 'Müşteriler', icon: Users, minRole: 'viewer' },
   { href: '/devices', label: 'Cihazlar', icon: Wrench, minRole: 'technician' },
   { href: '/devices/filters', label: 'Filtre Takibi', icon: Filter, minRole: 'technician' },

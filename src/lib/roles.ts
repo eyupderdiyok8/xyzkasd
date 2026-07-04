@@ -54,7 +54,7 @@ export const ROUTE_GUARDS: Record<string, UserRole> = {
   '/devices/filters': 'technician',
   '/inventory': 'technician',
   '/devices/new': 'technician',
-  '/hizli-servis': 'technician',
+  '/hizli-servis': 'manager',
   '/customers': 'viewer',
   '/customers/new': 'technician',
   '/dashboard': 'viewer',
