@@ -20,6 +20,7 @@ import {
 import TenantSwitcher from '@/components/TenantSwitcher';
 import BrandLogo from '@/components/BrandLogo';
 import LocationSharer from '@/components/LocationSharer';
+import DashboardPerfMonitor from '@/components/DashboardPerfMonitor';
 import SidebarNav from './SidebarNav';
 
 interface NavItem {
@@ -240,6 +241,7 @@ export default function DashboardShell({ children, role, membershipType, members
       {bottomBar}
       {mobileMenu}
       {role === 'technician' && <LocationSharer />}
+      <DashboardPerfMonitor />
     </div>
   );
 }
