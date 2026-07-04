@@ -4,7 +4,7 @@
 // Phase 3: Push notifications + Background Sync
 // ──────────────────────────────────────────────
 
-const CACHE_NAME = 'wps-v2';
+const CACHE_NAME = 'wps-v3';
 const STATIC_ASSETS = ['/', '/offline'];
 
 // ──────────────────────────────────────────────
