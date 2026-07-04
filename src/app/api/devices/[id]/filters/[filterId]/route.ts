@@ -9,7 +9,7 @@ import { requireRole } from '@/lib/supabase/require-role';
  */
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string; filterId: string } },
+  { params }: { params: Promise<{ id: string; filterId: string }> },
 ) {
   const auth = await requireRole('technician');
   if (!auth.ok) {
@@ -25,11 +25,12 @@ export async function PUT(
   }
 
   try {
+    const { id, filterId } = await params;
     const filter = await new FilterTrackingRepository({
       tenantId: auth.tenantId,
       role: auth.role!,
       userId: auth.userId,
-    }).update(params.filterId, {
+    }).update(filterId, {
       filterCatalogId: b.filterCatalogId ? String(b.filterCatalogId) : undefined,
       installedAt: b.installedAt !== undefined ? String(b.installedAt) : undefined,
       expectedLifespanDays: b.expectedLifespanDays !== undefined ? Number(b.expectedLifespanDays) : undefined,
@@ -51,7 +52,7 @@ export async function PUT(
  */
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string; filterId: string } },
+  { params }: { params: Promise<{ id: string; filterId: string }> },
 ) {
   const auth = await requireRole('technician');
   if (!auth.ok) {
@@ -62,11 +63,12 @@ export async function DELETE(
   }
 
   try {
+    const { filterId } = await params;
     await new FilterTrackingRepository({
       tenantId: auth.tenantId,
       role: auth.role!,
       userId: auth.userId,
-    }).remove(params.filterId);
+    }).remove(filterId);
     return NextResponse.json({ data: { success: true } });
   } catch (e: any) {
     if (e.message === 'NOT_FOUND') {
