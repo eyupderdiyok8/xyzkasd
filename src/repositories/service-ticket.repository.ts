@@ -93,12 +93,25 @@ export class ServiceTicketRepository extends BaseRepository {
       if (attempts > 10) throw new Error('TicketNo generation failed');
     }
 
-    // Validate technicianId belongs to the same tenant
-    if (input.technicianId) {
-      const tech = await this.prisma.technician.findFirst({
-        where: { id: input.technicianId, tenantId: input.tenantId, deletedAt: null },
+    // Resolve technicianId: UUID → Technician.id mapping for backward compat
+    let resolvedTechnicianId = input.technicianId ?? null;
+
+    if (resolvedTechnicianId) {
+      // Try direct id match first (cuid)
+      let tech = await this.prisma.technician.findFirst({
+        where: { id: resolvedTechnicianId, tenantId: input.tenantId, deletedAt: null },
         select: { id: true },
       });
+
+      // If not found and looks like a UUID, try by userId (Supabase auth user ID)
+      if (!tech && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resolvedTechnicianId)) {
+        tech = await this.prisma.technician.findFirst({
+          where: { userId: resolvedTechnicianId, tenantId: input.tenantId, deletedAt: null },
+          select: { id: true },
+        });
+        if (tech) resolvedTechnicianId = tech.id;
+      }
+
       if (!tech) {
         throw new Error(`Seçilen teknisyen bulunamadı (ID: ${input.technicianId}, Tenant: ${input.tenantId}).`);
       }
@@ -110,7 +123,7 @@ export class ServiceTicketRepository extends BaseRepository {
         tenantId: input.tenantId,
         customerId: input.customerId,
         deviceId: input.deviceId,
-        technicianId: input.technicianId ?? null,
+        technicianId: resolvedTechnicianId,
         issueDesc: input.issueDesc,
         status: input.technicianId ? 'ASSIGNED' : 'PENDING',
         scheduledAt: input.scheduledAt ? new Date(input.scheduledAt) : null,
