@@ -211,10 +211,11 @@ model Technician {
   phone     String?
   email     String?
   isActive  Boolean   @default(true)
-  userId    String?   @unique // auth.users id — profil ile eşleşme
+  userId    String?   @unique @map("user_id")
   lastLat   Float?    @map("last_lat")
   lastLng   Float?    @map("last_lng")
   locationUpdatedAt DateTime? @map("location_updated_at")
+  locationSharingEnabled Boolean @default(false) @map("location_sharing_enabled")
   deletedAt DateTime? // soft delete
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

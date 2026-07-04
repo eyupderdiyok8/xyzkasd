@@ -1,11 +1,45 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { MapPin } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { MapPin, Power } from 'lucide-react';
+
+const LOCATION_SEND_INTERVAL_MS = 60_000;
 
 export default function LocationSharer() {
   const [status, setStatus] = useState<'idle' | 'sharing' | 'error' | 'denied' | 'unavailable'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const watchIdRef = useRef<number | null>(null);
+
+  const stopSharing = useCallback((notifyServer = true) => {
+    const wasSharing = watchIdRef.current !== null;
+    if (watchIdRef.current !== null && 'geolocation' in navigator) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+
+    if (notifyServer && wasSharing) {
+      fetch('/api/technicians/locations', {
+        method: 'DELETE',
+        keepalive: true,
+      }).catch(() => {});
+    }
+
+    setStatus('idle');
+    setErrorMsg('');
+  }, []);
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      if (watchIdRef.current === null) return;
+      stopSharing(true);
+    };
+
+    window.addEventListener('pagehide', handlePageHide);
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+      stopSharing(true);
+    };
+  }, [stopSharing]);
 
   const startSharing = useCallback(() => {
     if (typeof window === 'undefined') return;
@@ -22,14 +56,15 @@ export default function LocationSharer() {
       setErrorMsg('Tarayıcınız konum paylaşımını desteklemiyor.');
       return;
     }
+    if (watchIdRef.current !== null) return;
 
-    let lastSent = '';
+    let lastSentAt = 0;
 
-    navigator.geolocation.watchPosition(
+    watchIdRef.current = navigator.geolocation.watchPosition(
       async (pos) => {
-        const key = `${pos.coords.latitude.toFixed(4)},${pos.coords.longitude.toFixed(4)}`;
-        if (key === lastSent) return;
-        lastSent = key;
+        const now = Date.now();
+        if (lastSentAt && now - lastSentAt < LOCATION_SEND_INTERVAL_MS) return;
+        lastSentAt = now;
 
         try {
           const res = await fetch('/api/technicians/locations', {
@@ -63,15 +98,25 @@ export default function LocationSharer() {
           setErrorMsg('Konum alınamadı: ' + err.message);
         }
       },
-      { enableHighAccuracy: false, maximumAge: 60_000, timeout: 15_000 },
+      { enableHighAccuracy: false, maximumAge: LOCATION_SEND_INTERVAL_MS, timeout: 15_000 },
     );
   }, []);
 
   if (status === 'sharing') {
     return (
-      <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 shadow-lg">
-        <MapPin className="h-4 w-4 text-green-500 animate-pulse" />
-        <span className="text-xs font-medium text-green-700">Konum paylaşılıyor</span>
+      <div className="fixed bottom-4 left-4 z-50 flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-3 py-2 shadow-lg">
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4 text-green-500 animate-pulse" />
+          <span className="text-xs font-medium text-green-700">Konum paylaşılıyor</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => stopSharing(true)}
+          className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[11px] font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+        >
+          <Power className="h-3 w-3" />
+          Durdur
+        </button>
       </div>
     );
   }
@@ -85,7 +130,7 @@ export default function LocationSharer() {
           {status === 'unavailable' && 'Konum kullanılamıyor'}
         </p>
         <p className="mt-0.5 text-[10px] text-amber-600">{errorMsg}</p>
-        <button onClick={() => setStatus('idle')} className="mt-2 text-[10px] text-amber-700 underline">
+        <button onClick={() => stopSharing(true)} className="mt-2 text-[10px] text-amber-700 underline">
           Tekrar dene
         </button>
       </div>

@@ -2738,6 +2738,7 @@ export const TechnicianScalarFieldEnum = {
   lastLat: 'lastLat',
   lastLng: 'lastLng',
   locationUpdatedAt: 'locationUpdatedAt',
+  locationSharingEnabled: 'locationSharingEnabled',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

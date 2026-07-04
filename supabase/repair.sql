@@ -8,6 +8,7 @@
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "membershipType" TEXT NOT NULL DEFAULT 'MONTHLY';
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "membershipExpiresAt" TIMESTAMPTZ;
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS "themeConfig" TEXT;
+ALTER TABLE public.technicians ADD COLUMN IF NOT EXISTS location_sharing_enabled BOOLEAN NOT NULL DEFAULT false;
 
 -- Eski plan → membershipType dönüşümü (plan sütunu varsa)
 DO $$

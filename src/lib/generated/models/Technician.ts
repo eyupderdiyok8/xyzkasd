@@ -47,6 +47,7 @@ export type TechnicianMinAggregateOutputType = {
   lastLat: number | null
   lastLng: number | null
   locationUpdatedAt: Date | null
+  locationSharingEnabled: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +64,7 @@ export type TechnicianMaxAggregateOutputType = {
   lastLat: number | null
   lastLng: number | null
   locationUpdatedAt: Date | null
+  locationSharingEnabled: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -79,6 +81,7 @@ export type TechnicianCountAggregateOutputType = {
   lastLat: number
   lastLng: number
   locationUpdatedAt: number
+  locationSharingEnabled: number
   deletedAt: number
   createdAt: number
   updatedAt: number
@@ -107,6 +110,7 @@ export type TechnicianMinAggregateInputType = {
   lastLat?: true
   lastLng?: true
   locationUpdatedAt?: true
+  locationSharingEnabled?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -123,6 +127,7 @@ export type TechnicianMaxAggregateInputType = {
   lastLat?: true
   lastLng?: true
   locationUpdatedAt?: true
+  locationSharingEnabled?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -139,6 +144,7 @@ export type TechnicianCountAggregateInputType = {
   lastLat?: true
   lastLng?: true
   locationUpdatedAt?: true
+  locationSharingEnabled?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -242,6 +248,7 @@ export type TechnicianGroupByOutputType = {
   lastLat: number | null
   lastLng: number | null
   locationUpdatedAt: Date | null
+  locationSharingEnabled: boolean
   deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -281,6 +288,7 @@ export type TechnicianWhereInput = {
   lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
   lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
   locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFilter<"Technician"> | boolean
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
@@ -299,6 +307,7 @@ export type TechnicianOrderByWithRelationInput = {
   lastLat?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLng?: Prisma.SortOrderInput | Prisma.SortOrder
   locationUpdatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationSharingEnabled?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -320,6 +329,7 @@ export type TechnicianWhereUniqueInput = Prisma.AtLeast<{
   lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
   lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
   locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFilter<"Technician"> | boolean
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
@@ -338,6 +348,7 @@ export type TechnicianOrderByWithAggregationInput = {
   lastLat?: Prisma.SortOrderInput | Prisma.SortOrder
   lastLng?: Prisma.SortOrderInput | Prisma.SortOrder
   locationUpdatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationSharingEnabled?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -362,6 +373,7 @@ export type TechnicianScalarWhereWithAggregatesInput = {
   lastLat?: Prisma.FloatNullableWithAggregatesFilter<"Technician"> | number | null
   lastLng?: Prisma.FloatNullableWithAggregatesFilter<"Technician"> | number | null
   locationUpdatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Technician"> | Date | string | null
+  locationSharingEnabled?: Prisma.BoolWithAggregatesFilter<"Technician"> | boolean
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Technician"> | Date | string
@@ -377,6 +389,7 @@ export type TechnicianCreateInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -395,6 +408,7 @@ export type TechnicianUncheckedCreateInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -411,6 +425,7 @@ export type TechnicianUpdateInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -429,6 +444,7 @@ export type TechnicianUncheckedUpdateInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -446,6 +462,7 @@ export type TechnicianCreateManyInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -461,6 +478,7 @@ export type TechnicianUpdateManyMutationInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -477,6 +495,7 @@ export type TechnicianUncheckedUpdateManyInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -503,6 +522,7 @@ export type TechnicianCountOrderByAggregateInput = {
   lastLat?: Prisma.SortOrder
   lastLng?: Prisma.SortOrder
   locationUpdatedAt?: Prisma.SortOrder
+  locationSharingEnabled?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -524,6 +544,7 @@ export type TechnicianMaxOrderByAggregateInput = {
   lastLat?: Prisma.SortOrder
   lastLng?: Prisma.SortOrder
   locationUpdatedAt?: Prisma.SortOrder
+  locationSharingEnabled?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -540,6 +561,7 @@ export type TechnicianMinOrderByAggregateInput = {
   lastLat?: Prisma.SortOrder
   lastLng?: Prisma.SortOrder
   locationUpdatedAt?: Prisma.SortOrder
+  locationSharingEnabled?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -631,6 +653,7 @@ export type TechnicianCreateWithoutTenantInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -647,6 +670,7 @@ export type TechnicianUncheckedCreateWithoutTenantInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -693,6 +717,7 @@ export type TechnicianScalarWhereInput = {
   lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
   lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
   locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFilter<"Technician"> | boolean
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
@@ -708,6 +733,7 @@ export type TechnicianCreateWithoutServiceTicketsInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -725,6 +751,7 @@ export type TechnicianUncheckedCreateWithoutServiceTicketsInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -756,6 +783,7 @@ export type TechnicianUpdateWithoutServiceTicketsInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -773,6 +801,7 @@ export type TechnicianUncheckedUpdateWithoutServiceTicketsInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -788,6 +817,7 @@ export type TechnicianCreateManyTenantInput = {
   lastLat?: number | null
   lastLng?: number | null
   locationUpdatedAt?: Date | string | null
+  locationSharingEnabled?: boolean
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -803,6 +833,7 @@ export type TechnicianUpdateWithoutTenantInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -819,6 +850,7 @@ export type TechnicianUncheckedUpdateWithoutTenantInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -835,6 +867,7 @@ export type TechnicianUncheckedUpdateManyWithoutTenantInput = {
   lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  locationSharingEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -882,6 +915,7 @@ export type TechnicianSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   lastLat?: boolean
   lastLng?: boolean
   locationUpdatedAt?: boolean
+  locationSharingEnabled?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -901,6 +935,7 @@ export type TechnicianSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   lastLat?: boolean
   lastLng?: boolean
   locationUpdatedAt?: boolean
+  locationSharingEnabled?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -918,6 +953,7 @@ export type TechnicianSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   lastLat?: boolean
   lastLng?: boolean
   locationUpdatedAt?: boolean
+  locationSharingEnabled?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -935,12 +971,13 @@ export type TechnicianSelectScalar = {
   lastLat?: boolean
   lastLng?: boolean
   locationUpdatedAt?: boolean
+  locationSharingEnabled?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TechnicianOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "phone" | "email" | "isActive" | "userId" | "lastLat" | "lastLng" | "locationUpdatedAt" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["technician"]>
+export type TechnicianOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "phone" | "email" | "isActive" | "userId" | "lastLat" | "lastLng" | "locationUpdatedAt" | "locationSharingEnabled" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["technician"]>
 export type TechnicianInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   serviceTickets?: boolean | Prisma.Technician$serviceTicketsArgs<ExtArgs>
@@ -970,6 +1007,7 @@ export type $TechnicianPayload<ExtArgs extends runtime.Types.Extensions.Internal
     lastLat: number | null
     lastLng: number | null
     locationUpdatedAt: Date | null
+    locationSharingEnabled: boolean
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1408,6 +1446,7 @@ export interface TechnicianFieldRefs {
   readonly lastLat: Prisma.FieldRef<"Technician", 'Float'>
   readonly lastLng: Prisma.FieldRef<"Technician", 'Float'>
   readonly locationUpdatedAt: Prisma.FieldRef<"Technician", 'DateTime'>
+  readonly locationSharingEnabled: Prisma.FieldRef<"Technician", 'Boolean'>
   readonly deletedAt: Prisma.FieldRef<"Technician", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Technician", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Technician", 'DateTime'>

@@ -64,6 +64,355 @@
   }
 }
 
+@layer components {
+  .technician-map.leaflet-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background: #eef6f7;
+    font-family: inherit;
+    z-index: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .technician-map .leaflet-pane,
+  .technician-map .leaflet-tile,
+  .technician-map .leaflet-marker-icon,
+  .technician-map .leaflet-marker-shadow,
+  .technician-map .leaflet-tile-container,
+  .technician-map .leaflet-pane > svg,
+  .technician-map .leaflet-pane > canvas,
+  .technician-map .leaflet-zoom-box,
+  .technician-map .leaflet-image-layer,
+  .technician-map .leaflet-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .technician-map .leaflet-tile,
+  .technician-map .leaflet-marker-icon,
+  .technician-map .leaflet-marker-shadow {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .technician-map .leaflet-tile::selection {
+    background: transparent;
+  }
+
+  .technician-map .leaflet-container .leaflet-overlay-pane svg,
+  .technician-map .leaflet-overlay-pane svg {
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  .technician-map .leaflet-marker-pane img,
+  .technician-map .leaflet-shadow-pane img,
+  .technician-map .leaflet-tile-pane img,
+  .technician-map img.leaflet-image-layer,
+  .technician-map .leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+    width: auto;
+    padding: 0;
+  }
+
+  .technician-map.leaflet-touch-zoom {
+    touch-action: pan-x pan-y;
+  }
+
+  .technician-map.leaflet-touch-drag {
+    touch-action: pinch-zoom;
+  }
+
+  .technician-map.leaflet-touch-drag.leaflet-touch-zoom {
+    touch-action: none;
+  }
+
+  .technician-map .leaflet-tile {
+    filter: inherit;
+    visibility: hidden;
+  }
+
+  .technician-map .leaflet-tile-loaded {
+    visibility: inherit;
+  }
+
+  .technician-map .leaflet-zoom-box {
+    width: 0;
+    height: 0;
+    box-sizing: border-box;
+    z-index: 800;
+  }
+
+  .technician-map .leaflet-pane {
+    z-index: 400;
+  }
+
+  .technician-map .leaflet-tile-pane {
+    z-index: 200;
+  }
+
+  .technician-map .leaflet-overlay-pane {
+    z-index: 400;
+  }
+
+  .technician-map .leaflet-shadow-pane {
+    z-index: 500;
+  }
+
+  .technician-map .leaflet-marker-pane {
+    z-index: 600;
+  }
+
+  .technician-map .leaflet-tooltip-pane {
+    z-index: 650;
+  }
+
+  .technician-map .leaflet-popup-pane {
+    z-index: 700;
+  }
+
+  .technician-map .leaflet-map-pane canvas {
+    z-index: 100;
+  }
+
+  .technician-map .leaflet-map-pane svg {
+    z-index: 200;
+  }
+
+  .technician-map .leaflet-control {
+    position: relative;
+    z-index: 800;
+    pointer-events: auto;
+  }
+
+  .technician-map .leaflet-top,
+  .technician-map .leaflet-bottom {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .technician-map .leaflet-top {
+    top: 0;
+  }
+
+  .technician-map .leaflet-right {
+    right: 0;
+  }
+
+  .technician-map .leaflet-bottom {
+    bottom: 0;
+  }
+
+  .technician-map .leaflet-left {
+    left: 0;
+  }
+
+  .technician-map .leaflet-control {
+    float: left;
+    clear: both;
+  }
+
+  .technician-map .leaflet-right .leaflet-control {
+    float: right;
+  }
+
+  .technician-map .leaflet-top .leaflet-control {
+    margin-top: 10px;
+  }
+
+  .technician-map .leaflet-bottom .leaflet-control {
+    margin-bottom: 10px;
+  }
+
+  .technician-map .leaflet-left .leaflet-control {
+    margin-left: 10px;
+  }
+
+  .technician-map .leaflet-right .leaflet-control {
+    margin-right: 10px;
+  }
+
+  .technician-map .leaflet-zoom-animated {
+    transform-origin: 0 0;
+  }
+
+  .technician-map .leaflet-zoom-anim .leaflet-zoom-hide {
+    visibility: hidden;
+  }
+
+  .technician-map .leaflet-interactive {
+    cursor: pointer;
+  }
+
+  .technician-map .leaflet-grab {
+    cursor: grab;
+  }
+
+  .technician-map .leaflet-dragging .leaflet-grab,
+  .technician-map .leaflet-dragging .leaflet-grab .leaflet-interactive {
+    cursor: grabbing;
+  }
+
+  .technician-map .leaflet-marker-icon,
+  .technician-map .leaflet-marker-shadow,
+  .technician-map .leaflet-image-layer,
+  .technician-map .leaflet-pane > svg path,
+  .technician-map .leaflet-tile-container {
+    pointer-events: none;
+  }
+
+  .technician-map .leaflet-marker-icon.leaflet-interactive,
+  .technician-map .leaflet-image-layer.leaflet-interactive,
+  .technician-map .leaflet-pane > svg path.leaflet-interactive {
+    pointer-events: auto;
+  }
+
+  .leaflet-control-zoom {
+    border: 1px solid rgb(226 232 240);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
+  }
+
+  .leaflet-control-zoom a {
+    display: block;
+    height: 34px;
+    width: 34px;
+    line-height: 34px;
+    text-align: center;
+    color: rgb(15 23 42);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .leaflet-control-attribution {
+    background: rgb(255 255 255 / 0.85);
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+
+  .leaflet-popup {
+    position: absolute;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 0.75rem;
+    background: white;
+    box-shadow: 0 18px 42px rgb(15 23 42 / 0.18);
+    padding: 1px;
+    text-align: left;
+  }
+
+  .leaflet-popup-content {
+    margin: 12px 14px;
+    min-width: 170px;
+  }
+
+  .leaflet-popup-tip-container {
+    display: none;
+  }
+
+  .leaflet-popup-close-button {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    color: rgb(100 116 139);
+    text-decoration: none;
+  }
+
+  .technician-marker-wrapper {
+    background: transparent;
+    border: 0;
+  }
+
+  .technician-marker {
+    position: relative;
+    display: flex;
+    height: 42px;
+    width: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px 999px 999px 0;
+    transform: rotate(-45deg);
+    border: 3px solid white;
+    box-shadow: 0 12px 24px rgb(15 23 42 / 0.25);
+  }
+
+  .technician-marker span {
+    transform: rotate(45deg);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .technician-marker-live {
+    background: rgb(22 163 74);
+  }
+
+  .technician-marker-live::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+    border-radius: inherit;
+    border: 2px solid rgb(34 197 94 / 0.36);
+    animation: marker-pulse 1.8s ease-out infinite;
+  }
+
+  .technician-marker-recent {
+    background: rgb(217 119 6);
+  }
+
+  .technician-marker-stale {
+    background: rgb(100 116 139);
+  }
+
+  .technician-marker-off {
+    background: rgb(71 85 105);
+    opacity: 0.72;
+  }
+
+  .technician-popup {
+    display: grid;
+    gap: 4px;
+    color: rgb(15 23 42);
+    font-size: 12px;
+  }
+
+  .technician-popup strong {
+    padding-right: 14px;
+    font-size: 14px;
+  }
+
+  .technician-popup small {
+    color: rgb(100 116 139);
+  }
+
+  .technician-popup a {
+    margin-top: 4px;
+    color: rgb(8 145 178);
+    font-weight: 700;
+    text-decoration: none;
+  }
+}
+
+@keyframes marker-pulse {
+  from {
+    opacity: 0.8;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

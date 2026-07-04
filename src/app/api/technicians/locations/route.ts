@@ -36,13 +36,50 @@ export async function POST(req: NextRequest) {
 
     await prisma.technician.update({
       where: { id: tech.id },
-      data: { lastLat: body.lat, lastLng: body.lng, locationUpdatedAt: new Date() },
+      data: {
+        lastLat: body.lat,
+        lastLng: body.lng,
+        locationUpdatedAt: new Date(),
+        locationSharingEnabled: true,
+      },
     });
 
     return NextResponse.json({ data: { success: true } });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Konum güncellenemedi';
     console.error('[locations] POST error:', message);
+    return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message } }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/technicians/locations
+ * Teknisyen konum paylaşımını kapatır. Son konum korunur.
+ */
+export async function DELETE() {
+  const auth = await requireRole('technician');
+  if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
+  if (!auth.tenantId) return NextResponse.json({ error: { code: 'FORBIDDEN' } }, { status: 403 });
+  if (!auth.userId) return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Kullanıcı bulunamadı' } }, { status: 403 });
+
+  try {
+    const tech = await prisma.technician.findFirst({
+      where: { userId: auth.userId, tenantId: auth.tenantId, isActive: true },
+      select: { id: true },
+    });
+    if (!tech) {
+      return NextResponse.json({ error: { code: 'NOT_FOUND', message: 'Teknisyen kaydı bulunamadı.' } }, { status: 404 });
+    }
+
+    await prisma.technician.update({
+      where: { id: tech.id },
+      data: { locationSharingEnabled: false },
+    });
+
+    return NextResponse.json({ data: { success: true } });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Konum paylaşımı kapatılamadı';
+    console.error('[locations] DELETE error:', message);
     return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message } }, { status: 500 });
   }
 }
@@ -71,6 +108,7 @@ export async function GET() {
       lastLat: true,
       lastLng: true,
       locationUpdatedAt: true,
+      locationSharingEnabled: true,
     },
     orderBy: { name: 'asc' },
   });

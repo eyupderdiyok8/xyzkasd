@@ -16,6 +16,8 @@ export default function BrandLogo({ className, imageClassName, priority = false 
         width={424}
         height={140}
         priority={priority}
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
         className={cn('h-auto w-full object-contain', imageClassName)}
       />
     </span>
