@@ -11,15 +11,15 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = 'public'
 AS $$
 BEGIN
-  INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive") VALUES
-    (gen_random_uuid(), NEW.id, 'Sediment Filtre',       'SEDIMENT',      1, true),
-    (gen_random_uuid(), NEW.id, 'Karbon Blok Filtre',    'CARBON_BLOCK',  2, true),
-    (gen_random_uuid(), NEW.id, 'Granul Aktif Karbon',   'GAC',           3, true),
-    (gen_random_uuid(), NEW.id, 'Membran (RO)',          'MEMBRANE',      4, true),
-    (gen_random_uuid(), NEW.id, 'Post Karbon Filtre',    'POST_CARBON',   5, true),
-    (gen_random_uuid(), NEW.id, 'Alkalin Filtre',        'ALKALINE',      6, true),
-    (gen_random_uuid(), NEW.id, 'Mineral Filtre',        'MINERAL',       7, true),
-    (gen_random_uuid(), NEW.id, 'UV Sterilizasyon',      'UV',            8, true);
+  INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive", "createdAt", "updatedAt") VALUES
+    (gen_random_uuid(), NEW.id, 'Sediment Filtre',       'SEDIMENT',      1, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Karbon Blok Filtre',    'CARBON_BLOCK',  2, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Granul Aktif Karbon',   'GAC',           3, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Membran (RO)',          'MEMBRANE',      4, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Post Karbon Filtre',    'POST_CARBON',   5, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Alkalin Filtre',        'ALKALINE',      6, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'Mineral Filtre',        'MINERAL',       7, true, now(), now()),
+    (gen_random_uuid(), NEW.id, 'UV Sterilizasyon',      'UV',            8, true, now(), now());
   RETURN NEW;
 END;
 $$;
@@ -30,8 +30,8 @@ CREATE TRIGGER trg_seed_filter_catalog
   FOR EACH ROW EXECUTE FUNCTION public.seed_filter_catalog();
 
 -- 2. Mevcut tenantlara filtre katalogu ekle (yoksa, tekrar calistirma guvenli)
-INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive")
-SELECT gen_random_uuid(), t.id, fc.name, fc.stage, fc.sort_order, true
+INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive", "createdAt", "updatedAt")
+SELECT gen_random_uuid(), t.id, fc.name, fc.stage, fc.sort_order, true, now(), now()
 FROM public.tenants t
 CROSS JOIN (VALUES
   ('Sediment Filtre',       'SEDIMENT',      1),
