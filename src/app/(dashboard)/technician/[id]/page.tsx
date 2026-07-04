@@ -42,6 +42,11 @@ interface PhotoInfo {
 
 interface ServicePart { name: string; quantity: number; }
 
+interface CompletionDraft {
+  body: Record<string, unknown>;
+  payAmount: number;
+}
+
 interface TicketDetail {
   id: string;
   ticketNo: string;
@@ -359,6 +364,7 @@ export default function ServiceRecordPage() {
     dueDate: string | null; notes: string | null;
   } | null>(null);
   const [paymentSaving, setPaymentSaving] = useState(false);
+  const [completionDraft, setCompletionDraft] = useState<CompletionDraft | null>(null);
 
   // ── Load Data ───────────────────────────────
   useEffect(() => {
@@ -565,7 +571,7 @@ export default function ServiceRecordPage() {
       }
     }
 
-    const payAmount = paymentAmount ? Number(paymentAmount) : 0;
+    const payAmount = paymentAmount === '' ? NaN : Number(paymentAmount);
     const body: Record<string, unknown> = {
       tdsBefore: tdsBefore ? Number(tdsBefore) : null,
       tdsAfter: tdsAfter ? Number(tdsAfter) : null,
@@ -584,21 +590,23 @@ export default function ServiceRecordPage() {
       serviceParts: serviceParts.length > 0 ? JSON.stringify(serviceParts) : null,
     };
 
-    if (payAmount <= 0) {
+    if (Number.isNaN(payAmount) || payAmount < 0) {
       setError('Lütfen tahsilat tutarını girin. Ücretsiz servis ise 0 girebilirsiniz.');
       return;
     }
 
-    const confirmMsg = payAmount > 0
-      ? `${payAmount.toLocaleString('tr-TR')}₺ - ${METHOD_LABELS[paymentMethod] ?? paymentMethod} ile tahsilat yapılacak. Servisi tamamlamak istediğinize emin misiniz?`
-      : 'Ücretsiz servis olarak tamamlanacak. Emin misiniz?';
+    setError(null);
+    setCompletionDraft({ body, payAmount });
+  };
 
-    if (!confirm(confirmMsg)) return;
+  const executeCompletion = async ({ body, payAmount }: CompletionDraft) => {
+    if (!ticket) return;
 
     setSaving(true);
     setError(null);
     setSuccess(null);
     setOfflineSaved(false);
+    setCompletionDraft(null);
 
     // ── OFFLINE MODE ──────────────────────────────
     if (!isOnline()) {
@@ -633,7 +641,7 @@ export default function ServiceRecordPage() {
           workDone: workDone || null,
           customerNote: customerNote || null,
           resolution: resolution || null,
-          signatureDataUrl: sigUrl,
+          signatureDataUrl: (body.signatureDataUrl as string | null) ?? null,
           signatureName: signatureName || null,
           completedAt: new Date().toISOString(),
         });
@@ -745,10 +753,85 @@ export default function ServiceRecordPage() {
     const { data } = supabase.storage.from('service-photos').getPublicUrl(p.storagePath);
     return data.publicUrl;
   };
+  const completionAmountLabel = completionDraft
+    ? completionDraft.payAmount.toLocaleString('tr-TR', { maximumFractionDigits: 2 })
+    : '0';
+  const completionPaymentLabel = existingPayment
+    ? 'Mevcut tahsilat kaydı korunacak.'
+    : completionDraft && completionDraft.payAmount > 0
+      ? `${METHOD_LABELS[paymentMethod] ?? paymentMethod} ile yeni tahsilat kaydedilecek.`
+      : 'Ücretsiz servis olarak tamamlanacak.';
 
   // ── Render ────────────────────────────────────
   return (
     <div className="mx-auto max-w-4xl space-y-6 md:space-y-8">
+      {completionDraft && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/55 px-4 py-5 backdrop-blur-sm sm:items-center">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="complete-service-title"
+            className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+          >
+            <div className="bg-gradient-to-br from-emerald-600 to-cyan-600 px-6 py-5 text-white">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/18 text-2xl">
+                ✓
+              </div>
+              <h2 id="complete-service-title" className="mt-4 text-xl font-bold">
+                Servisi tamamlayalım mı?
+              </h2>
+              <p className="mt-1 text-sm text-emerald-50">
+                Bu işlem servis kaydını tamamlandı durumuna alacak.
+              </p>
+            </div>
+
+            <div className="space-y-4 p-6">
+              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Tahsilat</p>
+                <p className="mt-1 text-3xl font-bold text-emerald-950">{completionAmountLabel}₺</p>
+                <p className="mt-1 text-sm text-emerald-700">{completionPaymentLabel}</p>
+              </div>
+
+              <div className="grid gap-3 text-sm text-slate-600">
+                <div className="flex items-center justify-between gap-4">
+                  <span>Müşteri</span>
+                  <strong className="text-right font-semibold text-slate-950">{ticket.customer?.name ?? 'Müşteri yok'}</strong>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span>Cihaz</span>
+                  <strong className="text-right font-semibold text-slate-950">
+                    {ticket.device ? `${ticket.device.brand} ${ticket.device.model}` : 'Cihaz yok'}
+                  </strong>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span>Servis no</span>
+                  <strong className="font-mono text-slate-950">{ticket.ticketNo}</strong>
+                </div>
+              </div>
+
+              <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setCompletionDraft(null)}
+                  disabled={saving}
+                  className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                >
+                  Vazgeç
+                </button>
+                <button
+                  type="button"
+                  onClick={() => executeCompletion(completionDraft)}
+                  disabled={saving}
+                  className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 disabled:opacity-60"
+                >
+                  {saving || paymentSaving ? 'Tamamlanıyor...' : 'Evet, servisi tamamla'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
