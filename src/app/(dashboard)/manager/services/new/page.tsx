@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+// v2: fixed technician dropdown to use /api/technicians
 
 interface CustomerOption {
   id: string;
