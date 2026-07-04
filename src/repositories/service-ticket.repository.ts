@@ -100,7 +100,7 @@ export class ServiceTicketRepository extends BaseRepository {
         select: { id: true },
       });
       if (!tech) {
-        throw new Error('Seçilen teknisyen bulunamadı veya bu firmaya ait değil.');
+        throw new Error(`Seçilen teknisyen bulunamadı (ID: ${input.technicianId}, Tenant: ${input.tenantId}).`);
       }
     }
 
