@@ -20,8 +20,20 @@ export type TechnicianModel = runtime.Types.Result.DefaultSelection<Prisma.$Tech
 
 export type AggregateTechnician = {
   _count: TechnicianCountAggregateOutputType | null
+  _avg: TechnicianAvgAggregateOutputType | null
+  _sum: TechnicianSumAggregateOutputType | null
   _min: TechnicianMinAggregateOutputType | null
   _max: TechnicianMaxAggregateOutputType | null
+}
+
+export type TechnicianAvgAggregateOutputType = {
+  lastLat: number | null
+  lastLng: number | null
+}
+
+export type TechnicianSumAggregateOutputType = {
+  lastLat: number | null
+  lastLng: number | null
 }
 
 export type TechnicianMinAggregateOutputType = {
@@ -31,6 +43,10 @@ export type TechnicianMinAggregateOutputType = {
   phone: string | null
   email: string | null
   isActive: boolean | null
+  userId: string | null
+  lastLat: number | null
+  lastLng: number | null
+  locationUpdatedAt: Date | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -43,6 +59,10 @@ export type TechnicianMaxAggregateOutputType = {
   phone: string | null
   email: string | null
   isActive: boolean | null
+  userId: string | null
+  lastLat: number | null
+  lastLng: number | null
+  locationUpdatedAt: Date | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,12 +75,26 @@ export type TechnicianCountAggregateOutputType = {
   phone: number
   email: number
   isActive: number
+  userId: number
+  lastLat: number
+  lastLng: number
+  locationUpdatedAt: number
   deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type TechnicianAvgAggregateInputType = {
+  lastLat?: true
+  lastLng?: true
+}
+
+export type TechnicianSumAggregateInputType = {
+  lastLat?: true
+  lastLng?: true
+}
 
 export type TechnicianMinAggregateInputType = {
   id?: true
@@ -69,6 +103,10 @@ export type TechnicianMinAggregateInputType = {
   phone?: true
   email?: true
   isActive?: true
+  userId?: true
+  lastLat?: true
+  lastLng?: true
+  locationUpdatedAt?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +119,10 @@ export type TechnicianMaxAggregateInputType = {
   phone?: true
   email?: true
   isActive?: true
+  userId?: true
+  lastLat?: true
+  lastLng?: true
+  locationUpdatedAt?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -93,6 +135,10 @@ export type TechnicianCountAggregateInputType = {
   phone?: true
   email?: true
   isActive?: true
+  userId?: true
+  lastLat?: true
+  lastLng?: true
+  locationUpdatedAt?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -137,6 +183,18 @@ export type TechnicianAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TechnicianAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TechnicianSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TechnicianMinAggregateInputType
@@ -167,6 +225,8 @@ export type TechnicianGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: TechnicianCountAggregateInputType | true
+  _avg?: TechnicianAvgAggregateInputType
+  _sum?: TechnicianSumAggregateInputType
   _min?: TechnicianMinAggregateInputType
   _max?: TechnicianMaxAggregateInputType
 }
@@ -178,10 +238,16 @@ export type TechnicianGroupByOutputType = {
   phone: string | null
   email: string | null
   isActive: boolean
+  userId: string | null
+  lastLat: number | null
+  lastLng: number | null
+  locationUpdatedAt: Date | null
   deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: TechnicianCountAggregateOutputType | null
+  _avg: TechnicianAvgAggregateOutputType | null
+  _sum: TechnicianSumAggregateOutputType | null
   _min: TechnicianMinAggregateOutputType | null
   _max: TechnicianMaxAggregateOutputType | null
 }
@@ -211,6 +277,10 @@ export type TechnicianWhereInput = {
   phone?: Prisma.StringNullableFilter<"Technician"> | string | null
   email?: Prisma.StringNullableFilter<"Technician"> | string | null
   isActive?: Prisma.BoolFilter<"Technician"> | boolean
+  userId?: Prisma.StringNullableFilter<"Technician"> | string | null
+  lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
@@ -225,6 +295,10 @@ export type TechnicianOrderByWithRelationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLat?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLng?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationUpdatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -234,6 +308,7 @@ export type TechnicianOrderByWithRelationInput = {
 
 export type TechnicianWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId?: string
   AND?: Prisma.TechnicianWhereInput | Prisma.TechnicianWhereInput[]
   OR?: Prisma.TechnicianWhereInput[]
   NOT?: Prisma.TechnicianWhereInput | Prisma.TechnicianWhereInput[]
@@ -242,12 +317,15 @@ export type TechnicianWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Technician"> | string | null
   email?: Prisma.StringNullableFilter<"Technician"> | string | null
   isActive?: Prisma.BoolFilter<"Technician"> | boolean
+  lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   serviceTickets?: Prisma.ServiceTicketListRelationFilter
-}, "id">
+}, "id" | "userId">
 
 export type TechnicianOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -256,12 +334,18 @@ export type TechnicianOrderByWithAggregationInput = {
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLat?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLng?: Prisma.SortOrderInput | Prisma.SortOrder
+  locationUpdatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TechnicianCountOrderByAggregateInput
+  _avg?: Prisma.TechnicianAvgOrderByAggregateInput
   _max?: Prisma.TechnicianMaxOrderByAggregateInput
   _min?: Prisma.TechnicianMinOrderByAggregateInput
+  _sum?: Prisma.TechnicianSumOrderByAggregateInput
 }
 
 export type TechnicianScalarWhereWithAggregatesInput = {
@@ -274,6 +358,10 @@ export type TechnicianScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringNullableWithAggregatesFilter<"Technician"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Technician"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Technician"> | boolean
+  userId?: Prisma.StringNullableWithAggregatesFilter<"Technician"> | string | null
+  lastLat?: Prisma.FloatNullableWithAggregatesFilter<"Technician"> | number | null
+  lastLng?: Prisma.FloatNullableWithAggregatesFilter<"Technician"> | number | null
+  locationUpdatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Technician"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Technician"> | Date | string
@@ -285,6 +373,10 @@ export type TechnicianCreateInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -299,6 +391,10 @@ export type TechnicianUncheckedCreateInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -311,6 +407,10 @@ export type TechnicianUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -325,6 +425,10 @@ export type TechnicianUncheckedUpdateInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -338,6 +442,10 @@ export type TechnicianCreateManyInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -349,6 +457,10 @@ export type TechnicianUpdateManyMutationInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -361,6 +473,10 @@ export type TechnicianUncheckedUpdateManyInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,9 +499,18 @@ export type TechnicianCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  lastLat?: Prisma.SortOrder
+  lastLng?: Prisma.SortOrder
+  locationUpdatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TechnicianAvgOrderByAggregateInput = {
+  lastLat?: Prisma.SortOrder
+  lastLng?: Prisma.SortOrder
 }
 
 export type TechnicianMaxOrderByAggregateInput = {
@@ -395,6 +520,10 @@ export type TechnicianMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  lastLat?: Prisma.SortOrder
+  lastLng?: Prisma.SortOrder
+  locationUpdatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -407,9 +536,18 @@ export type TechnicianMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+  lastLat?: Prisma.SortOrder
+  lastLng?: Prisma.SortOrder
+  locationUpdatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type TechnicianSumOrderByAggregateInput = {
+  lastLat?: Prisma.SortOrder
+  lastLng?: Prisma.SortOrder
 }
 
 export type TechnicianNullableScalarRelationFilter = {
@@ -459,6 +597,14 @@ export type TechnicianUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.TechnicianScalarWhereInput | Prisma.TechnicianScalarWhereInput[]
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type TechnicianCreateNestedOneWithoutServiceTicketsInput = {
   create?: Prisma.XOR<Prisma.TechnicianCreateWithoutServiceTicketsInput, Prisma.TechnicianUncheckedCreateWithoutServiceTicketsInput>
   connectOrCreate?: Prisma.TechnicianCreateOrConnectWithoutServiceTicketsInput
@@ -481,6 +627,10 @@ export type TechnicianCreateWithoutTenantInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -493,6 +643,10 @@ export type TechnicianUncheckedCreateWithoutTenantInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -535,6 +689,10 @@ export type TechnicianScalarWhereInput = {
   phone?: Prisma.StringNullableFilter<"Technician"> | string | null
   email?: Prisma.StringNullableFilter<"Technician"> | string | null
   isActive?: Prisma.BoolFilter<"Technician"> | boolean
+  userId?: Prisma.StringNullableFilter<"Technician"> | string | null
+  lastLat?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  lastLng?: Prisma.FloatNullableFilter<"Technician"> | number | null
+  locationUpdatedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Technician"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Technician"> | Date | string
@@ -546,6 +704,10 @@ export type TechnicianCreateWithoutServiceTicketsInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -559,6 +721,10 @@ export type TechnicianUncheckedCreateWithoutServiceTicketsInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -586,6 +752,10 @@ export type TechnicianUpdateWithoutServiceTicketsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -599,6 +769,10 @@ export type TechnicianUncheckedUpdateWithoutServiceTicketsInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -610,6 +784,10 @@ export type TechnicianCreateManyTenantInput = {
   phone?: string | null
   email?: string | null
   isActive?: boolean
+  userId?: string | null
+  lastLat?: number | null
+  lastLng?: number | null
+  locationUpdatedAt?: Date | string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -621,6 +799,10 @@ export type TechnicianUpdateWithoutTenantInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -633,6 +815,10 @@ export type TechnicianUncheckedUpdateWithoutTenantInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -645,6 +831,10 @@ export type TechnicianUncheckedUpdateManyWithoutTenantInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLat?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  lastLng?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  locationUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -688,6 +878,10 @@ export type TechnicianSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   phone?: boolean
   email?: boolean
   isActive?: boolean
+  userId?: boolean
+  lastLat?: boolean
+  lastLng?: boolean
+  locationUpdatedAt?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -703,6 +897,10 @@ export type TechnicianSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   phone?: boolean
   email?: boolean
   isActive?: boolean
+  userId?: boolean
+  lastLat?: boolean
+  lastLng?: boolean
+  locationUpdatedAt?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -716,6 +914,10 @@ export type TechnicianSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   phone?: boolean
   email?: boolean
   isActive?: boolean
+  userId?: boolean
+  lastLat?: boolean
+  lastLng?: boolean
+  locationUpdatedAt?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -729,12 +931,16 @@ export type TechnicianSelectScalar = {
   phone?: boolean
   email?: boolean
   isActive?: boolean
+  userId?: boolean
+  lastLat?: boolean
+  lastLng?: boolean
+  locationUpdatedAt?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TechnicianOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "phone" | "email" | "isActive" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["technician"]>
+export type TechnicianOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "phone" | "email" | "isActive" | "userId" | "lastLat" | "lastLng" | "locationUpdatedAt" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["technician"]>
 export type TechnicianInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   serviceTickets?: boolean | Prisma.Technician$serviceTicketsArgs<ExtArgs>
@@ -760,6 +966,10 @@ export type $TechnicianPayload<ExtArgs extends runtime.Types.Extensions.Internal
     phone: string | null
     email: string | null
     isActive: boolean
+    userId: string | null
+    lastLat: number | null
+    lastLng: number | null
+    locationUpdatedAt: Date | null
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1194,6 +1404,10 @@ export interface TechnicianFieldRefs {
   readonly phone: Prisma.FieldRef<"Technician", 'String'>
   readonly email: Prisma.FieldRef<"Technician", 'String'>
   readonly isActive: Prisma.FieldRef<"Technician", 'Boolean'>
+  readonly userId: Prisma.FieldRef<"Technician", 'String'>
+  readonly lastLat: Prisma.FieldRef<"Technician", 'Float'>
+  readonly lastLng: Prisma.FieldRef<"Technician", 'Float'>
+  readonly locationUpdatedAt: Prisma.FieldRef<"Technician", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Technician", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Technician", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Technician", 'DateTime'>

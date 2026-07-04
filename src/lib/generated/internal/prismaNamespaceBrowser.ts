@@ -107,6 +107,7 @@ export const TenantScalarFieldEnum = {
   email: 'email',
   address: 'address',
   reportConfig: 'reportConfig',
+  themeConfig: 'themeConfig',
   googleReviewUrl: 'googleReviewUrl',
   surveyMessage: 'surveyMessage',
   isActive: 'isActive',
@@ -214,6 +215,10 @@ export const TechnicianScalarFieldEnum = {
   phone: 'phone',
   email: 'email',
   isActive: 'isActive',
+  userId: 'userId',
+  lastLat: 'lastLat',
+  lastLng: 'lastLng',
+  locationUpdatedAt: 'locationUpdatedAt',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

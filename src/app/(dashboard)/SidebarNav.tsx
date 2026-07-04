@@ -10,7 +10,7 @@ import type { UserRole } from '@/lib/supabase/types';
 import {
   LayoutDashboard, Users, Wrench, Filter, Package, ClipboardList,
   BarChart3, Shield, UserPlus, MessageSquare, FileText, Bot,
-  Ticket, ThumbsUp, ChevronLeft, Settings, Zap, ChevronDown,
+  Ticket, ThumbsUp, ChevronLeft, Settings, Zap, ChevronDown, MapPin,
 } from 'lucide-react';
 
 interface NavItem {
@@ -43,6 +43,7 @@ const SECTIONS: NavSection[] = [
     key: 'mgmt', label: 'Yönetim', minRole: 'manager', items: [
       { href: '/manager', label: 'Yönetici Paneli', icon: BarChart3, minRole: 'manager' },
       { href: '/manager/services', label: 'Servis Kayıtları', icon: FileText, minRole: 'manager' },
+      { href: '/harita', label: 'Teknisyen Harita', icon: MapPin, minRole: 'manager' },
       { href: '/reports', label: 'Raporlar', icon: BarChart3, minRole: 'manager' },
     ],
   },

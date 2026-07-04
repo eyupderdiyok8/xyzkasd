@@ -43,6 +43,7 @@ export type TenantMinAggregateOutputType = {
   email: string | null
   address: string | null
   reportConfig: string | null
+  themeConfig: string | null
   googleReviewUrl: string | null
   surveyMessage: string | null
   isActive: boolean | null
@@ -64,6 +65,7 @@ export type TenantMaxAggregateOutputType = {
   email: string | null
   address: string | null
   reportConfig: string | null
+  themeConfig: string | null
   googleReviewUrl: string | null
   surveyMessage: string | null
   isActive: boolean | null
@@ -85,6 +87,7 @@ export type TenantCountAggregateOutputType = {
   email: number
   address: number
   reportConfig: number
+  themeConfig: number
   googleReviewUrl: number
   surveyMessage: number
   isActive: number
@@ -116,6 +119,7 @@ export type TenantMinAggregateInputType = {
   email?: true
   address?: true
   reportConfig?: true
+  themeConfig?: true
   googleReviewUrl?: true
   surveyMessage?: true
   isActive?: true
@@ -137,6 +141,7 @@ export type TenantMaxAggregateInputType = {
   email?: true
   address?: true
   reportConfig?: true
+  themeConfig?: true
   googleReviewUrl?: true
   surveyMessage?: true
   isActive?: true
@@ -158,6 +163,7 @@ export type TenantCountAggregateInputType = {
   email?: true
   address?: true
   reportConfig?: true
+  themeConfig?: true
   googleReviewUrl?: true
   surveyMessage?: true
   isActive?: true
@@ -266,6 +272,7 @@ export type TenantGroupByOutputType = {
   email: string | null
   address: string | null
   reportConfig: string | null
+  themeConfig: string | null
   googleReviewUrl: string | null
   surveyMessage: string | null
   isActive: boolean
@@ -310,6 +317,7 @@ export type TenantWhereInput = {
   email?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   reportConfig?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  themeConfig?: Prisma.StringNullableFilter<"Tenant"> | string | null
   googleReviewUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   surveyMessage?: Prisma.StringNullableFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
@@ -356,6 +364,7 @@ export type TenantOrderByWithRelationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   reportConfig?: Prisma.SortOrderInput | Prisma.SortOrder
+  themeConfig?: Prisma.SortOrderInput | Prisma.SortOrder
   googleReviewUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   surveyMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -405,6 +414,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringNullableFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   reportConfig?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  themeConfig?: Prisma.StringNullableFilter<"Tenant"> | string | null
   googleReviewUrl?: Prisma.StringNullableFilter<"Tenant"> | string | null
   surveyMessage?: Prisma.StringNullableFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolFilter<"Tenant"> | boolean
@@ -451,6 +461,7 @@ export type TenantOrderByWithAggregationInput = {
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   reportConfig?: Prisma.SortOrderInput | Prisma.SortOrder
+  themeConfig?: Prisma.SortOrderInput | Prisma.SortOrder
   googleReviewUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   surveyMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -480,6 +491,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   email?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   reportConfig?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  themeConfig?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   googleReviewUrl?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   surveyMessage?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Tenant"> | boolean
@@ -501,6 +513,7 @@ export type TenantCreateInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -547,6 +560,7 @@ export type TenantUncheckedCreateInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -593,6 +607,7 @@ export type TenantUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -639,6 +654,7 @@ export type TenantUncheckedUpdateInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -685,6 +701,7 @@ export type TenantCreateManyInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -706,6 +723,7 @@ export type TenantUpdateManyMutationInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -727,6 +745,7 @@ export type TenantUncheckedUpdateManyInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -748,6 +767,7 @@ export type TenantCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   address?: Prisma.SortOrder
   reportConfig?: Prisma.SortOrder
+  themeConfig?: Prisma.SortOrder
   googleReviewUrl?: Prisma.SortOrder
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -773,6 +793,7 @@ export type TenantMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   address?: Prisma.SortOrder
   reportConfig?: Prisma.SortOrder
+  themeConfig?: Prisma.SortOrder
   googleReviewUrl?: Prisma.SortOrder
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -794,6 +815,7 @@ export type TenantMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   address?: Prisma.SortOrder
   reportConfig?: Prisma.SortOrder
+  themeConfig?: Prisma.SortOrder
   googleReviewUrl?: Prisma.SortOrder
   surveyMessage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -1211,6 +1233,7 @@ export type TenantCreateWithoutProfilesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1256,6 +1279,7 @@ export type TenantUncheckedCreateWithoutProfilesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1317,6 +1341,7 @@ export type TenantUpdateWithoutProfilesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1362,6 +1387,7 @@ export type TenantUncheckedUpdateWithoutProfilesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1407,6 +1433,7 @@ export type TenantCreateWithoutUsersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1452,6 +1479,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1513,6 +1541,7 @@ export type TenantUpdateWithoutUsersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1558,6 +1587,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1603,6 +1633,7 @@ export type TenantCreateWithoutDevicesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1648,6 +1679,7 @@ export type TenantUncheckedCreateWithoutDevicesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1709,6 +1741,7 @@ export type TenantUpdateWithoutDevicesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1754,6 +1787,7 @@ export type TenantUncheckedUpdateWithoutDevicesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1799,6 +1833,7 @@ export type TenantCreateWithoutDevicePhotosInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1844,6 +1879,7 @@ export type TenantUncheckedCreateWithoutDevicePhotosInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -1905,6 +1941,7 @@ export type TenantUpdateWithoutDevicePhotosInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1950,6 +1987,7 @@ export type TenantUncheckedUpdateWithoutDevicePhotosInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1995,6 +2033,7 @@ export type TenantCreateWithoutTdsReadingsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2040,6 +2079,7 @@ export type TenantUncheckedCreateWithoutTdsReadingsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2101,6 +2141,7 @@ export type TenantUpdateWithoutTdsReadingsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2146,6 +2187,7 @@ export type TenantUncheckedUpdateWithoutTdsReadingsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2191,6 +2233,7 @@ export type TenantCreateWithoutTechniciansInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2236,6 +2279,7 @@ export type TenantUncheckedCreateWithoutTechniciansInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2297,6 +2341,7 @@ export type TenantUpdateWithoutTechniciansInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2342,6 +2387,7 @@ export type TenantUncheckedUpdateWithoutTechniciansInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2387,6 +2433,7 @@ export type TenantCreateWithoutCustomersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2432,6 +2479,7 @@ export type TenantUncheckedCreateWithoutCustomersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2493,6 +2541,7 @@ export type TenantUpdateWithoutCustomersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2538,6 +2587,7 @@ export type TenantUncheckedUpdateWithoutCustomersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2583,6 +2633,7 @@ export type TenantCreateWithoutCustomerAddressesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2628,6 +2679,7 @@ export type TenantUncheckedCreateWithoutCustomerAddressesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2689,6 +2741,7 @@ export type TenantUpdateWithoutCustomerAddressesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2734,6 +2787,7 @@ export type TenantUncheckedUpdateWithoutCustomerAddressesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2779,6 +2833,7 @@ export type TenantCreateWithoutCustomerPhonesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2824,6 +2879,7 @@ export type TenantUncheckedCreateWithoutCustomerPhonesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -2885,6 +2941,7 @@ export type TenantUpdateWithoutCustomerPhonesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2930,6 +2987,7 @@ export type TenantUncheckedUpdateWithoutCustomerPhonesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2975,6 +3033,7 @@ export type TenantCreateWithoutServiceTicketsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3020,6 +3079,7 @@ export type TenantUncheckedCreateWithoutServiceTicketsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3081,6 +3141,7 @@ export type TenantUpdateWithoutServiceTicketsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3126,6 +3187,7 @@ export type TenantUncheckedUpdateWithoutServiceTicketsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3171,6 +3233,7 @@ export type TenantCreateWithoutServicePhotosInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3216,6 +3279,7 @@ export type TenantUncheckedCreateWithoutServicePhotosInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3277,6 +3341,7 @@ export type TenantUpdateWithoutServicePhotosInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3322,6 +3387,7 @@ export type TenantUncheckedUpdateWithoutServicePhotosInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3367,6 +3433,7 @@ export type TenantCreateWithoutFilterCatalogsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3412,6 +3479,7 @@ export type TenantUncheckedCreateWithoutFilterCatalogsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3473,6 +3541,7 @@ export type TenantUpdateWithoutFilterCatalogsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3518,6 +3587,7 @@ export type TenantUncheckedUpdateWithoutFilterCatalogsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3563,6 +3633,7 @@ export type TenantCreateWithoutFilterChangesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3608,6 +3679,7 @@ export type TenantUncheckedCreateWithoutFilterChangesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3669,6 +3741,7 @@ export type TenantUpdateWithoutFilterChangesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3714,6 +3787,7 @@ export type TenantUncheckedUpdateWithoutFilterChangesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3759,6 +3833,7 @@ export type TenantCreateWithoutDeviceFiltersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3804,6 +3879,7 @@ export type TenantUncheckedCreateWithoutDeviceFiltersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -3865,6 +3941,7 @@ export type TenantUpdateWithoutDeviceFiltersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3910,6 +3987,7 @@ export type TenantUncheckedUpdateWithoutDeviceFiltersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3955,6 +4033,7 @@ export type TenantCreateWithoutDeviceMaintenanceInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4000,6 +4079,7 @@ export type TenantUncheckedCreateWithoutDeviceMaintenanceInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4061,6 +4141,7 @@ export type TenantUpdateWithoutDeviceMaintenanceInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4106,6 +4187,7 @@ export type TenantUncheckedUpdateWithoutDeviceMaintenanceInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4151,6 +4233,7 @@ export type TenantCreateWithoutMaintenanceRemindersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4196,6 +4279,7 @@ export type TenantUncheckedCreateWithoutMaintenanceRemindersInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4257,6 +4341,7 @@ export type TenantUpdateWithoutMaintenanceRemindersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4302,6 +4387,7 @@ export type TenantUncheckedUpdateWithoutMaintenanceRemindersInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4347,6 +4433,7 @@ export type TenantCreateWithoutCouponsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4392,6 +4479,7 @@ export type TenantUncheckedCreateWithoutCouponsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4453,6 +4541,7 @@ export type TenantUpdateWithoutCouponsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4498,6 +4587,7 @@ export type TenantUncheckedUpdateWithoutCouponsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4543,6 +4633,7 @@ export type TenantCreateWithoutCouponUsagesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4588,6 +4679,7 @@ export type TenantUncheckedCreateWithoutCouponUsagesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4649,6 +4741,7 @@ export type TenantUpdateWithoutCouponUsagesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4694,6 +4787,7 @@ export type TenantUncheckedUpdateWithoutCouponUsagesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4739,6 +4833,7 @@ export type TenantCreateWithoutInventoryInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4784,6 +4879,7 @@ export type TenantUncheckedCreateWithoutInventoryInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4845,6 +4941,7 @@ export type TenantUpdateWithoutInventoryInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4890,6 +4987,7 @@ export type TenantUncheckedUpdateWithoutInventoryInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -4935,6 +5033,7 @@ export type TenantCreateWithoutInventoryTransactionsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -4980,6 +5079,7 @@ export type TenantUncheckedCreateWithoutInventoryTransactionsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5041,6 +5141,7 @@ export type TenantUpdateWithoutInventoryTransactionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5086,6 +5187,7 @@ export type TenantUncheckedUpdateWithoutInventoryTransactionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5131,6 +5233,7 @@ export type TenantCreateWithoutAutomationRulesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5176,6 +5279,7 @@ export type TenantUncheckedCreateWithoutAutomationRulesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5237,6 +5341,7 @@ export type TenantUpdateWithoutAutomationRulesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5282,6 +5387,7 @@ export type TenantUncheckedUpdateWithoutAutomationRulesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5327,6 +5433,7 @@ export type TenantCreateWithoutAutomationLogsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5372,6 +5479,7 @@ export type TenantUncheckedCreateWithoutAutomationLogsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5433,6 +5541,7 @@ export type TenantUpdateWithoutAutomationLogsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5478,6 +5587,7 @@ export type TenantUncheckedUpdateWithoutAutomationLogsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5523,6 +5633,7 @@ export type TenantCreateWithoutServiceSurveysInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5568,6 +5679,7 @@ export type TenantUncheckedCreateWithoutServiceSurveysInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5629,6 +5741,7 @@ export type TenantUpdateWithoutServiceSurveysInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5674,6 +5787,7 @@ export type TenantUncheckedUpdateWithoutServiceSurveysInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5719,6 +5833,7 @@ export type TenantCreateWithoutMessageTemplatesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5764,6 +5879,7 @@ export type TenantUncheckedCreateWithoutMessageTemplatesInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5825,6 +5941,7 @@ export type TenantUpdateWithoutMessageTemplatesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5870,6 +5987,7 @@ export type TenantUncheckedUpdateWithoutMessageTemplatesInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -5915,6 +6033,7 @@ export type TenantCreateWithoutWhatsappSessionsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -5960,6 +6079,7 @@ export type TenantUncheckedCreateWithoutWhatsappSessionsInput = {
   email?: string | null
   address?: string | null
   reportConfig?: string | null
+  themeConfig?: string | null
   googleReviewUrl?: string | null
   surveyMessage?: string | null
   isActive?: boolean
@@ -6021,6 +6141,7 @@ export type TenantUpdateWithoutWhatsappSessionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6066,6 +6187,7 @@ export type TenantUncheckedUpdateWithoutWhatsappSessionsInput = {
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  themeConfig?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleReviewUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   surveyMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -6358,6 +6480,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   email?: boolean
   address?: boolean
   reportConfig?: boolean
+  themeConfig?: boolean
   googleReviewUrl?: boolean
   surveyMessage?: boolean
   isActive?: boolean
@@ -6405,6 +6528,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   email?: boolean
   address?: boolean
   reportConfig?: boolean
+  themeConfig?: boolean
   googleReviewUrl?: boolean
   surveyMessage?: boolean
   isActive?: boolean
@@ -6426,6 +6550,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   email?: boolean
   address?: boolean
   reportConfig?: boolean
+  themeConfig?: boolean
   googleReviewUrl?: boolean
   surveyMessage?: boolean
   isActive?: boolean
@@ -6447,6 +6572,7 @@ export type TenantSelectScalar = {
   email?: boolean
   address?: boolean
   reportConfig?: boolean
+  themeConfig?: boolean
   googleReviewUrl?: boolean
   surveyMessage?: boolean
   isActive?: boolean
@@ -6459,7 +6585,7 @@ export type TenantSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "phone" | "email" | "address" | "reportConfig" | "googleReviewUrl" | "surveyMessage" | "isActive" | "membershipType" | "membershipExpiresAt" | "mfaRequired" | "maxUsers" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "phone" | "email" | "address" | "reportConfig" | "themeConfig" | "googleReviewUrl" | "surveyMessage" | "isActive" | "membershipType" | "membershipExpiresAt" | "mfaRequired" | "maxUsers" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   profiles?: boolean | Prisma.Tenant$profilesArgs<ExtArgs>
@@ -6529,6 +6655,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     email: string | null
     address: string | null
     reportConfig: string | null
+    themeConfig: string | null
     googleReviewUrl: string | null
     surveyMessage: string | null
     isActive: boolean
@@ -6995,6 +7122,7 @@ export interface TenantFieldRefs {
   readonly email: Prisma.FieldRef<"Tenant", 'String'>
   readonly address: Prisma.FieldRef<"Tenant", 'String'>
   readonly reportConfig: Prisma.FieldRef<"Tenant", 'String'>
+  readonly themeConfig: Prisma.FieldRef<"Tenant", 'String'>
   readonly googleReviewUrl: Prisma.FieldRef<"Tenant", 'String'>
   readonly surveyMessage: Prisma.FieldRef<"Tenant", 'String'>
   readonly isActive: Prisma.FieldRef<"Tenant", 'Boolean'>
