@@ -14,6 +14,10 @@ const routes = [
   '/teknik-servis-yazilimi',
   '/servis-takip-programi',
   '/musteri-takip-yazilimi',
+  '/gizlilik-politikasi',
+  '/kvkk',
+  '/cerez-politikasi',
+  '/kullanim-sartlari',
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

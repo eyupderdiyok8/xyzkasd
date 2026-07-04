@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import MarketingNav from '@/components/marketing/MarketingNav';
+import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { PricingValueVisual } from '@/components/marketing/MarketingVisuals';
 import { CheckCircle2, Coffee, Crown, Gift, PhoneCall, SearchCheck, Sparkles } from 'lucide-react';
 
@@ -257,9 +258,7 @@ export default function FiyatPage() {
         </div>
       </section>
 
-      <footer className="py-12 text-center">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr</p>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

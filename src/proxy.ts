@@ -27,6 +27,10 @@ const PUBLIC_ROUTES = [
   '/teknik-servis-yazilimi',
   '/servis-takip-programi',
   '/musteri-takip-yazilimi',
+  '/gizlilik-politikasi',
+  '/kvkk',
+  '/cerez-politikasi',
+  '/kullanim-sartlari',
 ];
 const LOGIN_PAGE = '/login';
 const FORBIDDEN_REDIRECT = '/';

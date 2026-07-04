@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react';
 import MarketingNav from '@/components/marketing/MarketingNav';
+import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { ProductDashboardVisual, ServiceFlowVisual } from '@/components/marketing/MarketingVisuals';
 
 export type SeoLandingContent = {
@@ -145,9 +146,7 @@ export function SeoLandingPage({ content }: { content: SeoLandingContent }) {
         </div>
       </section>
 
-      <footer className="py-12 text-center">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr</p>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

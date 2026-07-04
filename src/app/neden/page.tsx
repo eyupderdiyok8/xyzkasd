@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import MarketingNav from '@/components/marketing/MarketingNav';
+import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { ProductDashboardVisual } from '@/components/marketing/MarketingVisuals';
 
 const REASONS = [
@@ -65,9 +66,7 @@ export default function NedenPage() {
         </div>
       </section>
 
-      <footer className="py-12 text-center">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr</p>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

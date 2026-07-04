@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import MarketingNav from '@/components/marketing/MarketingNav';
+import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { ProductDashboardVisual, ServiceFlowVisual } from '@/components/marketing/MarketingVisuals';
-import BrandLogo from '@/components/BrandLogo';
 
 const supabase = createClient();
 
@@ -327,10 +327,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-200 bg-white py-12 text-center">
-        <BrandLogo className="mx-auto mb-4 w-[220px]" />
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr</p>
-      </footer>
+      <MarketingFooter showLogo />
     </div>
   );
 }

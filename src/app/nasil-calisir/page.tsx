@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import MarketingNav from '@/components/marketing/MarketingNav';
+import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { ServiceFlowVisual } from '@/components/marketing/MarketingVisuals';
 
 const STEPS = [
@@ -77,9 +78,7 @@ export default function NasilCalisirPage() {
         </div>
       </section>
 
-      <footer className="py-12 text-center">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} suaritmaservisyazilimi.com.tr</p>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }
