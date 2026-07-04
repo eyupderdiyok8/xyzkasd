@@ -15,7 +15,9 @@ export async function POST(req: NextRequest) {
   if (!auth.userId) return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Kullanıcı bulunamadı' } }, { status: 403 });
 
   let body: { lat: number; lng: number };
-  try { body = await req.json(); } catch {
+  try {
+    body = await req.json();
+  } catch {
     return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Geçersiz JSON' } }, { status: 400 });
   }
 
@@ -23,21 +25,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'lat ve lng zorunlu (number)' } }, { status: 400 });
   }
 
-  // Teknisyeni userId ile bul
-  const tech = await prisma.technician.findFirst({
-    where: { userId: auth.userId, tenantId: auth.tenantId, isActive: true },
-    select: { id: true },
-  });
-  if (!tech) {
-    return NextResponse.json({ error: { code: 'NOT_FOUND', message: 'Teknisyen kaydı bulunamadı. Profiliniz bir teknisyene bağlı değil.' } }, { status: 404 });
+  try {
+    const tech = await prisma.technician.findFirst({
+      where: { userId: auth.userId, tenantId: auth.tenantId, isActive: true },
+      select: { id: true },
+    });
+    if (!tech) {
+      return NextResponse.json({ error: { code: 'NOT_FOUND', message: 'Teknisyen kaydı bulunamadı.' } }, { status: 404 });
+    }
+
+    await prisma.technician.update({
+      where: { id: tech.id },
+      data: { lastLat: body.lat, lastLng: body.lng, locationUpdatedAt: new Date() },
+    });
+
+    return NextResponse.json({ data: { success: true } });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Konum güncellenemedi';
+    console.error('[locations] POST error:', message);
+    return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message } }, { status: 500 });
   }
-
-  await prisma.technician.update({
-    where: { id: tech.id },
-    data: { lastLat: body.lat, lastLng: body.lng, locationUpdatedAt: new Date() },
-  });
-
-  return NextResponse.json({ data: { success: true } });
 }
 
 /**
