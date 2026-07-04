@@ -4,6 +4,9 @@
 -- Supabase SQL Editor'da tek seferde calistirin.
 -- ============================================================
 
+-- 0. Onceki basarisiz denemelerden kalan bozuk satirlari temizle
+DELETE FROM public.filter_catalogs WHERE "createdAt" IS NULL OR "updatedAt" IS NULL;
+
 -- 1. Yeni tenantlar icin trigger
 CREATE OR REPLACE FUNCTION public.seed_filter_catalog()
 RETURNS TRIGGER
