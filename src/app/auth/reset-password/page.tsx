@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Droplets, KeyRound, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { KeyRound, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 
 function generatePassword(): string {
   const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -117,9 +118,7 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm animate-scale-in">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-            <Droplets className="h-5 w-5 text-primary" />
-          </div>
+          <BrandLogo className="mx-auto mb-2 w-[220px]" priority />
           <CardTitle className="text-xl">Yeni Şifre Belirle</CardTitle>
           <CardDescription>En az 8 karakter, bir büyük harf, bir küçük harf ve bir rakam</CardDescription>
         </CardHeader>

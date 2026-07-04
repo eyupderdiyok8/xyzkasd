@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Shield, KeyRound } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 
 function MfaForm() {
   const router = useRouter();
@@ -66,9 +67,7 @@ function MfaForm() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm animate-scale-in">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-            <Shield className="h-5 w-5 text-primary" />
-          </div>
+          <BrandLogo className="mx-auto mb-2 w-[220px]" priority />
           <CardTitle className="text-xl">İki Adımlı Doğrulama</CardTitle>
           <CardDescription>
             Authenticator uygulamanızdaki 6 haneli kodu girin

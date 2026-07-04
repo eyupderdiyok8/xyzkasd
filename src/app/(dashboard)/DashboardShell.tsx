@@ -18,6 +18,7 @@ import {
   Menu, X, Home,
 } from 'lucide-react';
 import TenantSwitcher from '@/components/TenantSwitcher';
+import BrandLogo from '@/components/BrandLogo';
 import SidebarNav from './SidebarNav';
 
 interface NavItem {
@@ -86,10 +87,13 @@ export default function DashboardShell({ children, role, membershipType, members
     )}>
       {/* Logo */}
       <div className="flex h-14 items-center gap-2 border-b border-border px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
-          <Droplets className="h-4 w-4 text-white" />
-        </div>
-        {!collapsed && <span className="text-sm font-bold text-foreground">suaritmaservisyazilimi.com.tr</span>}
+        {collapsed ? (
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
+            <Droplets className="h-4 w-4 text-white" />
+          </div>
+        ) : (
+          <BrandLogo className="w-[170px]" />
+        )}
       </div>
 
       {/* Tenant Switcher (super_admin only) */}

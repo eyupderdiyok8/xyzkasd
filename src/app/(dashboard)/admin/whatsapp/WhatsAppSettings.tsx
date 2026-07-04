@@ -341,7 +341,7 @@ export default function WhatsAppSettings() {
         </h3>
         <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-blue-700">
           <li>
-            Her firma (tenant) kendi WhatsApp numarasını bağlayabilir.
+            Her firma kendi WhatsApp numarasını bağlayabilir.
           </li>
           <li>
             Bağlantı koptuğunda otomatik olarak yeniden bağlanma denenir.

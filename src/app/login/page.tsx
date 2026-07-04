@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Droplets, LogIn } from 'lucide-react';
+import { LogIn } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 
 function translateAuthError(message: string): string {
   if (message.includes('Invalid login credentials')) return 'E-posta veya şifre hatalı.';
@@ -58,10 +59,8 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm animate-scale-in">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-            <Droplets className="h-5 w-5 text-primary" />
-          </div>
-          <CardTitle className="text-xl">suaritmaservisyazilimi.com.tr</CardTitle>
+          <BrandLogo className="mx-auto mb-2 w-[220px]" priority />
+          <CardTitle className="sr-only">Su Arıtma Servis Yazılımı</CardTitle>
           <CardDescription>Hesabınıza giriş yapın</CardDescription>
         </CardHeader>
         <CardContent>

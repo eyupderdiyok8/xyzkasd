@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 
 /** Supabase auth error kodlarını Türkçe mesaja çevirir */
 function translateAuthError(message: string): string {
@@ -97,9 +98,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-sm rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-foreground">
-          suaritmaservisyazilimi.com.tr
-        </h1>
+        <BrandLogo className="mx-auto mb-6 w-[230px]" priority />
         <p className="mb-6 text-center text-sm text-gray-500">
           Yeni hesap oluşturun
         </p>

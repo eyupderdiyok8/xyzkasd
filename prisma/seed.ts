@@ -47,6 +47,29 @@ async function main() {
   });
   console.log(`  ✓ Tenant: ${starterTenant.name} (${starterTenant.membershipType})`);
 
+  // Create Filter Catalogs — standart su arıtma filtreleri
+  const filterCatalogs = await Promise.all([
+    { stage: 'SEDIMENT', name: 'Sediment Filtre', sortOrder: 1, lifespan: 180 },
+    { stage: 'CARBON_BLOCK', name: 'Karbon Blok Filtre', sortOrder: 2, lifespan: 180 },
+    { stage: 'GAC', name: 'Granül Aktif Karbon', sortOrder: 3, lifespan: 365 },
+    { stage: 'MEMBRANE', name: 'Membran (RO)', sortOrder: 4, lifespan: 730 },
+    { stage: 'POST_CARBON', name: 'Post Karbon Filtre', sortOrder: 5, lifespan: 365 },
+    { stage: 'ALKALINE', name: 'Alkalin Filtre', sortOrder: 6, lifespan: 365 },
+    { stage: 'MINERAL', name: 'Mineral Filtre', sortOrder: 7, lifespan: 365 },
+    { stage: 'UV', name: 'UV Sterilizasyon', sortOrder: 8, lifespan: 365 },
+  ].map((fc) =>
+    prisma.filterCatalog.create({
+      data: {
+        tenantId: tenant.id,
+        name: fc.name,
+        stage: fc.stage,
+        sortOrder: fc.sortOrder,
+        isActive: true,
+      },
+    }),
+  ));
+  console.log(`  ✓ Filtre Kataloğu: ${filterCatalogs.length} filtre türü`);
+
   // Create Customers
   const customer1 = await prisma.customer.create({
     data: {

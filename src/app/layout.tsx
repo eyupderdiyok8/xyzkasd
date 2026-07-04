@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'suaritmaservisyazilimi.com.tr',
-  description: 'Multi-tenant ERP for water purifier service management',
+  description: 'Su arıtma servis firmaları için servis, filtre, müşteri ve tahsilat takip yazılımı',
   appleWebApp: { capable: true, title: 'suaritmaservisyazilimi.com.tr' },
   manifest: '/manifest.json',
 };

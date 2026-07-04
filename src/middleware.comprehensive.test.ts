@@ -16,10 +16,13 @@ let mockProfileResult: { role: string; tenant_id: string | null; is_active: bool
   role: 'technician', tenant_id: 'tenant-1', is_active: true,
 };
 let mockProfileError: Error | null = null;
-let mockTenantResult: { plan: string } | null = { plan: 'PROFESSIONAL' };
+let mockTenantResult: { membershipType: string; membershipExpiresAt: string | null } | null = {
+  membershipType: 'YEARLY',
+  membershipExpiresAt: '2099-01-01T00:00:00.000Z',
+};
 let mockMinRole: string | null = null;
 let mockRequiredFeature: string | null = null;
-let mockHasFeatureResult = true;
+let mockMembershipStatus = 'ACTIVE';
 
 vi.mock('@supabase/ssr', () => ({
   createServerClient: vi.fn(() => ({
@@ -66,7 +69,7 @@ vi.mock('@/lib/roles', () => ({
 
 vi.mock('@/lib/features', () => ({
   getRequiredFeatureForPath: vi.fn(() => mockRequiredFeature),
-  hasFeature: vi.fn(() => mockHasFeatureResult),
+  getMembershipStatus: vi.fn(() => mockMembershipStatus),
 }));
 
 let redirectUrl: string | null = null;
@@ -108,10 +111,13 @@ describe('Middleware — edge cases', () => {
     mockUserError = null;
     mockProfileResult = { role: 'technician', tenant_id: 'tenant-1', is_active: true };
     mockProfileError = null;
-    mockTenantResult = { plan: 'PROFESSIONAL' };
+    mockTenantResult = {
+      membershipType: 'YEARLY',
+      membershipExpiresAt: '2099-01-01T00:00:00.000Z',
+    };
     mockMinRole = null;
     mockRequiredFeature = null;
-    mockHasFeatureResult = true;
+    mockMembershipStatus = 'ACTIVE';
     redirectUrl = null;
   });
 
@@ -127,7 +133,6 @@ describe('Middleware — edge cases', () => {
     mockProfileResult = { role: 'super_admin', tenant_id: null, is_active: true };
     mockMinRole = 'tenant_admin';
     mockRequiredFeature = 'whatsapp';
-    // super_admin has no tenant → tenantResult null → hasFeature default false
     mockTenantResult = null;
     const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
@@ -138,7 +143,7 @@ describe('Middleware — edge cases', () => {
   it('blocks access when tenant query returns null', async () => {
     mockMinRole = 'viewer';
     mockRequiredFeature = 'whatsapp';
-    mockHasFeatureResult = false;
+    mockMembershipStatus = 'EXPIRED';
     mockProfileResult = { role: 'manager', tenant_id: 'tenant-1', is_active: true };
     mockTenantResult = null; // No tenant row
     const { proxy: middleware } = await import('./proxy');
@@ -202,6 +207,13 @@ describe('Middleware — edge cases', () => {
   it('handles /survey routes as public', async () => {
     const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/survey/ticket-1'));
+    expect(res.status).toBe(200);
+  });
+
+  it('handles SEO landing routes as public', async () => {
+    mockUserResult = null;
+    const { proxy: middleware } = await import('./proxy');
+    const res = await middleware(createMockRequest('/su-aritma-servis-yazilimi'));
     expect(res.status).toBe(200);
   });
 

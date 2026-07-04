@@ -6,14 +6,14 @@
  * Kullanım:
  * ```html
  * <script src="https://suaritmaservisyazilimi.com.tr/widget/damacana.js"
- *   data-tenant="tenant_abc123"
+ *   data-tenant="firma_abc123"
  *   data-primary="#1e40af"
  *   data-bg="#ffffff">
  * </script>
  * ```
  *
  * data-* parametreleri:
- *   data-tenant      — Firma tenant ID (zorunlu)
+ *   data-tenant      — Firma ID (zorunlu)
  *   data-primary     — Ana renk (opsiyonel, otomatik algılanır)
  *   data-bg          — Arka plan rengi (opsiyonel)
  *   data-text        — Yazı rengi (opsiyonel)
@@ -26,7 +26,7 @@
 
   const tenant = script.getAttribute('data-tenant');
   if (!tenant) {
-    console.warn('[DamacanaWidget] data-tenant zorunludur');
+    console.warn('[DamacanaWidget] Firma ID zorunludur');
     return;
   }
 

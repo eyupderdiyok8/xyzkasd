@@ -99,7 +99,7 @@ export default function DefaultSurveyMessageEditor() {
             <code className="rounded bg-gray-100 px-1">{'{{company_name}}'}</code>
           </div>
           <p className="mt-1 text-[10px] text-gray-400">
-            Bu mesaj, firma kendi özel mesajını ayarlamamışsa tüm tenant&apos;lar için kullanılır.
+            Bu mesaj, firma kendi özel mesajını ayarlamamışsa tüm firmalar için kullanılır.
             Firma özel mesajı (Admin → Firma Ayarları) bu mesajı ezer.
           </p>
         </div>

@@ -4,7 +4,30 @@ import { getMinimumRoleForPath, ROLE_HIERARCHY } from '@/lib/roles';
 import { getRequiredFeatureForPath, getMembershipStatus, type MembershipType } from '@/lib/features';
 import type { UserRole } from '@/lib/supabase/types';
 
-const PUBLIC_ROUTES = ['/', '/login', '/register', '/auth/callback', '/auth/logout', '/auth/forgot-password', '/auth/reset-password', '/auth/mfa', '/public', '/qr', '/survey', '/neden', '/nasil-calisir', '/fiyat', '/ogren', '/upgrade'];
+const PUBLIC_ROUTES = [
+  '/',
+  '/login',
+  '/register',
+  '/auth/callback',
+  '/auth/logout',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+  '/auth/mfa',
+  '/public',
+  '/qr',
+  '/survey',
+  '/neden',
+  '/nasil-calisir',
+  '/fiyat',
+  '/ogren',
+  '/upgrade',
+  '/su-aritma-servis-yazilimi',
+  '/su-aritma-servis-programi',
+  '/filtre-takip-programi',
+  '/teknik-servis-yazilimi',
+  '/servis-takip-programi',
+  '/musteri-takip-yazilimi',
+];
 const LOGIN_PAGE = '/login';
 const FORBIDDEN_REDIRECT = '/';
 const UPGRADE_REDIRECT = '/upgrade';

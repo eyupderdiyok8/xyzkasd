@@ -11,10 +11,13 @@ let mockUserResult: { id: string } | null = { id: 'user-1' };
 let mockUserError: Error | null = null;
 let mockProfileResult: { role: string; tenant_id: string | null; is_active: boolean } | null = { role: 'technician', tenant_id: 'tenant-1', is_active: true };
 let mockProfileError: Error | null = null;
-let mockTenantResult: { plan: string } | null = { plan: 'PROFESSIONAL' };
+let mockTenantResult: { membershipType: string; membershipExpiresAt: string | null } | null = {
+  membershipType: 'YEARLY',
+  membershipExpiresAt: '2099-01-01T00:00:00.000Z',
+};
 let mockMinRole: string | null = null;
 let mockRequiredFeature: string | null = null;
-let mockHasFeatureResult = true;
+let mockMembershipStatus = 'ACTIVE';
 
 vi.mock('@supabase/ssr', () => ({
   createServerClient: vi.fn(() => ({
@@ -61,7 +64,7 @@ vi.mock('@/lib/roles', () => ({
 
 vi.mock('@/lib/features', () => ({
   getRequiredFeatureForPath: vi.fn(() => mockRequiredFeature),
-  hasFeature: vi.fn(() => mockHasFeatureResult),
+  getMembershipStatus: vi.fn(() => mockMembershipStatus),
 }));
 
 // Mock NextResponse
@@ -105,10 +108,13 @@ describe('Middleware', () => {
     mockUserError = null;
     mockProfileResult = { role: 'technician', tenant_id: 'tenant-1', is_active: true };
     mockProfileError = null;
-    mockTenantResult = { plan: 'PROFESSIONAL' };
+    mockTenantResult = {
+      membershipType: 'YEARLY',
+      membershipExpiresAt: '2099-01-01T00:00:00.000Z',
+    };
     mockMinRole = null;
     mockRequiredFeature = null;
-    mockHasFeatureResult = true;
+    mockMembershipStatus = 'ACTIVE';
     redirectUrl = null;
   });
 
@@ -129,6 +135,13 @@ describe('Middleware', () => {
   it('allows /auth/callback route', async () => {
     const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/auth/callback'));
+    expect(res.status).toBe(200);
+  });
+
+  it('allows SEO landing routes without auth', async () => {
+    mockUserResult = null;
+    const { proxy: middleware } = await import('./proxy');
+    const res = await middleware(createMockRequest('/su-aritma-servis-yazilimi'));
     expect(res.status).toBe(200);
   });
 
@@ -182,20 +195,19 @@ describe('Middleware', () => {
     expect(res.status).toBe(200);
   });
 
-  it('blocks Professional-only feature for STARTER plan', async () => {
+  it('blocks gated feature when membership is expired', async () => {
     mockMinRole = 'viewer';
     mockRequiredFeature = 'whatsapp';
-    mockHasFeatureResult = false;
-    mockTenantResult = { plan: 'STARTER' };
+    mockMembershipStatus = 'EXPIRED';
     const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     expect(res.status).toBe(307);
   });
 
-  it('allows Professional-only feature for PROFESSIONAL plan', async () => {
+  it('allows gated feature when membership is active', async () => {
     mockMinRole = 'viewer';
     mockRequiredFeature = 'whatsapp';
-    mockHasFeatureResult = true;
+    mockMembershipStatus = 'ACTIVE';
     const { proxy: middleware } = await import('./proxy');
     const res = await middleware(createMockRequest('/admin/whatsapp'));
     expect(res.status).toBe(200);
