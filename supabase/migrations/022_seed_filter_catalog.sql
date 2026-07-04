@@ -10,16 +10,16 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = 'public'
 AS $$
 BEGIN
-  INSERT INTO public.filter_catalogs ("tenantId", name, stage, "sortOrder", "isActive")
+  INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive")
   VALUES
-    (NEW.id, 'Sediment Filtre',       'SEDIMENT',      1, true),
-    (NEW.id, 'Karbon Blok Filtre',    'CARBON_BLOCK',  2, true),
-    (NEW.id, 'Granül Aktif Karbon',   'GAC',           3, true),
-    (NEW.id, 'Membran (RO)',          'MEMBRANE',      4, true),
-    (NEW.id, 'Post Karbon Filtre',    'POST_CARBON',   5, true),
-    (NEW.id, 'Alkalin Filtre',        'ALKALINE',      6, true),
-    (NEW.id, 'Mineral Filtre',        'MINERAL',       7, true),
-    (NEW.id, 'UV Sterilizasyon',      'UV',            8, true);
+    (gen_random_uuid()::text, NEW.id, 'Sediment Filtre',       'SEDIMENT',      1, true),
+    (gen_random_uuid()::text, NEW.id, 'Karbon Blok Filtre',    'CARBON_BLOCK',  2, true),
+    (gen_random_uuid()::text, NEW.id, 'Granül Aktif Karbon',   'GAC',           3, true),
+    (gen_random_uuid()::text, NEW.id, 'Membran (RO)',          'MEMBRANE',      4, true),
+    (gen_random_uuid()::text, NEW.id, 'Post Karbon Filtre',    'POST_CARBON',   5, true),
+    (gen_random_uuid()::text, NEW.id, 'Alkalin Filtre',        'ALKALINE',      6, true),
+    (gen_random_uuid()::text, NEW.id, 'Mineral Filtre',        'MINERAL',       7, true),
+    (gen_random_uuid()::text, NEW.id, 'UV Sterilizasyon',      'UV',            8, true);
   RETURN NEW;
 END;
 $$;
@@ -30,8 +30,8 @@ CREATE TRIGGER trg_seed_filter_catalog
   FOR EACH ROW EXECUTE FUNCTION public.seed_filter_catalog();
 
 -- Mevcut tenant'lara filtre kataloğu ekle (yoksa)
-INSERT INTO public.filter_catalogs ("tenantId", name, stage, "sortOrder", "isActive")
-SELECT t.id, fc.name, fc.stage, fc.sort_order, true
+INSERT INTO public.filter_catalogs (id, "tenantId", name, stage, "sortOrder", "isActive")
+SELECT gen_random_uuid()::text, t.id, fc.name, fc.stage, fc.sort_order, true
 FROM public.tenants t
 CROSS JOIN (VALUES
   ('Sediment Filtre',       'SEDIMENT',      1),
