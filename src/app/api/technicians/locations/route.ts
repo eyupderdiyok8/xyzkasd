@@ -47,10 +47,16 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   const auth = await requireRole('manager');
   if (!auth.ok) return NextResponse.json({ error: auth.error }, { status: auth.error!.status });
-  if (!auth.tenantId) return NextResponse.json({ error: { code: 'FORBIDDEN' } }, { status: 403 });
+
+  const where: any = { isActive: true, deletedAt: null };
+  // super_admin "Tüm Firmalar" seçiliyse tüm teknisyenleri görsün
+  if (auth.role !== 'super_admin' || auth.tenantId) {
+    if (!auth.tenantId) return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Firma seçin' } }, { status: 403 });
+    where.tenantId = auth.tenantId;
+  }
 
   const techs = await prisma.technician.findMany({
-    where: { tenantId: auth.tenantId, isActive: true, deletedAt: null },
+    where,
     select: {
       id: true,
       name: true,

@@ -30,14 +30,29 @@ export default function LocationSharer() {
         const key = `${pos.coords.latitude.toFixed(4)},${pos.coords.longitude.toFixed(4)}`;
         if (key === lastSent) return;
         lastSent = key;
-        setStatus('sharing');
+
         try {
-          await fetch('/api/technicians/locations', {
+          const res = await fetch('/api/technicians/locations', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
           });
-        } catch { /* ağ hatası */ }
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            if (res.status === 404) {
+              setStatus('error');
+              setErrorMsg(err.error?.message ?? 'Teknisyen kaydı profilinize bağlı değil. Yöneticinize bildirin.');
+            } else {
+              setStatus('error');
+              setErrorMsg(err.error?.message ?? 'Konum gönderilemedi: ' + res.status);
+            }
+            return;
+          }
+          setStatus('sharing');
+        } catch {
+          setStatus('error');
+          setErrorMsg('Bağlantı hatası. İnternet bağlantınızı kontrol edin.');
+        }
       },
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
