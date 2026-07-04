@@ -18,9 +18,10 @@ interface DeviceOption {
 }
 interface TechnicianOption {
   id: string;
-  full_name: string | null;
+  name: string;
+  phone: string | null;
   email: string | null;
-  role: string;
+  isActive: boolean;
 }
 
 export default function NewServiceTicketPage() {
@@ -51,7 +52,7 @@ export default function NewServiceTicketPage() {
         const [custRes, devRes, techRes] = await Promise.all([
           fetch('/api/customers?showAll=true'),
           fetch('/api/devices?status=ACTIVE'),
-          fetch('/api/users'),
+          fetch('/api/technicians'),
         ]);
 
         const custJson = await custRes.json();
@@ -61,11 +62,7 @@ export default function NewServiceTicketPage() {
         if (!custJson.error) setCustomers(custJson.data ?? []);
         if (!devJson.error) setDevices(devJson.data ?? []);
         if (!techJson.error) {
-          setTechnicians(
-            (techJson.data ?? []).filter(
-              (u: TechnicianOption) => u.role === 'technician',
-            ),
-          );
+          setTechnicians(techJson.data ?? []);
         }
       } catch {
         setError('Veriler yüklenemedi');
@@ -192,7 +189,7 @@ export default function NewServiceTicketPage() {
             <option value="">Sonra ata...</option>
             {technicians.map((t) => (
               <option key={t.id} value={t.id}>
-                {t.full_name || t.email || t.id}
+                {t.name}
               </option>
             ))}
           </select>
