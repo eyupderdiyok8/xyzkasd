@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/supabase/require-role';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { prisma } from '@/lib/prisma';
 import type { UserRole } from '@/lib/supabase/types';
 
 const VALID_ROLES: UserRole[] = ['super_admin', 'tenant_admin', 'manager', 'technician', 'viewer'];
@@ -147,6 +148,24 @@ export async function POST(request: NextRequest) {
       { error: { code: 'INTERNAL_ERROR', message: 'Profil oluşturulamadı. Lütfen daha sonra tekrar deneyin.' } },
       { status: 500 },
     );
+  }
+
+  // Teknisyen rolü verildiyse technicians tablosuna da ekle
+  if (body.role === 'technician' && effectiveTenantId) {
+    try {
+      await prisma.technician.create({
+        data: {
+          tenantId: effectiveTenantId,
+          name: body.fullName,
+          email: body.email,
+          userId: newUser.user.id,
+          isActive: true,
+        },
+      });
+    } catch (err) {
+      // Teknisyen kaydı başarısız olsa da kullanıcı oluştu — sadece logla
+      console.error('[invite] Teknisyen kaydı oluşturulamadı:', err);
+    }
   }
 
   return NextResponse.json(
