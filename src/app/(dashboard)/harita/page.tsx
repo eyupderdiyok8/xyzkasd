@@ -19,13 +19,15 @@ export default function HaritaPage() {
   const mapRef = useRef<any>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
+  const leafletRef = useRef<any>(null);
+  const [leafletReady, setLeafletReady] = useState(false);
 
   // Load Leaflet dynamically (no SSR)
   useEffect(() => {
-    let L: any;
     import('leaflet').then(mod => {
-      L = mod.default;
-      // Fix default icon paths
+      const L = mod.default;
+      leafletRef.current = L;
+
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
@@ -40,6 +42,8 @@ export default function HaritaPage() {
           maxZoom: 19,
         }).addTo(mapRef.current);
       }
+
+      setLeafletReady(true);
     });
 
     return () => {
@@ -66,7 +70,7 @@ export default function HaritaPage() {
 
   // Update markers on map when techs change
   useEffect(() => {
-    const L = (window as any).L;
+    const L = leafletRef.current;
     if (!L || !mapRef.current) return;
 
     // Clear old markers
@@ -87,7 +91,7 @@ export default function HaritaPage() {
     if (bounds.length > 0) {
       mapRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
     }
-  }, [techs]);
+  }, [techs, leafletReady]);
 
   useEffect(() => {
     fetchLocations();
