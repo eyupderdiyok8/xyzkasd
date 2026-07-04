@@ -41,18 +41,24 @@ function LoginForm() {
     setHata(null); setMesaj(null);
     setYukleniyor(true);
 
-    const { error: girisHatasi } = await supabase.auth.signInWithPassword({ email, password: parola });
-    if (girisHatasi) { setHata(translateAuthError(girisHatasi.message)); setYukleniyor(false); return; }
+    try {
+      const { error: girisHatasi } = await supabase.auth.signInWithPassword({ email, password: parola });
+      if (girisHatasi) { setHata(translateAuthError(girisHatasi.message)); setYukleniyor(false); return; }
 
-    // Check if MFA is required
-    const { data: factors } = await supabase.auth.mfa.listFactors();
-    if (factors?.totp && factors.totp.length > 0) {
-      router.push('/auth/mfa?next=/dashboard');
-      return;
+      // Check if MFA is required
+      const { data: factors } = await supabase.auth.mfa.listFactors();
+      if (factors?.totp && factors.totp.length > 0) {
+        router.push('/auth/mfa?next=/dashboard');
+        return;
+      }
+
+      // Cookie'nin oturduğundan emin olmak için kısa bekle
+      await new Promise(r => setTimeout(r, 300));
+      window.location.href = '/dashboard';
+    } catch (err: any) {
+      setHata(err?.message ?? 'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
+      setYukleniyor(false);
     }
-
-    router.push('/dashboard');
-    router.refresh();
   }
 
   return (
