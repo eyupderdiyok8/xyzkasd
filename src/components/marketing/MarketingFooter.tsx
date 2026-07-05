@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BrandLogo from '@/components/BrandLogo';
 
 const legalLinks = [
+  { href: '/blog', label: 'Blog' },
   { href: '/gizlilik-politikasi', label: 'Gizlilik Politikası' },
   { href: '/kvkk', label: 'KVKK' },
   { href: '/cerez-politikasi', label: 'Çerez Politikası' },

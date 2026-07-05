@@ -1,4 +1,5 @@
 import { BaseRepository } from './base.repository';
+import { paginationMeta, type PaginationMeta, type PaginationParams } from '@/lib/api-pagination';
 
 // ─── Types ─────────────────────────────────────
 
@@ -71,6 +72,43 @@ export class InventoryRepository extends BaseRepository {
     }
 
     return result;
+  }
+
+  async findAllPaged(options: { critical?: boolean; showDeleted?: boolean }, pagination: PaginationParams): Promise<{
+    data: InventoryItemDTO[];
+    meta: PaginationMeta & { allTotal: number; criticalTotal: number; totalStock: number };
+  }> {
+    const where = { ...this.tenantFilter(), ...this.notDeleted(options?.showDeleted) };
+    const allForStats = await this.prisma.inventoryItem.findMany({
+      where,
+      select: { id: true, quantity: true, minStock: true },
+    });
+    const total = options.critical
+      ? allForStats.filter((i) => i.quantity <= i.minStock).length
+      : allForStats.length;
+    const criticalTotal = allForStats.filter((i) => i.quantity <= i.minStock).length;
+    const totalStock = allForStats.reduce((sum, i) => sum + i.quantity, 0);
+
+    if (options.critical) {
+      const items = await this.findAll(options);
+      const data = items.slice(pagination.skip, pagination.skip + pagination.take);
+      return {
+        data,
+        meta: { ...paginationMeta(pagination.page, pagination.pageSize, total), allTotal: allForStats.length, criticalTotal, totalStock },
+      };
+    }
+
+    const items = await this.prisma.inventoryItem.findMany({
+      where,
+      orderBy: { name: 'asc' },
+      skip: pagination.skip,
+      take: pagination.take,
+    });
+
+    return {
+      data: items.map((i) => this.toDTO(i)),
+      meta: { ...paginationMeta(pagination.page, pagination.pageSize, total), allTotal: allForStats.length, criticalTotal, totalStock },
+    };
   }
 
   /**

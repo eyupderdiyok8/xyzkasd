@@ -11,6 +11,8 @@
 export type * from './models/Tenant'
 export type * from './models/Profile'
 export type * from './models/User'
+export type * from './models/BlogPost'
+export type * from './models/BlogComment'
 export type * from './models/Device'
 export type * from './models/DevicePhoto'
 export type * from './models/TdsReading'

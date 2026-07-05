@@ -12,6 +12,7 @@ const LINKS = [
   { href: '/nasil-calisir', label: 'Nasıl Çalışır' },
   { href: '/fiyat', label: 'Fiyat' },
   { href: '/ogren', label: 'Öğren' },
+  { href: '/blog', label: 'Blog' },
 ];
 
 export default function MarketingNav() {

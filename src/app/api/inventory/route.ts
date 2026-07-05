@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { InventoryRepository } from '@/repositories/inventory.repository';
 import { requireRole } from '@/lib/supabase/require-role';
+import { parsePagination } from '@/lib/api-pagination';
 
 /**
  * GET /api/inventory
@@ -20,12 +21,16 @@ export async function GET(req: NextRequest) {
   const showDeleted = req.nextUrl.searchParams.get('showDeleted') === 'true' && (auth.role === 'manager' || auth.role === 'tenant_admin' || auth.role === 'super_admin');
 
   try {
-    const items = await new InventoryRepository({
+    const repo = new InventoryRepository({
       tenantId: auth.tenantId,
       role: auth.role!,
       userId: auth.userId,
-    }).findAll({ critical, showDeleted });
-    return NextResponse.json({ data: items });
+    });
+    const opts = { critical, showDeleted };
+    const items = typeof (repo as any).findAllPaged === 'function'
+      ? await repo.findAllPaged(opts, parsePagination(req.nextUrl.searchParams))
+      : { data: await repo.findAll(opts) };
+    return NextResponse.json(items);
   } catch (e: any) {
     return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: e.message } }, { status: 500 });
   }

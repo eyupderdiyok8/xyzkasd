@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import TenantSelect from '@/components/TenantSelect';
 import { Plus, Phone, Mail, Users, UserCheck, AlertCircle, X, Check, Building } from 'lucide-react';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
+import { cachedJson } from '@/lib/client-api-cache';
 
 interface Technician {
   id: string; name: string; phone: string | null; email: string | null; isActive: boolean;
@@ -14,6 +16,7 @@ interface Technician {
 }
 
 export default function ManagerPage() {
+  const { role } = useDashboardSession();
   const [techs, setTechs] = useState<Technician[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,23 +28,19 @@ export default function ManagerPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [tenantId, setTenantId] = useState('');
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [sending, setSending] = useState(false);
+  const isSuperAdmin = role === 'super_admin';
 
   const fetchTechs = useCallback(() => {
     setLoading(true);
-    fetch('/api/technicians')
-      .then(r => r.json())
-      .then(j => { if (j.error) setError(j.error.message); else setTechs(j.data ?? []); })
+    cachedJson<{ data?: Technician[]; error?: { message?: string } }>('/api/technicians', undefined, 1000)
+      .then(j => { if (j.error) setError(j.error.message ?? 'Yüklenemedi'); else setTechs(j.data ?? []); })
       .catch(() => setError('Yüklenemedi'))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     fetchTechs();
-    fetch('/api/auth/me').then(r => r.json()).then(j => {
-      if (j.data?.role === 'super_admin') setIsSuperAdmin(true);
-    }).catch(() => {});
   }, [fetchTechs]);
 
   const handleAdd = async (e: React.FormEvent) => {

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
-import type { UserRole } from '@/lib/supabase/types';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
+import { cachedJson } from '@/lib/client-api-cache';
 
 interface InventoryItem {
   id: string;
@@ -26,41 +27,45 @@ const REFERENCE_LABELS: Record<string, string> = {
 };
 
 export default function InventoryPage() {
+  const { role } = useDashboardSession();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [role, setRole] = useState<UserRole | null>(null);
   const [showCriticalOnly, setShowCriticalOnly] = useState(false);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<{ total: number; totalPages: number; page: number; pageSize: number; allTotal?: number; criticalTotal?: number; totalStock?: number } | null>(null);
 
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then((r) => r.json())
-      .then((json) => setRole(json.data?.role ?? null))
-      .catch(() => {});
+    setLoading(true);
+    setError(null);
+    const params = new URLSearchParams();
+    params.set('page', String(page));
+    params.set('pageSize', '25');
+    if (showCriticalOnly) params.set('critical', 'true');
 
-    fetch('/api/inventory')
-      .then((r) => r.json())
+    cachedJson<{ data?: InventoryItem[]; meta?: typeof meta; error?: { message?: string } }>(`/api/inventory?${params}`, undefined, 1000)
       .then((json) => {
         if (json.error) {
-          setError(json.error.message);
+          setError(json.error.message ?? 'Stok verileri yüklenemedi');
           return;
         }
         setItems(json.data ?? []);
+        setMeta(json.meta ?? null);
       })
       .catch(() => setError('Stok verileri yüklenemedi'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [page, showCriticalOnly]);
 
-  const canEdit = role && hasRole(role, 'technician');
+  const canEdit = hasRole(role, 'technician');
 
   const displayed = showCriticalOnly
     ? items.filter((i) => i.isCritical)
     : items;
 
   const stats = {
-    total: items.length,
-    critical: items.filter((i) => i.isCritical).length,
-    totalStock: items.reduce((s, i) => s + i.quantity, 0),
+    total: meta?.allTotal ?? meta?.total ?? items.length,
+    critical: meta?.criticalTotal ?? items.filter((i) => i.isCritical).length,
+    totalStock: meta?.totalStock ?? items.reduce((s, i) => s + i.quantity, 0),
   };
 
   return (
@@ -112,7 +117,7 @@ export default function InventoryPage() {
               </p>
             </div>
             <button
-              onClick={() => setShowCriticalOnly(!showCriticalOnly)}
+              onClick={() => { setShowCriticalOnly(!showCriticalOnly); setPage(1); }}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                 showCriticalOnly
                   ? 'bg-red-600 text-white'
@@ -129,7 +134,7 @@ export default function InventoryPage() {
       {stats.critical > 0 && (
         <div className="mt-4 flex flex-wrap gap-2">
           <button
-            onClick={() => setShowCriticalOnly(false)}
+            onClick={() => { setShowCriticalOnly(false); setPage(1); }}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               !showCriticalOnly
                 ? 'bg-primary text-white'
@@ -139,7 +144,7 @@ export default function InventoryPage() {
             Tümü ({stats.total})
           </button>
           <button
-            onClick={() => setShowCriticalOnly(true)}
+            onClick={() => { setShowCriticalOnly(true); setPage(1); }}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               showCriticalOnly
                 ? 'bg-red-600 text-white'
@@ -252,6 +257,15 @@ export default function InventoryPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+      {meta && meta.totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-border bg-white px-4 py-3 text-sm">
+          <span className="text-gray-500">Sayfa {meta.page} / {meta.totalPages}</span>
+          <div className="flex gap-2">
+            <button className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>Önceki</button>
+            <button className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50" disabled={page >= meta.totalPages || loading} onClick={() => setPage((p) => p + 1)}>Sonraki</button>
+          </div>
         </div>
       )}
     </div>

@@ -55,18 +55,32 @@ export async function POST(
     return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Geçersiz JSON' } }, { status: 400 });
   }
 
-  if (!b.filterCatalogId || !b.expectedLifespanDays) {
+  const bulkFilters = Array.isArray(b.filters) ? b.filters : null;
+  if (!bulkFilters && (!b.filterCatalogId || !b.expectedLifespanDays)) {
     return NextResponse.json({
       error: { code: 'VALIDATION_ERROR', message: 'filterCatalogId ve expectedLifespanDays zorunludur' },
     }, { status: 400 });
   }
 
   try {
-    const filter = await new FilterTrackingRepository({
+    const repo = new FilterTrackingRepository({
       tenantId: auth.tenantId,
       role: auth.role!,
       userId: auth.userId,
-    }).add(id, {
+    });
+    if (bulkFilters) {
+      const filters = await repo.addMany(id, bulkFilters
+        .filter((f: any) => f?.filterCatalogId && f?.expectedLifespanDays)
+        .map((f: any) => ({
+          filterCatalogId: String(f.filterCatalogId),
+          installedAt: f.installedAt ? String(f.installedAt) : undefined,
+          expectedLifespanDays: Number(f.expectedLifespanDays),
+          notes: f.notes ? String(f.notes) : null,
+        })));
+      return NextResponse.json({ data: filters }, { status: 201 });
+    }
+
+    const filter = await repo.add(id, {
       filterCatalogId: String(b.filterCatalogId),
       installedAt: b.installedAt ? String(b.installedAt) : undefined,
       expectedLifespanDays: Number(b.expectedLifespanDays),

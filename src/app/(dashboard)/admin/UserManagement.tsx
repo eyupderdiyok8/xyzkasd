@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { UserRole } from '@/lib/supabase/types';
-import { ROLE_LABELS, ROLE_HIERARCHY } from '@/lib/roles';
+import { ROLE_LABELS } from '@/lib/roles';
+import { cachedJson } from '@/lib/client-api-cache';
 
 interface User {
   id: string;
@@ -17,11 +18,10 @@ interface User {
 
 const ROLES: UserRole[] = ['super_admin', 'tenant_admin', 'manager', 'technician', 'viewer'];
 
-export default function UserManagement({ currentRole }: { currentRole: UserRole }) {
+export default function UserManagement({ currentRole, currentUserId }: { currentRole: UserRole; currentUserId: string }) {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -30,19 +30,13 @@ export default function UserManagement({ currentRole }: { currentRole: UserRole 
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await fetch('/api/users');
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error?.message ?? 'Failed to fetch');
+      const json = await cachedJson<{ data?: User[]; error?: { message?: string } }>('/api/users');
+      if (json.error) throw new Error(json.error.message ?? 'Failed to fetch');
       setUsers(json.data ?? []);
-
-      const meRes = await fetch('/api/auth/me');
-      const meJson = await meRes.json();
-      if (meJson.data?.id) setCurrentUserId(meJson.data.id);
 
       // Super admin için tenant listesini yükle
       if (currentRole === 'super_admin') {
-        const tRes = await fetch('/api/tenants');
-        const tJson = await tRes.json();
+        const tJson = await cachedJson<{ data?: { id: string; name: string }[] }>('/api/tenants');
         if (tJson.data) {
           setTenants(tJson.data);
         }

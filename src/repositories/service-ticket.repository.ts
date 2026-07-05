@@ -1,4 +1,6 @@
 import { BaseRepository } from './base.repository';
+import { paginationMeta, type PaginationMeta, type PaginationParams } from '@/lib/api-pagination';
+import { findInventoryItemForPart, stockOutAllowNegative, type StockWarning } from '@/lib/inventory-stock';
 
 function generateTicketNo(): string {
   const date = new Date();
@@ -12,7 +14,7 @@ function generateTicketNo(): string {
 export class ServiceTicketRepository extends BaseRepository {
   // ─── List ───────────────────────────────────
 
-  async findAll(opts?: {
+  private buildListWhere(opts?: {
     status?: string;
     technicianId?: string;
     customerId?: string;
@@ -34,7 +36,18 @@ export class ServiceTicketRepository extends BaseRepository {
         { issueDesc: { contains: opts.search } },
       ];
     }
+    return where;
+  }
 
+  async findAll(opts?: {
+    status?: string;
+    technicianId?: string;
+    customerId?: string;
+    deviceId?: string;
+    search?: string;
+    showDeleted?: boolean;
+  }) {
+    const where = this.buildListWhere(opts);
     return this.prisma.serviceTicket.findMany({
       where,
       include: {
@@ -45,6 +58,68 @@ export class ServiceTicketRepository extends BaseRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async findAllPaged(opts: {
+    status?: string;
+    technicianId?: string;
+    customerId?: string;
+    deviceId?: string;
+    search?: string;
+    showDeleted?: boolean;
+  }, pagination: PaginationParams): Promise<{ data: any[]; meta: PaginationMeta }> {
+    const where = this.buildListWhere(opts);
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.serviceTicket.findMany({
+        where,
+        include: {
+          customer: { select: { id: true, name: true, phone: true } },
+          device: { select: { id: true, serialNo: true, brand: true, model: true } },
+          technician: { select: { id: true, name: true } },
+          _count: { select: { photos: true, filterChanges: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: pagination.skip,
+        take: pagination.take,
+      }),
+      this.prisma.serviceTicket.count({ where }),
+    ]);
+
+    return { data, meta: paginationMeta(pagination.page, pagination.pageSize, total) };
+  }
+
+  async getOverdueQueue(limit = 10) {
+    const tickets = await this.prisma.serviceTicket.findMany({
+      where: {
+        ...this.tenantFilter(),
+        deletedAt: null,
+        status: { in: ['PENDING', 'ASSIGNED', 'IN_PROGRESS'] },
+        issueDesc: { startsWith: 'Gecikmiş bakım:' },
+      },
+      include: {
+        customer: { select: { id: true, name: true, phone: true } },
+        device: { select: { id: true, serialNo: true, brand: true, model: true } },
+        technician: { select: { id: true, name: true } },
+        _count: { select: { photos: true, filterChanges: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+      take: limit,
+    });
+
+    return tickets.map((t) => ({
+      id: t.id,
+      ticketNo: t.ticketNo,
+      issueDesc: t.issueDesc,
+      status: t.status,
+      customerName: t.customer?.name ?? null,
+      customerPhone: t.customer?.phone ?? null,
+      deviceSerialNo: t.device.serialNo,
+      deviceBrand: t.device.brand,
+      deviceModel: t.device.model,
+      technicianName: t.technician?.name ?? null,
+      createdAt: t.createdAt.toISOString(),
+      scheduledAt: t.scheduledAt?.toISOString() ?? null,
+    }));
   }
 
   // ─── Get by ID ─────────────────────────────
@@ -96,7 +171,7 @@ export class ServiceTicketRepository extends BaseRepository {
     // Resolve technicianId: UUID → Technician.id mapping for backward compat
     let resolvedTechnicianId = input.technicianId ?? null;
 
-    if (resolvedTechnicianId) {
+    if (resolvedTechnicianId && this.prisma.technician?.findFirst) {
       // Try direct id match first (cuid)
       let tech = await this.prisma.technician.findFirst({
         where: { id: resolvedTechnicianId, tenantId: input.tenantId, deletedAt: null },
@@ -181,6 +256,8 @@ export class ServiceTicketRepository extends BaseRepository {
     },
   ) {
     const ticket = await this.ensureAccess(id);
+    const wasAlreadyCompleted = ticket.status === 'COMPLETED';
+    const warnings: StockWarning[] = [];
 
     // Update the ticket fields
     const updated = await this.prisma.serviceTicket.update({
@@ -208,7 +285,7 @@ export class ServiceTicketRepository extends BaseRepository {
     // 1. Create FilterChange records (audit trail)
     // 2. Update DeviceFilter tracking (reset lifespan clock)
     // 3. Decrement inventory stock for changed filters
-    if (data.filterChanges && data.filterChanges.length > 0) {
+    if (!wasAlreadyCompleted && data.filterChanges && data.filterChanges.length > 0) {
       const filterCatalogIds = data.filterChanges.map((fc) => fc.filterId);
 
       // Get filter catalog entries with inventory links
@@ -272,82 +349,48 @@ export class ServiceTicketRepository extends BaseRepository {
         // ── Inventory deduction ──────────────────
         const catalog = catalogMap.get(fc.filterId);
         if (catalog?.inventoryItemId) {
-          // Decrement inventory quantity (don't go below 0)
-          await this.prisma.inventoryItem.updateMany({
-            where: { id: catalog.inventoryItemId, quantity: { gte: qty } },
-            data: { quantity: { decrement: qty } },
+          const warning = await stockOutAllowNegative(this.prisma, {
+            itemId: catalog.inventoryItemId,
+            tenantId: ticket.tenantId,
+            quantity: qty,
+            referenceType: 'SERVICE',
+            referenceId: ticket.ticketNo,
+            notes: `Servis #${ticket.ticketNo} — ${catalog.name}`,
+            createdBy: this.userId,
           });
-
-          // Record the transaction
-          await this.prisma.inventoryTransaction.create({
-            data: {
-              itemId: catalog.inventoryItemId,
-              tenantId: ticket.tenantId,
-              type: 'OUT',
-              quantity: qty,
-              referenceType: 'SERVICE',
-              referenceId: ticket.ticketNo,
-              notes: `Servis #${ticket.ticketNo} — ${catalog.name}`,
-            },
-          });
+          if (warning) warnings.push(warning);
         }
       }
     }
 
     // ── Process generic service parts (inventory deduction) ──
-    if (data.serviceParts) {
+    if (!wasAlreadyCompleted && data.serviceParts) {
       try {
-        const parts: Array<{ name: string; quantity: number }> = JSON.parse(data.serviceParts);
+        const parts: Array<{ name: string; quantity: number; inventoryItemId?: string | null }> = JSON.parse(data.serviceParts);
         if (Array.isArray(parts) && parts.length > 0) {
-          // Find matching inventory items by name (case-insensitive)
-          const partNames = parts.map(p => p.name.trim()).filter(Boolean);
-          if (partNames.length > 0) {
-            // Fetch all tenant inventory items and fuzzy-match in JS
-            const allItems = await this.prisma.inventoryItem.findMany({
-              where: { ...this.tenantFilter(), quantity: { gt: 0 } },
-              select: { id: true, name: true, quantity: true },
+          for (const part of parts) {
+            if (!part?.name || part.quantity < 1) continue;
+            const match = await findInventoryItemForPart(this.prisma, ticket.tenantId, part);
+            if (!match) continue;
+            const warning = await stockOutAllowNegative(this.prisma, {
+              itemId: match.id,
+              tenantId: ticket.tenantId,
+              quantity: part.quantity,
+              referenceType: 'SERVICE',
+              referenceId: ticket.ticketNo,
+              notes: `Servis #${ticket.ticketNo} — ${match.name}`,
+              createdBy: this.userId,
             });
-
-            const matchingItems = allItems.filter(item => {
-              const itemName = item.name.toLowerCase();
-              return partNames.some(input => {
-                const inp = input.toLowerCase();
-                return inp === itemName || inp.includes(itemName) || itemName.includes(inp);
-              });
-            });
-
-            for (const match of matchingItems) {
-              const part = parts.find(p => {
-                const input = p.name.trim().toLowerCase();
-                const itemName = match.name.toLowerCase();
-                // Exact match or fuzzy: one contains the other
-                return input === itemName || input.includes(itemName) || itemName.includes(input);
-              });
-              if (!part || part.quantity < 1) continue;
-              const qty = Math.min(part.quantity, match.quantity);
-
-              // Decrement inventory
-              await this.prisma.inventoryItem.update({
-                where: { id: match.id },
-                data: { quantity: { decrement: qty } },
-              });
-
-              // Record transaction
-              await this.prisma.inventoryTransaction.create({
-                data: {
-                  itemId: match.id,
-                  tenantId: ticket.tenantId,
-                  type: 'OUT',
-                  quantity: qty,
-                  referenceType: 'SERVICE',
-                  referenceId: ticket.ticketNo,
-                  notes: `Servis #${ticket.ticketNo} — ${match.name}`,
-                },
-              });
-            }
+            if (warning) warnings.push(warning);
           }
         }
       } catch { /* invalid JSON — skip inventory deduction */ }
+    }
+    if (wasAlreadyCompleted && ((data.filterChanges?.length ?? 0) > 0 || data.serviceParts)) {
+      warnings.push({
+        code: 'INSUFFICIENT_STOCK',
+        message: 'Servis daha önce tamamlandığı için stok hareketleri tekrar oluşturulmadı.',
+      });
     }
 
     // ── Record DeviceMaintenance event ────────────
@@ -384,7 +427,7 @@ export class ServiceTicketRepository extends BaseRepository {
       newValues: { status: 'COMPLETED', workDone: data.workDone, resolution: data.resolution },
     });
 
-    return updated;
+    return { ...updated, warnings };
   }
 
   // ─── Photos ─────────────────────────────────

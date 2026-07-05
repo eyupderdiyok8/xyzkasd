@@ -1,4 +1,5 @@
 import { BaseRepository } from './base.repository';
+import { paginationMeta, type PaginationMeta, type PaginationParams } from '@/lib/api-pagination';
 
 /** Phone with optional id — id is stripped before create */
 interface PhoneInput {
@@ -38,9 +39,8 @@ interface UpdateCustomerInput {
 export class CustomerRepository extends BaseRepository {
   // ─── List ───────────────────────────────────
 
-  async findAll(search?: string, showAll?: boolean) {
+  private buildListWhere(search?: string, showAll?: boolean) {
     const where: any = this.tenantFilter();
-    // Default: exclude soft-deleted customers
     if (!showAll) where.deletedAt = null;
     if (search) {
       where.OR = [
@@ -49,6 +49,11 @@ export class CustomerRepository extends BaseRepository {
         { phones: { some: { number: { contains: search } } } },
       ];
     }
+    return where;
+  }
+
+  async findAll(search?: string, showAll?: boolean) {
+    const where = this.buildListWhere(search, showAll);
     return this.prisma.customer.findMany({
       where,
       include: {
@@ -61,6 +66,29 @@ export class CustomerRepository extends BaseRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async findAllPaged(search: string | undefined, showAll: boolean | undefined, pagination: PaginationParams): Promise<{ data: any[]; meta: PaginationMeta }> {
+    const where = this.buildListWhere(search, showAll);
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.customer.findMany({
+        where,
+        include: {
+          phones: {
+            where: { deletedAt: null },
+            select: { id: true, label: true, number: true },
+            orderBy: { label: 'asc' },
+          },
+          _count: { select: { devices: true, serviceTickets: true, addresses: true, phones: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: pagination.skip,
+        take: pagination.take,
+      }),
+      this.prisma.customer.count({ where }),
+    ]);
+
+    return { data, meta: paginationMeta(pagination.page, pagination.pageSize, total) };
   }
 
   // ─── Get by ID ─────────────────────────────
@@ -90,6 +118,7 @@ export class CustomerRepository extends BaseRepository {
             _count: { select: { tdsReadings: true, serviceTickets: true } },
           },
           orderBy: { createdAt: 'desc' },
+          take: 10,
         },
         serviceTickets: {
           select: {
@@ -105,6 +134,7 @@ export class CustomerRepository extends BaseRepository {
             technician: { select: { id: true, name: true } },
           },
           orderBy: { createdAt: 'desc' },
+          take: 10,
         },
         _count: { select: { devices: true, serviceTickets: true, addresses: true, phones: true } },
       },

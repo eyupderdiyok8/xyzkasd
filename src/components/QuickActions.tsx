@@ -1,24 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
 import type { UserRole } from '@/lib/supabase/types';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
 import { UserPlus, Wrench, Package, ClipboardList, ArrowRight } from 'lucide-react';
 
 const ACTIONS = [
-  { href: '/hizli-servis', label: '⚡ Hızlı Servis', icon: ClipboardList, minRole: 'technician' as UserRole },
+  { href: '/hizli-servis', label: '⚡ Hızlı Servis', icon: ClipboardList, minRole: 'manager' as UserRole },
   { href: '/customers/new', label: 'Yeni Müşteri', icon: UserPlus, minRole: 'technician' as UserRole },
   { href: '/devices/new', label: 'Yeni Cihaz', icon: Wrench, minRole: 'technician' as UserRole },
   { href: '/inventory', label: 'Stok Kontrol', icon: Package, minRole: 'technician' as UserRole },
 ];
 
 export default function QuickActions({ role: initialRole }: { role?: UserRole }) {
-  const [role, setRole] = useState<UserRole | null>(initialRole ?? null);
-  useEffect(() => {
-    if (initialRole) return;
-    fetch('/api/auth/me').then(r => r.json()).then(j => setRole(j.data?.role ?? null)).catch(() => {});
-  }, [initialRole]);
+  const session = useDashboardSession();
+  const role = initialRole ?? session.role;
 
   const visible = ACTIONS.filter(a => role && hasRole(role, a.minRole));
   if (visible.length === 0) return null;

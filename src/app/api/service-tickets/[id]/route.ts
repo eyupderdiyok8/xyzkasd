@@ -215,7 +215,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       }
     }
 
-    return NextResponse.json({ data: updated });
+    return NextResponse.json({ data: updated, warnings: (updated as any).warnings ?? [] });
   } catch (e: any) {
     if (e.message === 'NOT_FOUND') {
       return NextResponse.json({ error: { code: 'NOT_FOUND' } }, { status: 404 });

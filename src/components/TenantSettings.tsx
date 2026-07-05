@@ -13,6 +13,7 @@ import {
   stringifyAppThemeConfig,
   type AppThemePresetId,
 } from '@/lib/app-theme';
+import { cachedJson, invalidateCachedJson } from '@/lib/client-api-cache';
 
 interface TenantInfo {
   id: string;
@@ -154,17 +155,8 @@ export default function TenantSettings() {
     setLoading(true);
     try {
       setEmptyMessage(null);
-      const res = await fetch('/api/admin/plan');
-      const json = await res.json();
-      if (!res.ok) {
-        if (res.status === 404) {
-          setError(null);
-          setTenant(null);
-          setLoading(false);
-          return;
-        }
-        throw new Error(json.error?.message ?? 'Yüklenemedi');
-      }
+      const json = await cachedJson<{ data?: TenantInfo | null; meta?: { message?: string }; error?: { message?: string; status?: number } }>('/api/admin/plan');
+      if (json.error) throw new Error(json.error.message ?? 'Yüklenemedi');
       if (!json.data) {
         setError(null);
         setTenant(null);
@@ -247,6 +239,7 @@ export default function TenantSettings() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error?.message ?? 'Kaydedilemedi');
 
+      invalidateCachedJson('/api/admin/plan');
       setSuccess('Firma bilgileri güncellendi');
       setLogoChanged(false);
       setAppThemeChanged(false);

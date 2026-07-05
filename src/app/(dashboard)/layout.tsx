@@ -60,6 +60,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         themeConfig={themeConfig}
         fullName={profile.full_name}
         email={profile.email}
+        userId={user.id}
+        tenantId={profile.tenant_id}
+        effectiveTenantId={effectiveTenantId}
       >
         <MembershipBanner membershipType={membershipType} expiresAt={membershipExpiresAt} />
         {children}

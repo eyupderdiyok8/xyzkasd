@@ -21,6 +21,7 @@ import TenantSwitcher from '@/components/TenantSwitcher';
 import BrandLogo from '@/components/BrandLogo';
 import LocationSharer from '@/components/LocationSharer';
 import DashboardPerfMonitor from '@/components/DashboardPerfMonitor';
+import { DashboardSessionProvider } from '@/components/DashboardSessionProvider';
 import SidebarNav from './SidebarNav';
 
 interface NavItem {
@@ -67,9 +68,12 @@ interface DashboardShellProps {
   themeConfig: string | null;
   fullName: string | null;
   email: string | null;
+  userId: string;
+  tenantId: string | null;
+  effectiveTenantId: string | null;
 }
 
-export default function DashboardShell({ children, role, membershipType, membershipExpiresAt, themeConfig, fullName, email }: DashboardShellProps) {
+export default function DashboardShell({ children, role, membershipType, membershipExpiresAt, themeConfig, fullName, email, userId, tenantId, effectiveTenantId }: DashboardShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -225,7 +229,19 @@ export default function DashboardShell({ children, role, membershipType, members
     </div>
   );
 
+  const session = {
+    userId,
+    role,
+    tenantId,
+    effectiveTenantId,
+    membershipType,
+    membershipExpiresAt,
+    fullName,
+    email,
+  };
+
   return (
+    <DashboardSessionProvider value={session}>
     <div className="flex min-h-screen" style={themeStyle}>
       {sidebar}
 
@@ -243,5 +259,6 @@ export default function DashboardShell({ children, role, membershipType, members
       {role === 'technician' && <LocationSharer />}
       <DashboardPerfMonitor />
     </div>
+    </DashboardSessionProvider>
   );
 }

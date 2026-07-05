@@ -51,15 +51,19 @@ export async function loadDashboardStats(tenantId: string): Promise<DashboardSta
   const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999);
   const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-  const [todayServices, upcomingMaintenance, overdueMaintenance] = await Promise.all([
+  const todayServiceWhere = { tenantId, deletedAt: null, createdAt: { gte: todayStart, lte: todayEnd } };
+
+  const [todayServices, todayServiceCount, upcomingMaintenance, overdueMaintenance] = await Promise.all([
     prisma.serviceTicket.findMany({
-      where: { tenantId, deletedAt: null, createdAt: { gte: todayStart, lte: todayEnd } },
+      where: todayServiceWhere,
       include: {
         customer: { select: { name: true, phone: true } },
         technician: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 5,
     }),
+    prisma.serviceTicket.count({ where: todayServiceWhere }),
     prisma.deviceMaintenance.count({
       where: {
         tenantId, deletedAt: null,
@@ -77,7 +81,7 @@ export async function loadDashboardStats(tenantId: string): Promise<DashboardSta
   ]);
 
   return {
-    todayServiceCount: todayServices.length,
+    todayServiceCount,
     todayServices: todayServices.map(s => ({
       id: s.id, ticketNo: s.ticketNo, status: s.status,
       customer: s.customer, technician: s.technician,
@@ -94,22 +98,32 @@ export async function loadMaintenanceReminders(tenantId: string): Promise<Mainte
   const in7Days = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const in15Days = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
 
-  const [overdue, upcoming7, upcoming15] = await Promise.all([
+  const overdueWhere = { tenantId, deletedAt: null, scheduledDate: { lt: now }, completedDate: null };
+  const upcoming7Where = { tenantId, deletedAt: null, scheduledDate: { gte: now, lte: in7Days }, completedDate: null };
+  const upcoming15Where = { tenantId, deletedAt: null, scheduledDate: { gte: in7Days, lte: in15Days }, completedDate: null };
+
+  const [overdue, upcoming7, upcoming15, overdueCount, upcoming7Count, upcoming15Count] = await Promise.all([
     prisma.deviceMaintenance.findMany({
-      where: { tenantId, deletedAt: null, scheduledDate: { lt: now }, completedDate: null },
+      where: overdueWhere,
       include: { device: { select: { id: true, serialNo: true, brand: true, model: true } } },
       orderBy: { scheduledDate: "asc" },
+      take: 5,
     }),
     prisma.deviceMaintenance.findMany({
-      where: { tenantId, deletedAt: null, scheduledDate: { gte: now, lte: in7Days }, completedDate: null },
+      where: upcoming7Where,
       include: { device: { select: { id: true, serialNo: true, brand: true, model: true } } },
       orderBy: { scheduledDate: "asc" },
+      take: 5,
     }),
     prisma.deviceMaintenance.findMany({
-      where: { tenantId, deletedAt: null, scheduledDate: { gte: in7Days, lte: in15Days }, completedDate: null },
+      where: upcoming15Where,
       include: { device: { select: { id: true, serialNo: true, brand: true, model: true } } },
       orderBy: { scheduledDate: "asc" },
+      take: 5,
     }),
+    prisma.deviceMaintenance.count({ where: overdueWhere }),
+    prisma.deviceMaintenance.count({ where: upcoming7Where }),
+    prisma.deviceMaintenance.count({ where: upcoming15Where }),
   ]);
 
   const toItem = (m: typeof overdue[number]): MaintenanceItemData => ({
@@ -124,9 +138,9 @@ export async function loadMaintenanceReminders(tenantId: string): Promise<Mainte
   });
 
   return {
-    upcoming15Count: upcoming15.length,
-    upcoming7Count: upcoming7.length,
-    overdueCount: overdue.length,
+    upcoming15Count,
+    upcoming7Count,
+    overdueCount,
     upcoming15: upcoming15.map(toItem),
     upcoming7: upcoming7.map(toItem),
     overdue: overdue.map(toItem),
@@ -146,6 +160,7 @@ export async function loadOverdueQueue(tenantId: string): Promise<OverdueQueueIt
       technician: { select: { id: true, name: true } },
     },
     orderBy: { createdAt: "asc" },
+    take: 10,
   });
 
   return tickets.map(t => ({
@@ -161,27 +176,34 @@ export async function loadRevenueStats(tenantId: string): Promise<RevenueStatsDa
   const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
   const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-  const [allPayments, todayPayments, pendingPayments, monthlyPayments] = await Promise.all([
-    prisma.servicePayment.findMany({ where: { tenantId, status: "PAID" } }),
-    prisma.servicePayment.findMany({ where: { tenantId, status: "PAID", paidAt: { gte: todayStart } } }),
+  const [totalPaid, todayPaid, pendingPayments, overduePayments, byMethodRows, monthlyPayments] = await Promise.all([
     prisma.servicePayment.aggregate({
-      where: { tenantId, status: { in: ["PENDING", "OVERDUE"] } },
+      where: { tenantId, status: "PAID" },
       _sum: { amount: true },
+    }),
+    prisma.servicePayment.aggregate({
+      where: { tenantId, status: "PAID", paidAt: { gte: todayStart } },
+      _sum: { amount: true },
+    }),
+    prisma.servicePayment.aggregate({
+      where: { tenantId, status: "PENDING" },
+      _sum: { amount: true },
+    }),
+    prisma.servicePayment.aggregate({
+      where: { tenantId, status: "OVERDUE" },
+      _sum: { amount: true },
+    }),
+    prisma.servicePayment.groupBy({
+      by: ["paymentMethod"],
+      where: { tenantId, status: "PAID" },
+      _sum: { amount: true },
+      _count: { _all: true },
     }),
     prisma.servicePayment.findMany({
       where: { tenantId, status: "PAID", paidAt: { gte: sixMonthsAgo } },
       select: { amount: true, paidAt: true },
     }),
   ]);
-
-  // Group by method
-  const byMethod = new Map<string, { total: number; count: number }>();
-  for (const p of allPayments) {
-    const entry = byMethod.get(p.paymentMethod) ?? { total: 0, count: 0 };
-    entry.total += Number(p.amount);
-    entry.count += 1;
-    byMethod.set(p.paymentMethod, entry);
-  }
 
   // Group by month
   const monthlyMap = new Map<string, { total: number; count: number }>();
@@ -195,11 +217,15 @@ export async function loadRevenueStats(tenantId: string): Promise<RevenueStatsDa
   }
 
   return {
-    totalRevenue: allPayments.reduce((s, p) => s + Number(p.amount), 0),
-    collectedToday: todayPayments.reduce((s, p) => s + Number(p.amount), 0),
+    totalRevenue: Number(totalPaid._sum.amount ?? 0),
+    collectedToday: Number(todayPaid._sum.amount ?? 0),
     pendingAmount: Number(pendingPayments._sum.amount ?? 0),
-    overdueAmount: 0,
-    byMethod: Array.from(byMethod.entries()).map(([method, v]) => ({ method, ...v })),
+    overdueAmount: Number(overduePayments._sum.amount ?? 0),
+    byMethod: byMethodRows.map((row) => ({
+      method: row.paymentMethod,
+      total: Number(row._sum.amount ?? 0),
+      count: row._count._all,
+    })),
     byTechnician: [],
     monthlyRevenue: Array.from(monthlyMap.entries()).map(([month, v]) => ({ month, ...v })),
   };

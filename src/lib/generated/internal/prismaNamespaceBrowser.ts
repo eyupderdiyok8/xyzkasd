@@ -54,6 +54,8 @@ export const ModelName = {
   Tenant: 'Tenant',
   Profile: 'Profile',
   User: 'User',
+  BlogPost: 'BlogPost',
+  BlogComment: 'BlogComment',
   Device: 'Device',
   DevicePhoto: 'DevicePhoto',
   TdsReading: 'TdsReading',
@@ -153,6 +155,48 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const BlogPostScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  excerpt: 'excerpt',
+  coverImageUrl: 'coverImageUrl',
+  coverImageAlt: 'coverImageAlt',
+  contentJson: 'contentJson',
+  tocJson: 'tocJson',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  status: 'status',
+  publishedAt: 'publishedAt',
+  authorId: 'authorId',
+  authorName: 'authorName',
+  category: 'category',
+  tags: 'tags',
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BlogPostScalarFieldEnum = (typeof BlogPostScalarFieldEnum)[keyof typeof BlogPostScalarFieldEnum]
+
+
+export const BlogCommentScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  name: 'name',
+  email: 'email',
+  body: 'body',
+  status: 'status',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BlogCommentScalarFieldEnum = (typeof BlogCommentScalarFieldEnum)[keyof typeof BlogCommentScalarFieldEnum]
 
 
 export const DeviceScalarFieldEnum = {

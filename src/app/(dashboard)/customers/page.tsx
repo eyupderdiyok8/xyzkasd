@@ -3,11 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
-import type { UserRole } from '@/lib/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
+import { cachedJson } from '@/lib/client-api-cache';
 import { Plus, Search, X, Phone, MapPin, Wrench, ClipboardList, LayoutGrid, List, ChevronRight } from 'lucide-react';
 
 interface PhoneInfo { id: string; label: string; number: string; }
@@ -20,39 +21,49 @@ interface Customer {
 }
 
 export default function CustomersPage() {
+  const { role } = useDashboardSession();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [role, setRole] = useState<UserRole | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<{ total: number; totalPages: number; page: number; pageSize: number } | null>(null);
 
-  const fetchCustomers = useCallback(async (term: string) => {
+  const fetchCustomers = useCallback(async (term: string, nextPage = 1) => {
     setLoading(true); setError(null);
     try {
       const params = new URLSearchParams();
       if (term) params.set('search', term);
-      const res = await fetch(`/api/customers?${params}`);
-      const json = await res.json();
-      if (!res.ok) { setError(json.error?.message || 'Yüklenemedi'); return; }
+      params.set('page', String(nextPage));
+      params.set('pageSize', '25');
+      const json = await cachedJson<{ data?: Customer[]; meta?: { total: number; totalPages: number; page: number; pageSize: number }; error?: { message?: string } }>(`/api/customers?${params}`, undefined, 1000);
+      if (json.error) { setError(json.error.message || 'Yüklenemedi'); return; }
       setCustomers(json.data ?? []);
+      setMeta(json.meta ?? null);
+      setPage(json.meta?.page ?? nextPage);
     } catch { setError('Sunucuya bağlanılamadı'); }
     finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(j => setRole(j.data?.role ?? null)).catch(() => {});
-    fetchCustomers('');
-  }, [fetchCustomers]);
+    const timer = setTimeout(() => fetchCustomers(search, 1), 300);
+    return () => clearTimeout(timer);
+  }, [fetchCustomers, search]);
 
-  const handleSearch = (e: React.FormEvent) => { e.preventDefault(); fetchCustomers(search); };
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+    fetchCustomers(search, 1);
+  };
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`"${name}" silinsin mi?`)) return;
     const res = await fetch(`/api/customers/${id}`, { method: 'DELETE' });
     if (res.ok) setCustomers(p => p.filter(c => c.id !== id));
   };
 
-  const canEdit = role && hasRole(role, 'technician');
+  const canEdit = hasRole(role, 'technician');
+  const totalCustomers = meta?.total ?? customers.length;
 
   return (
     <div className="space-y-5">
@@ -60,7 +71,7 @@ export default function CustomersPage() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Müşteriler</h1>
-          <p className="text-sm text-slate-500">{customers.length} müşteri</p>
+          <p className="text-sm text-slate-500">{totalCustomers} müşteri</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex rounded-lg border border-slate-200 bg-white p-0.5">
@@ -92,7 +103,7 @@ export default function CustomersPage() {
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="İsim veya telefon..." className="pl-9 bg-white" />
         </div>
         <Button type="submit" variant="secondary">Ara</Button>
-        {search && <Button type="button" variant="ghost" onClick={() => { setSearch(''); fetchCustomers(''); }}><X className="mr-1 h-3.5 w-3.5" />Temizle</Button>}
+        {search && <Button type="button" variant="ghost" onClick={() => { setSearch(''); setPage(1); fetchCustomers('', 1); }}><X className="mr-1 h-3.5 w-3.5" />Temizle</Button>}
       </form>
 
       {error && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
@@ -251,6 +262,15 @@ export default function CustomersPage() {
             </>
           )}
         </>
+      )}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm">
+          <span className="text-slate-500">Sayfa {meta.page} / {meta.totalPages}</span>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" disabled={page <= 1 || loading} onClick={() => fetchCustomers(search, Math.max(1, page - 1))}>Önceki</Button>
+            <Button type="button" variant="outline" size="sm" disabled={page >= meta.totalPages || loading} onClick={() => fetchCustomers(search, page + 1)}>Sonraki</Button>
+          </div>
+        </div>
       )}
     </div>
   );

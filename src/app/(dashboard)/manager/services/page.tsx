@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { cachedJson } from '@/lib/client-api-cache';
 
 interface TicketListItem {
   id: string;
@@ -38,31 +39,37 @@ export default function ManagerServicesPage() {
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<{ total: number; totalPages: number; page: number; pageSize: number } | null>(null);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async (nextPage: number) => {
     setLoading(true);
     setError(null);
     try {
       const params = new URLSearchParams();
       if (statusFilter) params.set('status', statusFilter);
       if (search) params.set('search', search);
-      const res = await fetch(`/api/service-tickets?${params.toString()}`);
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error?.message || 'Yüklenemedi');
+      params.set('page', String(nextPage));
+      params.set('pageSize', '25');
+      const json = await cachedJson<{ data?: TicketListItem[]; meta?: { total: number; totalPages: number; page: number; pageSize: number }; error?: { message?: string } }>(`/api/service-tickets?${params.toString()}`, undefined, 1000);
+      if (json.error) {
+        setError(json.error.message || 'Yüklenemedi');
         return;
       }
       setTickets(json.data ?? []);
+      setMeta(json.meta ?? null);
+      setPage(json.meta?.page ?? nextPage);
     } catch {
       setError('Sunucuya bağlanılamadı');
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter]);
 
   useEffect(() => {
-    fetchTickets();
-  }, [statusFilter, search]);
+    const timer = setTimeout(() => fetchTickets(1), 300);
+    return () => clearTimeout(timer);
+  }, [fetchTickets]);
 
   return (
     <div className="space-y-6">
@@ -91,7 +98,7 @@ export default function ManagerServicesPage() {
           ].map((tab) => (
             <button
               key={tab.value}
-              onClick={() => setStatusFilter(tab.value)}
+              onClick={() => { setStatusFilter(tab.value); setPage(1); }}
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 statusFilter === tab.value
                   ? 'bg-white text-foreground shadow-sm'
@@ -105,7 +112,7 @@ export default function ManagerServicesPage() {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Servis no veya arıza açıklaması ara..."
           className="rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none w-64"
         />
@@ -160,6 +167,15 @@ export default function ManagerServicesPage() {
               </div>
             </Link>
           ))}
+        </div>
+      )}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between rounded-lg border border-border bg-white px-4 py-3 text-sm">
+          <span className="text-gray-500">Sayfa {meta.page} / {meta.totalPages} · {meta.total} servis</span>
+          <div className="flex gap-2">
+            <button className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50" disabled={page <= 1 || loading} onClick={() => fetchTickets(Math.max(1, page - 1))}>Önceki</button>
+            <button className="rounded-md border px-3 py-1.5 text-sm disabled:opacity-50" disabled={page >= meta.totalPages || loading} onClick={() => fetchTickets(page + 1)}>Sonraki</button>
+          </div>
         </div>
       )}
     </div>

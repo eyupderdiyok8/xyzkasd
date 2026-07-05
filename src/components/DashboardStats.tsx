@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import type { DashboardStatsData } from '@/lib/dashboard-data';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -34,6 +35,7 @@ export default function DashboardStats({ initialData }: { initialData?: Dashboar
   if (!data) return null;
 
   const todayServices = data.todayServices ?? [];
+  const hiddenTodayServices = Math.max(0, data.todayServiceCount - todayServices.length);
 
   return (
     <section className="rounded-lg border border-border bg-card shadow-card">
@@ -70,6 +72,14 @@ export default function DashboardStats({ initialData }: { initialData?: Dashboar
                 <Badge variant={SV[s.status] ?? 'outline'} className="text-[10px]">{SL[s.status] ?? s.status}</Badge>
               </div>
             ))}
+            {hiddenTodayServices > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-xs text-muted-foreground">
+                <span>İlk {todayServices.length} kayıt gösteriliyor, {hiddenTodayServices} kayıt daha var.</span>
+                <Link href="/technician" className="font-semibold text-primary hover:text-primary/80">
+                  Tüm servisleri gör
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

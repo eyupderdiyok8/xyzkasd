@@ -33,6 +33,16 @@ export type Profile = Prisma.ProfileModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model BlogPost
+ * 
+ */
+export type BlogPost = Prisma.BlogPostModel
+/**
+ * Model BlogComment
+ * 
+ */
+export type BlogComment = Prisma.BlogCommentModel
+/**
  * Model Device
  * 
  */

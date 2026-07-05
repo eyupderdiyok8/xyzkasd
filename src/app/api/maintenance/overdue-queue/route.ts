@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prismaClient } from '@/repositories/base.repository';
+import { ServiceTicketRepository } from '@/repositories/service-ticket.repository';
 import { requireRole } from '@/lib/supabase/require-role';
 
 /**
@@ -16,41 +16,11 @@ export async function GET() {
   }
 
   try {
-    const tenantFilter = auth.role === 'super_admin'
-      ? {}
-      : { tenantId: auth.tenantId! };
-
-    const tickets = await prismaClient.serviceTicket.findMany({
-      where: {
-        ...tenantFilter,
-        deletedAt: null,
-        status: { in: ['PENDING', 'ASSIGNED', 'IN_PROGRESS'] },
-        issueDesc: { startsWith: 'Gecikmiş bakım:' },
-      },
-      include: {
-        customer: { select: { id: true, name: true, phone: true } },
-        device: { select: { id: true, serialNo: true, brand: true, model: true } },
-        technician: { select: { id: true, name: true } },
-        _count: { select: { photos: true, filterChanges: true } },
-      },
-      orderBy: [{ createdAt: 'asc' }],
-    });
+    const repo = new ServiceTicketRepository({ tenantId: auth.tenantId, role: auth.role!, userId: auth.userId });
+    const tickets = await repo.getOverdueQueue(10);
 
     return NextResponse.json({
-      data: tickets.map((t) => ({
-        id: t.id,
-        ticketNo: t.ticketNo,
-        issueDesc: t.issueDesc,
-        status: t.status,
-        customerName: t.customer?.name ?? null,
-        customerPhone: t.customer?.phone ?? null,
-        deviceSerialNo: t.device.serialNo,
-        deviceBrand: t.device.brand,
-        deviceModel: t.device.model,
-        technicianName: t.technician?.name ?? null,
-        createdAt: t.createdAt.toISOString(),
-        scheduledAt: t.scheduledAt?.toISOString() ?? null,
-      })),
+      data: tickets,
       total: tickets.length,
     });
   } catch (e: any) {

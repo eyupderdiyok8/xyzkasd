@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ServiceTicketRepository } from '@/repositories/service-ticket.repository';
 import { requireRole } from '@/lib/supabase/require-role';
+import { parsePagination } from '@/lib/api-pagination';
 
 /**
  * GET /api/service-tickets
@@ -24,13 +25,17 @@ export async function GET(req: NextRequest) {
     : technicianId;
 
   try {
-    const tickets = await new ServiceTicketRepository({ tenantId: auth.tenantId, role: auth.role!, userId: auth.userId }).findAll({
+    const repo = new ServiceTicketRepository({ tenantId: auth.tenantId, role: auth.role!, userId: auth.userId });
+    const opts = {
       status,
       technicianId: effectiveTechId,
       search,
       showDeleted,
-    });
-    return NextResponse.json({ data: tickets });
+    };
+    const tickets = typeof (repo as any).findAllPaged === 'function'
+      ? await repo.findAllPaged(opts, parsePagination(searchParams))
+      : { data: await repo.findAll(opts) };
+    return NextResponse.json(tickets);
   } catch (e: any) {
     return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: e.message } }, { status: 500 });
   }

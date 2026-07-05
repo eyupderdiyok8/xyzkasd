@@ -3,11 +3,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { hasRole } from '@/lib/roles';
-import type { UserRole } from '@/lib/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
+import { cachedJson } from '@/lib/client-api-cache';
 import { Plus, Search, X, ShieldCheck } from 'lucide-react';
 
 interface Device {
@@ -25,40 +26,46 @@ const STATUS_VARS: Record<string, 'success' | 'secondary' | 'destructive' | 'out
 };
 
 export default function DevicesPage() {
+  const { role } = useDashboardSession();
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [role, setRole] = useState<UserRole | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<{ total: number; totalPages: number; page: number; pageSize: number } | null>(null);
 
-  const fetchDevices = useCallback(async (term: string, status: string) => {
+  const fetchDevices = useCallback(async (term: string, status: string, nextPage = 1) => {
     setLoading(true); setError(null);
     try {
       const p = new URLSearchParams();
       if (term) p.set('search', term);
       if (status) p.set('status', status);
-      const res = await fetch(`/api/devices?${p}`);
-      const json = await res.json();
-      if (!res.ok) { setError(json.error?.message || 'Yüklenemedi'); return; }
+      p.set('page', String(nextPage));
+      p.set('pageSize', '25');
+      const json = await cachedJson<{ data?: Device[]; meta?: { total: number; totalPages: number; page: number; pageSize: number }; error?: { message?: string } }>(`/api/devices?${p}`, undefined, 1000);
+      if (json.error) { setError(json.error.message || 'Yüklenemedi'); return; }
       setDevices(json.data ?? []);
+      setMeta(json.meta ?? null);
+      setPage(json.meta?.page ?? nextPage);
     } catch { setError('Sunucuya bağlanılamadı'); }
     finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => r.json()).then(j => setRole(j.data?.role ?? null)).catch(() => {});
-    fetchDevices('', '');
-  }, [fetchDevices]);
+    const timer = setTimeout(() => fetchDevices(search, statusFilter, 1), 300);
+    return () => clearTimeout(timer);
+  }, [fetchDevices, search, statusFilter]);
 
-  const canEdit = role && hasRole(role, 'technician');
+  const canEdit = hasRole(role, 'technician');
+  const totalDevices = meta?.total ?? devices.length;
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Cihazlar</h1>
-          <p className="text-sm text-slate-500">{devices.length} cihaz</p>
+          <p className="text-sm text-slate-500">{totalDevices} cihaz</p>
         </div>
         {canEdit && <Button asChild><Link href="/devices/new"><Plus className="mr-1.5 h-4 w-4" />Yeni Cihaz</Link></Button>}
       </div>
@@ -69,20 +76,20 @@ export default function DevicesPage() {
           {STATUS_OPTS.map((v, i) => {
             const active = statusFilter === v;
             return (
-              <button key={v} onClick={() => setStatusFilter(v)}
+              <button key={v} onClick={() => { setStatusFilter(v); setPage(1); }}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
                 {STATUS_LABELS[i]}
               </button>
             );
           })}
         </div>
-        <form onSubmit={e => { e.preventDefault(); fetchDevices(search, statusFilter); }} className="flex gap-2">
+        <form onSubmit={e => { e.preventDefault(); setPage(1); fetchDevices(search, statusFilter, 1); }} className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Seri no, marka..." className="pl-9 bg-white w-48" />
           </div>
           <Button type="submit" variant="secondary" size="sm">Ara</Button>
-          {search && <Button type="button" variant="ghost" size="sm" onClick={() => { setSearch(''); fetchDevices('', statusFilter); }}><X className="h-3.5 w-3.5" /></Button>}
+          {search && <Button type="button" variant="ghost" size="sm" onClick={() => { setSearch(''); setPage(1); fetchDevices('', statusFilter, 1); }}><X className="h-3.5 w-3.5" /></Button>}
         </form>
       </div>
 
@@ -132,6 +139,15 @@ export default function DevicesPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+      {meta && meta.totalPages > 1 && (
+        <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm">
+          <span className="text-slate-500">Sayfa {meta.page} / {meta.totalPages}</span>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" disabled={page <= 1 || loading} onClick={() => fetchDevices(search, statusFilter, Math.max(1, page - 1))}>Önceki</Button>
+            <Button type="button" variant="outline" size="sm" disabled={page >= meta.totalPages || loading} onClick={() => fetchDevices(search, statusFilter, page + 1)}>Sonraki</Button>
+          </div>
         </div>
       )}
     </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Code, Copy, Check, Eye } from 'lucide-react';
+import { cachedJson } from '@/lib/client-api-cache';
 
 const COLOR_PRESETS = [
   '#1e40af', '#0d9488', '#16a34a', '#dc2626',
@@ -24,11 +25,7 @@ export default function WidgetSettings() {
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    fetch('/api/admin/plan')
-      .then(r => {
-        if (r.status === 404) return null; // tenant bağlı değil
-        return r.json();
-      })
+    cachedJson<{ data?: { id: string; name: string } | null }>('/api/admin/plan')
       .then(j => {
         if (j && j.data) {
           setTenantId(j.data.id);

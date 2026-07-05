@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CustomerRepository } from '@/repositories/customer.repository';
 import { requireRole } from '@/lib/supabase/require-role';
+import { parsePagination } from '@/lib/api-pagination';
 
 /**
  * GET /api/customers
@@ -22,8 +23,10 @@ export async function GET(request: NextRequest) {
     const showDeleted = searchParams.get('showDeleted') === 'true' || searchParams.get('showAll') === 'true';
     const includeDeleted = showDeleted && (auth.role === 'manager' || auth.role === 'tenant_admin' || auth.role === 'super_admin');
 
-    const customers = await repo.findAll(search, includeDeleted);
-    return NextResponse.json({ data: customers });
+    const result = typeof (repo as any).findAllPaged === 'function'
+      ? await repo.findAllPaged(search, includeDeleted, parsePagination(searchParams))
+      : { data: await repo.findAll(search, includeDeleted) };
+    return NextResponse.json(result);
   } catch (err: any) {
     return NextResponse.json(
       { error: { code: 'INTERNAL_ERROR', message: err.message || 'Bir hata oluştu' } },

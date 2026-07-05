@@ -13,6 +13,16 @@ const nextConfig = {
   // manifest generation conflicts in route groups with parentheses.
   serverExternalPackages: ['@prisma/client', 'prisma'],
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
+
   async headers() {
     return [
       // Service Worker — allow root scope

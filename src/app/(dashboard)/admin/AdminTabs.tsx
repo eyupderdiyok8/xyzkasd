@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Building2, Database, Palette, Shield, Users, WalletCards } from 'lucide-react';
+import { BookOpenText, Building2, Database, Palette, Shield, Users, WalletCards } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export type AdminSectionId = 'users' | 'company' | 'widget' | 'data' | 'membership' | 'system';
+export type AdminSectionId = 'users' | 'company' | 'widget' | 'data' | 'membership' | 'blog' | 'system';
 
 export interface AdminSection {
   id: AdminSectionId;
@@ -20,6 +20,7 @@ const ICONS: Record<AdminSectionId, React.ElementType> = {
   widget: Palette,
   data: Database,
   membership: WalletCards,
+  blog: BookOpenText,
   system: Shield,
 };
 

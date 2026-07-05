@@ -120,6 +120,12 @@ export default function DeviceDetailPage() {
     installedAt: new Date().toISOString().slice(0, 10),
     notes: '',
   });
+  const [bulkFilterForms, setBulkFilterForms] = useState<Array<{
+    filterCatalogId: string;
+    expectedLifespanDays: string;
+    installedAt: string;
+    notes: string;
+  }>>([]);
   const [filterSubmitting, setFilterSubmitting] = useState(false);
   const [tdsValue, setTdsValue] = useState('');
   const [inValue, setInValue] = useState('');
@@ -231,9 +237,34 @@ export default function DeviceDetailPage() {
     }
   };
 
+  const toggleBulkFilter = (filterCatalogId: string) => {
+    setBulkFilterForms((prev) => {
+      if (prev.some((item) => item.filterCatalogId === filterCatalogId)) {
+        return prev.filter((item) => item.filterCatalogId !== filterCatalogId);
+      }
+      return [...prev, {
+        filterCatalogId,
+        expectedLifespanDays: '365',
+        installedAt: new Date().toISOString().slice(0, 10),
+        notes: '',
+      }];
+    });
+  };
+
+  const updateBulkFilter = (filterCatalogId: string, field: 'expectedLifespanDays' | 'installedAt' | 'notes', value: string) => {
+    setBulkFilterForms((prev) => prev.map((item) => (
+      item.filterCatalogId === filterCatalogId ? { ...item, [field]: value } : item
+    )));
+  };
+
   const handleAddFilter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!device) return;
+    const filtersToSave = bulkFilterForms.length > 0 ? bulkFilterForms : (filterForm.filterCatalogId ? [filterForm] : []);
+    if (filtersToSave.length === 0) {
+      alert('En az bir filtre seçmelisiniz');
+      return;
+    }
     setFilterSubmitting(true);
 
     try {
@@ -241,10 +272,12 @@ export default function DeviceDetailPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          filterCatalogId: filterForm.filterCatalogId,
-          installedAt: filterForm.installedAt,
-          expectedLifespanDays: Number(filterForm.expectedLifespanDays),
-          notes: filterForm.notes || null,
+          filters: filtersToSave.map((item) => ({
+            filterCatalogId: item.filterCatalogId,
+            installedAt: item.installedAt,
+            expectedLifespanDays: Number(item.expectedLifespanDays),
+            notes: item.notes || null,
+          })),
         }),
       });
 
@@ -264,6 +297,7 @@ export default function DeviceDetailPage() {
         installedAt: new Date().toISOString().slice(0, 10),
         notes: '',
       });
+      setBulkFilterForms([]);
     } catch {
       alert('Filtre eklenirken hata oluştu');
     } finally {
@@ -756,62 +790,70 @@ export default function DeviceDetailPage() {
 
         {showFilterForm && (
           <form onSubmit={handleAddFilter} className="border-b border-border px-6 py-4">
-            <div className="grid gap-4 sm:grid-cols-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Filtre Türü *</label>
-                <select
-                  value={filterForm.filterCatalogId}
-                  onChange={(e) => setFilterForm({ ...filterForm, filterCatalogId: e.target.value })}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="">Seçiniz...</option>
-                  {filterCatalog.map((fc: any) => (
-                    <option key={fc.id} value={fc.id}>
-                      {fc.name} ({fc.stage})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Takılma Tarihi *</label>
-                <input
-                  type="date"
-                  value={filterForm.installedAt}
-                  onChange={(e) => setFilterForm({ ...filterForm, installedAt: e.target.value })}
-                  required
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Beklenen Ömür (gün) *</label>
-                <input
-                  type="number"
-                  value={filterForm.expectedLifespanDays}
-                  onChange={(e) => setFilterForm({ ...filterForm, expectedLifespanDays: e.target.value })}
-                  required
-                  min={1}
-                  max={9999}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Not</label>
-                <input
-                  type="text"
-                  value={filterForm.notes}
-                  onChange={(e) => setFilterForm({ ...filterForm, notes: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                  placeholder="İsteğe bağlı"
-                />
-              </div>
+            <div className="space-y-3">
+              {filterCatalog.map((fc: any) => {
+                const selected = bulkFilterForms.find((item) => item.filterCatalogId === fc.id);
+                return (
+                  <div key={fc.id} className={`rounded-lg border p-3 transition-colors ${selected ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'}`}>
+                    <label className="flex cursor-pointer items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={!!selected}
+                        onChange={() => toggleBulkFilter(fc.id)}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                      />
+                      <span className="flex-1 text-sm font-medium text-foreground">{fc.name}</span>
+                      <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">{fc.stage}</code>
+                    </label>
+                    {selected && (
+                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Takılma Tarihi *</label>
+                          <input
+                            type="date"
+                            value={selected.installedAt}
+                            onChange={(e) => updateBulkFilter(fc.id, 'installedAt', e.target.value)}
+                            required
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Beklenen Ömür (gün) *</label>
+                          <input
+                            type="number"
+                            value={selected.expectedLifespanDays}
+                            onChange={(e) => updateBulkFilter(fc.id, 'expectedLifespanDays', e.target.value)}
+                            required
+                            min={1}
+                            max={9999}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Not</label>
+                          <input
+                            type="text"
+                            value={selected.notes}
+                            onChange={(e) => updateBulkFilter(fc.id, 'notes', e.target.value)}
+                            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                            placeholder="İsteğe bağlı"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              {filterCatalog.length === 0 && (
+                <p className="text-sm text-gray-400">Filtre kataloğu bulunamadı.</p>
+              )}
             </div>
             <button
               type="submit"
-              disabled={filterSubmitting}
+              disabled={filterSubmitting || bulkFilterForms.length === 0}
               className="mt-3 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors disabled:opacity-50"
             >
-              {filterSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+              {filterSubmitting ? 'Kaydediliyor...' : `${bulkFilterForms.length || 0} Filtreyi Kaydet`}
             </button>
           </form>
         )}

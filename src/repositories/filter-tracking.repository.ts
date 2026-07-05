@@ -100,6 +100,11 @@ export class FilterTrackingRepository extends BaseRepository {
 
   async add(deviceId: string, input: DeviceFilterInput) {
     await this.ensureDeviceAccess(deviceId);
+    return this.addOrUpdate(deviceId, input);
+  }
+
+  async addOrUpdate(deviceId: string, input: DeviceFilterInput) {
+    await this.ensureDeviceAccess(deviceId);
 
     const data: any = {
       deviceId,
@@ -113,7 +118,31 @@ export class FilterTrackingRepository extends BaseRepository {
       data.installedAt = new Date(input.installedAt);
     }
 
-    const row = await this.prisma.deviceFilter.create({
+    const existing = await this.prisma.deviceFilter.findFirst({
+      where: {
+        deviceId,
+        filterCatalogId: input.filterCatalogId,
+        deletedAt: null,
+        ...this.tenantFilter(),
+      },
+      select: { id: true },
+    });
+
+    const row = existing
+      ? await this.prisma.deviceFilter.update({
+          where: { id: existing.id },
+          data: {
+            installedAt: data.installedAt ?? new Date(),
+            expectedLifespanDays: data.expectedLifespanDays,
+            notes: data.notes,
+          },
+          include: {
+            filterCatalog: {
+              select: { id: true, name: true, stage: true, sku: true },
+            },
+          },
+        })
+      : await this.prisma.deviceFilter.create({
       data,
       include: {
         filterCatalog: {
@@ -122,13 +151,30 @@ export class FilterTrackingRepository extends BaseRepository {
       },
     });
 
-    await this.auditCreate({
-      entity: 'device_filter',
-      entityId: row.id,
-      newValues: { deviceId, filterCatalogId: input.filterCatalogId, expectedLifespanDays: input.expectedLifespanDays },
-    });
+    if (existing) {
+      await this.auditUpdate({
+        entity: 'device_filter',
+        entityId: row.id,
+        oldValues: { filterCatalogId: input.filterCatalogId },
+        newValues: { deviceId, filterCatalogId: input.filterCatalogId, expectedLifespanDays: input.expectedLifespanDays },
+      });
+    } else {
+      await this.auditCreate({
+        entity: 'device_filter',
+        entityId: row.id,
+        newValues: { deviceId, filterCatalogId: input.filterCatalogId, expectedLifespanDays: input.expectedLifespanDays },
+      });
+    }
 
     return this.mapWithLifecycle(row);
+  }
+
+  async addMany(deviceId: string, inputs: DeviceFilterInput[]) {
+    const results = [];
+    for (const input of inputs) {
+      results.push(await this.addOrUpdate(deviceId, input));
+    }
+    return results;
   }
 
   // ─── Update a filter tracking entry ─────────

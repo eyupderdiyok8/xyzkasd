@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { hasRole } from '@/lib/roles';
-import type { UserRole } from '@/lib/supabase/types';
+import { useDashboardSession } from '@/components/DashboardSessionProvider';
 
 interface PhoneInfo {
   id: string;
@@ -60,6 +60,7 @@ interface CustomerDetail {
   addresses: AddressInfo[];
   devices: DeviceInfo[];
   serviceTickets: TicketInfo[];
+  _count?: { devices: number; serviceTickets: number; addresses: number; phones: number };
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -79,17 +80,12 @@ const DEVICE_STATUS_COLORS: Record<string, string> = {
 export default function CustomerDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { role } = useDashboardSession();
   const [customer, setCustomer] = useState<CustomerDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<UserRole | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/auth/me')
-      .then((r) => r.json())
-      .then((json) => setRole(json.data?.role ?? null))
-      .catch(() => {});
-
     if (!params.id) return;
     fetch(`/api/customers/${params.id}`)
       .then((r) => r.json())
@@ -139,7 +135,7 @@ export default function CustomerDetailPage() {
     );
   }
 
-  const canEdit = role && hasRole(role, 'technician');
+  const canEdit = hasRole(role, 'technician');
 
   return (
     <div className="space-y-8">
@@ -254,7 +250,7 @@ export default function CustomerDetailPage() {
       <div className="rounded-lg border border-border bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
           <h2 className="text-base font-semibold text-foreground">
-            Cihazlar ({customer.devices.length})
+            Cihazlar ({customer._count?.devices ?? customer.devices.length})
           </h2>
           <Link
             href={`/devices/new?customerId=${customer.id}`}
@@ -303,7 +299,7 @@ export default function CustomerDetailPage() {
       <div className="rounded-lg border border-border bg-white shadow-sm">
         <div className="border-b border-border px-6 py-4">
           <h2 className="text-base font-semibold text-foreground">
-            Servis Geçmişi ({customer.serviceTickets.length})
+            Servis Geçmişi ({customer._count?.serviceTickets ?? customer.serviceTickets.length})
           </h2>
         </div>
         {customer.serviceTickets.length > 0 ? (
@@ -313,7 +309,7 @@ export default function CustomerDetailPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <Link
-                      href={`/technician/service-record/${t.id}`}
+                      href={`/technician/${t.id}`}
                       className="font-medium text-blue-600 hover:text-blue-800"
                     >
                       {t.ticketNo}

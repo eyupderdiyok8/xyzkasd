@@ -11,6 +11,32 @@ import RevenueStats from '@/components/RevenueStats';
 import QuickActions from '@/components/QuickActions';
 import { AlertTriangle, CalendarDays, CheckCircle2, Sparkles } from 'lucide-react';
 
+const EMPTY_DASHBOARD_STATS = {
+  todayServiceCount: 0,
+  todayServices: [],
+  upcomingMaintenanceCount: 0,
+  overdueMaintenanceCount: 0,
+};
+
+const EMPTY_MAINTENANCE_REMINDERS = {
+  upcoming15Count: 0,
+  upcoming7Count: 0,
+  overdueCount: 0,
+  upcoming15: [],
+  upcoming7: [],
+  overdue: [],
+};
+
+const EMPTY_REVENUE_STATS = {
+  totalRevenue: 0,
+  collectedToday: 0,
+  pendingAmount: 0,
+  overdueAmount: 0,
+  byMethod: [],
+  byTechnician: [],
+  monthlyRevenue: [],
+};
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -127,16 +153,16 @@ export default async function DashboardPage({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(360px,0.75fr)]">
         <div className="space-y-6">
-          <DashboardStats initialData={stats ?? undefined} />
-          {canSeeRevenue && <RevenueStats initialData={revenue ?? undefined} />}
+          <DashboardStats initialData={stats ?? EMPTY_DASHBOARD_STATS} />
+          {canSeeRevenue && <RevenueStats initialData={revenue ?? EMPTY_REVENUE_STATS} />}
         </div>
 
         <div className="space-y-6">
           <Panel title="Bakım Hatırlatmaları">
-            <MaintenanceReminders initialData={reminders ?? undefined} />
+            <MaintenanceReminders initialData={reminders ?? EMPTY_MAINTENANCE_REMINDERS} />
           </Panel>
           <Panel title="Gecikmiş Bakım Kuyruğu">
-            <OverdueQueue initialData={queue ?? undefined} />
+            <OverdueQueue initialData={queue ?? []} />
           </Panel>
         </div>
       </div>

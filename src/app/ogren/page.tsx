@@ -2,6 +2,7 @@ import Link from 'next/link';
 import MarketingNav from '@/components/marketing/MarketingNav';
 import MarketingFooter from '@/components/marketing/MarketingFooter';
 import { LearnCenterVisual } from '@/components/marketing/MarketingVisuals';
+import { blogPostDelegate } from '@/lib/blog-db';
 
 const GUIDES = [
   ['Başlangıç rehberi', 'İlk müşteri, ilk cihaz ve ilk servis kaydı nasıl açılır?'],
@@ -12,7 +13,21 @@ const GUIDES = [
   ['Offline saha kullanımı', 'İnternet yokken servis kaydı nasıl alınır, sonra nasıl senkronize olur?'],
 ];
 
-export default function OgrenPage() {
+export const revalidate = 300;
+
+export default async function OgrenPage() {
+  let latestPosts: Array<{ id: string; title: string; slug: string; excerpt: string }> = [];
+  try {
+    latestPosts = await blogPostDelegate().findMany({
+      where: { status: 'PUBLISHED', deletedAt: null },
+      orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
+      take: 3,
+      select: { id: true, title: true, slug: true, excerpt: true },
+    });
+  } catch {
+    latestPosts = [];
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <MarketingNav />
@@ -48,6 +63,30 @@ export default function OgrenPage() {
           </div>
         </div>
       </section>
+
+      {latestPosts.length > 0 && (
+        <section className="border-y border-slate-200 bg-white py-16">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-700">Blog</p>
+                <h2 className="mt-2 text-3xl font-bold">Son rehber yazıları</h2>
+              </div>
+              <Link href="/blog" className="text-sm font-bold text-cyan-700 hover:text-cyan-900">
+                Tüm yazılar
+              </Link>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {latestPosts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-6 transition-colors hover:border-cyan-300">
+                  <h3 className="text-lg font-bold text-slate-950">{post.title}</h3>
+                  <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{post.excerpt}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="border-y border-slate-200 bg-white py-16">
         <div className="mx-auto max-w-3xl px-6">

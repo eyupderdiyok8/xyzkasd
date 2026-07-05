@@ -7,6 +7,14 @@ import TenantSelect from '@/components/TenantSelect';
 
 const supabase = createClient();
 
+interface InventoryItem {
+  id: string;
+  name: string;
+  sku: string | null;
+  quantity: number;
+  unitPrice: number;
+}
+
 export default function NewDeviceForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -14,6 +22,7 @@ export default function NewDeviceForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [createdId, setCreatedId] = useState<string | null>(null);
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
 
   // Upload state
   const [uploading, setUploading] = useState(false);
@@ -31,7 +40,17 @@ export default function NewDeviceForm() {
     notes: '',
     status: 'ACTIVE',
   });
+  const [saleType, setSaleType] = useState<'existing' | 'sold'>('existing');
+  const [sale, setSale] = useState({
+    inventoryItemId: '',
+    amount: '',
+    paymentMethod: 'CASH',
+    installmentCount: '',
+    dueDate: '',
+    notes: '',
+  });
   const u = (field: string, v: string) => setF(p => ({ ...p, [field]: v }));
+  const su = (field: string, v: string) => setSale(p => ({ ...p, [field]: v }));
   const cls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none';
 
   // Read customerId from URL query params (e.g. /devices/new?customerId=xxx)
@@ -48,11 +67,18 @@ export default function NewDeviceForm() {
       .then(r => r.json())
       .then(j => { if (j.data?.role === 'super_admin') setIsSuperAdmin(true); })
       .catch(() => {});
+
+    fetch('/api/inventory?pageSize=100')
+      .then(r => r.json())
+      .then(j => setInventoryItems(j.data ?? []))
+      .catch(() => {});
   }, []);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
     if (isSuperAdmin && !tenantId) { setError('Süper admin olarak bir firma seçmelisiniz'); return; }
+    if (saleType === 'sold' && !f.customerId) { setError('Cihaz satışı için müşteri seçmelisiniz'); return; }
+    if (saleType === 'sold' && !sale.inventoryItemId) { setError('Cihaz satışı için envanter ürünü seçmelisiniz'); return; }
     setSending(true);
     setError('');
 
@@ -68,6 +94,14 @@ export default function NewDeviceForm() {
         installDate: f.installDate || null,
         notes: f.notes || null,
         tenantId: isSuperAdmin ? tenantId || undefined : undefined,
+        sale: saleType === 'sold' ? {
+          inventoryItemId: sale.inventoryItemId,
+          amount: sale.amount ? Number(sale.amount) : 0,
+          paymentMethod: sale.paymentMethod,
+          installmentCount: sale.installmentCount ? Number(sale.installmentCount) : null,
+          dueDate: sale.dueDate || null,
+          notes: sale.notes || null,
+        } : null,
       }),
     });
     const j = await res.json();
@@ -79,6 +113,9 @@ export default function NewDeviceForm() {
 
     const deviceId = j.data.id;
     setCreatedId(deviceId);
+    if (Array.isArray(j.warnings) && j.warnings.length > 0) {
+      alert(j.warnings.map((w: { message?: string }) => w.message).filter(Boolean).join('\n'));
+    }
 
     // Upload photos if selected
     if (photos.length > 0) {
@@ -208,6 +245,100 @@ export default function NewDeviceForm() {
           <p className="mt-1.5 text-xs text-gray-400">
             Opsiyonel — cihazı bir müşteriye atayın
           </p>
+        )}
+      </section>
+
+      {/* Satış ve Stok */}
+      <section className="rounded-lg border border-border bg-white p-6">
+        <h2 className="mb-4 text-lg font-semibold">Satış ve Stok</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className={`cursor-pointer rounded-lg border p-4 transition-colors ${saleType === 'existing' ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'}`}>
+            <input
+              type="radio"
+              name="saleType"
+              value="existing"
+              checked={saleType === 'existing'}
+              onChange={() => setSaleType('existing')}
+              className="mr-2"
+            />
+            <span className="text-sm font-semibold">Müşterinin mevcut cihazı</span>
+            <p className="mt-1 text-xs text-gray-500">Sadece cihaz kaydı oluşur; stok ve gelir işlemi yapılmaz.</p>
+          </label>
+          <label className={`cursor-pointer rounded-lg border p-4 transition-colors ${saleType === 'sold' ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white'}`}>
+            <input
+              type="radio"
+              name="saleType"
+              value="sold"
+              checked={saleType === 'sold'}
+              onChange={() => setSaleType('sold')}
+              className="mr-2"
+            />
+            <span className="text-sm font-semibold">Cihaz bizden satıldı</span>
+            <p className="mt-1 text-xs text-gray-500">Stoktan düşer, satış servis kaydı ve tahsilat oluşur.</p>
+          </label>
+        </div>
+
+        {saleType === 'sold' && (
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                Envanter Ürünü <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={sale.inventoryItemId}
+                onChange={(e) => {
+                  const selected = inventoryItems.find((item) => item.id === e.target.value);
+                  su('inventoryItemId', e.target.value);
+                  if (selected && !sale.amount) su('amount', String(selected.unitPrice || ''));
+                }}
+                required={saleType === 'sold'}
+                className={cls}
+              >
+                <option value="">Seçiniz...</option>
+                {inventoryItems.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}{item.sku ? ` (${item.sku})` : ''} - Stok: {item.quantity}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Satış Tutarı</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={sale.amount}
+                onChange={(e) => su('amount', e.target.value)}
+                className={cls}
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Ödeme Yöntemi</label>
+              <select value={sale.paymentMethod} onChange={(e) => su('paymentMethod', e.target.value)} className={cls}>
+                <option value="CASH">Nakit</option>
+                <option value="CREDIT_CARD">Kredi Kartı</option>
+                <option value="BANK_TRANSFER">Banka Transferi</option>
+                <option value="PROMISSORY_NOTE">Senet</option>
+                <option value="DEFERRED">İleri Tarihli</option>
+              </select>
+            </div>
+            {sale.paymentMethod === 'DEFERRED' && (
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Vade Tarihi</label>
+                <input type="date" value={sale.dueDate} onChange={(e) => su('dueDate', e.target.value)} className={cls} />
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Taksit Sayısı</label>
+              <input type="number" min="1" value={sale.installmentCount} onChange={(e) => su('installmentCount', e.target.value)} className={cls} placeholder="Opsiyonel" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">Satış Notu</label>
+              <input type="text" value={sale.notes} onChange={(e) => su('notes', e.target.value)} className={cls} placeholder="Opsiyonel" />
+            </div>
+          </div>
         )}
       </section>
 

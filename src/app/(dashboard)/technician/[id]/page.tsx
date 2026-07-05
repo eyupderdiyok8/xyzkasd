@@ -40,7 +40,8 @@ interface PhotoInfo {
   createdAt: string;
 }
 
-interface ServicePart { name: string; quantity: number; }
+interface ServicePart { name: string; quantity: number; inventoryItemId?: string | null; }
+interface InventoryOption { id: string; name: string; quantity: number; sku: string | null; }
 
 interface CompletionDraft {
   body: Record<string, unknown>;
@@ -336,7 +337,7 @@ export default function ServiceRecordPage() {
 
   // Generic parts
   const [serviceParts, setServiceParts] = useState<ServicePart[]>([]);
-  const [inventoryItems, setInventoryItems] = useState<string[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<InventoryOption[]>([]);
 
   // Signature
   const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
@@ -375,7 +376,7 @@ export default function ServiceRecordPage() {
         const [ticketRes, filterRes, invRes] = await Promise.all([
           fetch(`/api/service-tickets/${ticketId}`),
           fetch('/api/filters'),
-          fetch('/api/inventory'),
+          fetch('/api/inventory?pageSize=100'),
         ]);
 
         const ticketJson = await ticketRes.json();
@@ -407,8 +408,7 @@ export default function ServiceRecordPage() {
 
         const invJson = await invRes.json();
         if (invJson.data) {
-          const names = (invJson.data as Array<{ name: string }>).map((i: { name: string }) => i.name);
-          setInventoryItems(names);
+          setInventoryItems(invJson.data as InventoryOption[]);
         }
 
         // Load existing payment if any
@@ -689,10 +689,13 @@ export default function ServiceRecordPage() {
       if (!res.ok) throw new Error(json.error?.message || 'Kaydedilemedi');
 
       setTicket(json.data);
+      const warningText = Array.isArray(json.warnings) && json.warnings.length > 0
+        ? `\n\nStok uyarısı: ${json.warnings.map((w: { message?: string }) => w.message).filter(Boolean).join(' ')}`
+        : '';
       setSuccess(
         payAmount > 0
-          ? `✅ Servis tamamlandı, ${payAmount.toLocaleString('tr-TR')}₺ tahsilat kaydedildi!`
-          : '✅ Servis başarıyla tamamlandı!',
+          ? `✅ Servis tamamlandı, ${payAmount.toLocaleString('tr-TR')}₺ tahsilat kaydedildi!${warningText}`
+          : `✅ Servis başarıyla tamamlandı!${warningText}`,
       );
     } catch (err: any) {
       setError(err.message || 'Bir hata oluştu');
@@ -1385,32 +1388,56 @@ function EditableExpenses({ ticketId, initialExpenses }: { ticketId: string; ini
   );
 }
 
-function ServicePartsList({ parts, setParts, inventoryItems }: { parts: ServicePart[]; setParts: (p: ServicePart[]) => void; inventoryItems: string[] }) {
-  const add = () => setParts([...parts, { name: '', quantity: 1 }]);
+function ServicePartsList({ parts, setParts, inventoryItems }: { parts: ServicePart[]; setParts: (p: ServicePart[]) => void; inventoryItems: InventoryOption[] }) {
+  const add = () => setParts([...parts, { name: '', quantity: 1, inventoryItemId: null }]);
   const remove = (i: number) => setParts(parts.filter((_, idx) => idx !== i));
   const update = (i: number, field: keyof ServicePart, value: string | number) => {
     const next = [...parts];
     next[i] = { ...next[i], [field]: value };
     setParts(next);
   };
+  const chooseInventory = (i: number, inventoryItemId: string) => {
+    const item = inventoryItems.find((inv) => inv.id === inventoryItemId);
+    const next = [...parts];
+    next[i] = {
+      ...next[i],
+      inventoryItemId: inventoryItemId || null,
+      name: item?.name ?? next[i]?.name ?? '',
+    };
+    setParts(next);
+  };
 
-  const suggestions = [...new Set([...inventoryItems, ...STATIC_SUGGESTIONS])];
+  const suggestions = [...new Set([...inventoryItems.map((item) => item.name), ...STATIC_SUGGESTIONS])];
 
   return (
     <div className="space-y-2">
       {parts.length === 0 && <p className="text-sm text-gray-400">Henüz parça eklenmedi.</p>}
       {parts.map((p, i) => (
-        <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-gray-50">
-          <input type="text" value={p.name} onChange={(ev) => update(i, 'name', ev.target.value)}
-            placeholder="Parça adı" list="part-suggestions"
-            className="flex-1 rounded border border-gray-200 px-2 py-1.5 text-xs" />
-          <datalist id="part-suggestions">
-            {suggestions.map(s => <option key={s} value={s} />)}
-          </datalist>
+        <div key={i} className="grid gap-2 rounded-lg bg-gray-50 p-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_72px_32px] sm:items-center">
+          <select
+            value={p.inventoryItemId ?? ''}
+            onChange={(ev) => chooseInventory(i, ev.target.value)}
+            className="rounded border border-gray-200 px-2 py-1.5 text-xs"
+          >
+            <option value="">Stoktan seçme</option>
+            {inventoryItems.map((item, itemIndex) => (
+              <option key={`${item.id || item.name}-${itemIndex}`} value={item.id}>
+                {item.name}{item.sku ? ` (${item.sku})` : ''} - Stok: {item.quantity}
+              </option>
+            ))}
+          </select>
+          <div>
+            <input type="text" value={p.name} onChange={(ev) => update(i, 'name', ev.target.value)}
+              placeholder="Parça adı" list="part-suggestions"
+              className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs" />
+            <datalist id="part-suggestions">
+              {suggestions.map((s, suggestionIndex) => <option key={`${s}-${suggestionIndex}`} value={s} />)}
+            </datalist>
+          </div>
           <input type="number" min="1" value={p.quantity} onChange={(ev) => update(i, 'quantity', parseInt(ev.target.value) || 1)}
-            className="w-16 rounded border border-gray-200 px-2 py-1.5 text-xs text-center" />
+            className="w-full rounded border border-gray-200 px-2 py-1.5 text-xs text-center" />
           <button type="button" onClick={() => remove(i)}
-            className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600">✕</button>
+            className="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600">x</button>
         </div>
       ))}
       <button type="button" onClick={add}

@@ -11,6 +11,7 @@ import {
   type MembershipType,
 } from '@/lib/features';
 import { Star, Clock, Shield, AlertTriangle } from 'lucide-react';
+import { cachedJson } from '@/lib/client-api-cache';
 
 interface TenantMembership {
   id: string;
@@ -68,17 +69,8 @@ export default function PlanManagement(props: PlanManagementProps = {}) {
     try {
       setError(null);
       setEmptyMessage(null);
-      const res = await fetch('/api/admin/plan');
-      const json = await res.json();
-      if (!res.ok) {
-        if (res.status === 404) {
-          setError(null);
-          setTenant(null);
-          setLoading(false);
-          return;
-        }
-        throw new Error(json.error?.message ?? 'Yüklenemedi');
-      }
+      const json = await cachedJson<{ data?: TenantMembership | null; meta?: { message?: string }; error?: { message?: string } }>('/api/admin/plan');
+      if (json.error) throw new Error(json.error.message ?? 'Yüklenemedi');
       if (!json.data) {
         setTenant(null);
         setEmptyMessage(json.meta?.message ?? null);

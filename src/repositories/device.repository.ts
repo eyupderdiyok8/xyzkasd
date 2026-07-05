@@ -1,14 +1,25 @@
 import { randomUUID } from 'node:crypto';
 import { BaseRepository } from './base.repository';
+import { paginationMeta, type PaginationMeta, type PaginationParams } from '@/lib/api-pagination';
+import { stockOutAllowNegative, type StockWarning } from '@/lib/inventory-stock';
 
 function generateQrCode(): string {
   return 'QR-' + randomUUID().replace(/-/g, '').slice(0, 16).toUpperCase();
 }
 
+function generateSaleTicketNo(): string {
+  const date = new Date();
+  const y = date.getFullYear().toString().slice(-2);
+  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const d = date.getDate().toString().padStart(2, '0');
+  const seq = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `SAT-${y}${m}${d}-${seq}`;
+}
+
 export class DeviceRepository extends BaseRepository {
   // ─── CRUD ─────────────────────────────────
 
-  async findAll(opts?: { search?: string; status?: string; showDeleted?: boolean }) {
+  private buildListWhere(opts?: { search?: string; status?: string; showDeleted?: boolean }) {
     const where: any = {
       ...this.tenantFilter(),
     };
@@ -28,7 +39,11 @@ export class DeviceRepository extends BaseRepository {
         { qrCode: { contains: s } },
       ];
     }
+    return where;
+  }
 
+  async findAll(opts?: { search?: string; status?: string; showDeleted?: boolean }) {
+    const where = this.buildListWhere(opts);
     return this.prisma.device.findMany({
       where,
       include: {
@@ -41,6 +56,25 @@ export class DeviceRepository extends BaseRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async findAllPaged(opts: { search?: string; status?: string; showDeleted?: boolean }, pagination: PaginationParams): Promise<{ data: any[]; meta: PaginationMeta }> {
+    const where = this.buildListWhere(opts);
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.device.findMany({
+        where,
+        include: {
+          customer: { select: { id: true, name: true } },
+          _count: { select: { tdsReadings: true, serviceTickets: true, photos: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: pagination.skip,
+        take: pagination.take,
+      }),
+      this.prisma.device.count({ where }),
+    ]);
+
+    return { data, meta: paginationMeta(pagination.page, pagination.pageSize, total) };
   }
 
   async findById(id: string, showDeleted?: boolean) {
@@ -91,22 +125,119 @@ export class DeviceRepository extends BaseRepository {
     installDate?: string | null;
     notes?: string | null;
     status?: string;
+    sale?: {
+      inventoryItemId: string;
+      amount?: number | null;
+      paymentMethod?: string | null;
+      installmentCount?: number | null;
+      dueDate?: string | null;
+      notes?: string | null;
+    } | null;
   }) {
     const qrCode = generateQrCode();
-    const device = await this.prisma.device.create({
-      data: {
-        serialNo: input.serialNo,
-        brand: input.brand,
-        model: input.model,
-        tenantId: input.tenantId,
-        customerId: input.customerId ?? null,
-        qrCode,
-        status: input.status ?? 'ACTIVE',
-        warrantyStart: input.warrantyStart ? new Date(input.warrantyStart) : null,
-        warrantyEnd: input.warrantyEnd ? new Date(input.warrantyEnd) : null,
-        installDate: input.installDate ? new Date(input.installDate) : null,
-        notes: input.notes ?? null,
-      },
+    if (!input.sale?.inventoryItemId) {
+      const device = await this.prisma.device.create({
+        data: {
+          serialNo: input.serialNo,
+          brand: input.brand,
+          model: input.model,
+          tenantId: input.tenantId,
+          customerId: input.customerId ?? null,
+          qrCode,
+          status: input.status ?? 'ACTIVE',
+          warrantyStart: input.warrantyStart ? new Date(input.warrantyStart) : null,
+          warrantyEnd: input.warrantyEnd ? new Date(input.warrantyEnd) : null,
+          installDate: input.installDate ? new Date(input.installDate) : null,
+          notes: input.notes ?? null,
+        },
+      });
+
+      await this.auditCreate({
+        entity: 'device',
+        entityId: device.id,
+        newValues: { serialNo: device.serialNo, brand: device.brand, model: device.model, status: device.status, customerId: device.customerId },
+      });
+
+      return device;
+    }
+
+    const warnings: StockWarning[] = [];
+    let saleTicket: any = null;
+    let payment: any = null;
+
+    const device = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.device.create({
+        data: {
+          serialNo: input.serialNo,
+          brand: input.brand,
+          model: input.model,
+          tenantId: input.tenantId,
+          customerId: input.customerId ?? null,
+          qrCode,
+          status: input.status ?? 'ACTIVE',
+          warrantyStart: input.warrantyStart ? new Date(input.warrantyStart) : null,
+          warrantyEnd: input.warrantyEnd ? new Date(input.warrantyEnd) : null,
+          installDate: input.installDate ? new Date(input.installDate) : null,
+          notes: input.notes ?? null,
+        },
+      });
+
+      if (input.sale?.inventoryItemId && input.customerId) {
+        let ticketNo = generateSaleTicketNo();
+        let attempts = 0;
+        while (await tx.serviceTicket.findUnique({ where: { ticketNo } })) {
+          ticketNo = generateSaleTicketNo();
+          attempts++;
+          if (attempts > 10) throw new Error('TicketNo generation failed');
+        }
+
+        saleTicket = await tx.serviceTicket.create({
+          data: {
+            ticketNo,
+            tenantId: input.tenantId,
+            customerId: input.customerId,
+            deviceId: created.id,
+            issueDesc: 'Cihaz satışı / kurulum',
+            status: 'COMPLETED',
+            completedAt: new Date(),
+            workDone: 'Cihaz satışı ve kurulumu kaydedildi.',
+            resolution: input.sale.notes ?? null,
+          },
+        });
+
+        const stockWarning = await stockOutAllowNegative(tx, {
+          itemId: input.sale.inventoryItemId,
+          tenantId: input.tenantId,
+          quantity: 1,
+          referenceType: 'SERVICE',
+          referenceId: saleTicket.ticketNo,
+          notes: `Cihaz satışı #${saleTicket.ticketNo} — ${created.brand} ${created.model}`,
+          createdBy: this.userId,
+        });
+        if (stockWarning) warnings.push(stockWarning);
+
+        const amount = Number(input.sale.amount ?? 0);
+        if (amount > 0) {
+          const paymentMethod = input.sale.paymentMethod || 'CASH';
+          payment = await tx.servicePayment.create({
+            data: {
+              ticketId: saleTicket.id,
+              tenantId: input.tenantId,
+              customerId: input.customerId,
+              amount,
+              paymentMethod,
+              status: paymentMethod === 'DEFERRED' ? 'PENDING' : 'PAID',
+              installmentCount: input.sale.installmentCount ?? null,
+              paidAt: paymentMethod === 'DEFERRED' ? null : new Date(),
+              dueDate: input.sale.dueDate ? new Date(input.sale.dueDate) : null,
+              notes: input.sale.notes ?? 'Cihaz satışı',
+              createdBy: this.userId,
+            },
+          });
+        }
+      }
+
+      return created;
     });
 
     await this.auditCreate({
@@ -115,7 +246,7 @@ export class DeviceRepository extends BaseRepository {
       newValues: { serialNo: device.serialNo, brand: device.brand, model: device.model, status: device.status, customerId: device.customerId },
     });
 
-    return device;
+    return { ...device, saleTicket, payment, warnings };
   }
 
   async update(id: string, input: Record<string, unknown>) {

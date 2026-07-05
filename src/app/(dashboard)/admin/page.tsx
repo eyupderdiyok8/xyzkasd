@@ -14,6 +14,7 @@ import DataImport from '@/components/DataImport';
 import MembershipAssigner from '@/components/MembershipAssigner';
 import WidgetSettings from '@/components/WidgetSettings';
 import AdminTabs, { type AdminSection } from './AdminTabs';
+import BlogManagement from './BlogManagement';
 
 export default async function AdminPage() {
   const supabase = await createServerSupabaseClient();
@@ -104,7 +105,7 @@ export default async function AdminPage() {
       id: 'users',
       title: 'Kullanıcılar',
       description: 'Ekip üyelerini, rollerini ve erişimlerini yönetin.',
-      children: <UserManagement currentRole={role} />,
+      children: <UserManagement currentRole={role} currentUserId={user.id} />,
     },
     {
       id: 'company',
@@ -152,6 +153,13 @@ export default async function AdminPage() {
   ];
 
   if (role === 'super_admin') {
+    sections.push({
+      id: 'blog',
+      title: 'Blog',
+      description: 'SEO blog yazılarını, kapak görsellerini ve ziyaretçi yorumlarını yönetin.',
+      children: <BlogManagement />,
+    });
+
     sections.push({
       id: 'system',
       title: 'Sistem',
