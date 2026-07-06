@@ -20,6 +20,7 @@ const PUBLIC_ROUTES = [
   '/nasil-calisir',
   '/fiyat',
   '/ogren',
+  '/blog',
   '/upgrade',
   '/su-aritma-servis-yazilimi',
   '/su-aritma-servis-programi',
