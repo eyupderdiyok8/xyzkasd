@@ -64,9 +64,9 @@ export default function BlogComments({ slug }: { slug: string }) {
         {loading ? (
           <p className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="h-4 w-4 animate-spin" /> Yorumlar yükleniyor</p>
         ) : comments.length === 0 ? (
-          <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">İlk yorumu siz bırakabilirsiniz.</p>
+          <p className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">İlk yorumu siz bırakabilirsiniz.</p>
         ) : comments.map((comment) => (
-          <article key={comment.id} className="rounded-xl border border-slate-200 bg-white p-5">
+          <article key={comment.id} className="rounded-lg border border-slate-200 bg-white p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="font-bold text-slate-900">{comment.name}</h3>
               <time className="text-xs text-slate-500">{new Date(comment.createdAt).toLocaleDateString('tr-TR')}</time>
@@ -79,26 +79,26 @@ export default function BlogComments({ slug }: { slug: string }) {
       <form
         id="blog-comment-form"
         action={submit}
-        className="mt-8 grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5"
+        className="mt-8 grid gap-4 rounded-lg border border-slate-200 bg-slate-50 p-5 sm:p-6"
       >
         <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1">
             <span className="text-sm font-semibold text-slate-800">Adınız</span>
-            <input name="name" required minLength={2} maxLength={80} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
+            <input name="name" required minLength={2} maxLength={80} className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100" />
           </label>
           <label className="space-y-1">
             <span className="text-sm font-semibold text-slate-800">E-posta</span>
-            <input name="email" type="email" required className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
+            <input name="email" type="email" required className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100" />
           </label>
         </div>
         <label className="space-y-1">
           <span className="text-sm font-semibold text-slate-800">Yorumunuz</span>
-          <textarea name="body" required minLength={5} maxLength={1200} rows={4} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2" />
+          <textarea name="body" required minLength={5} maxLength={1200} rows={4} className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100" />
         </label>
         <div className="flex flex-wrap items-center justify-between gap-3">
           {message ? <p className="text-sm font-semibold text-cyan-700">{message}</p> : <p className="text-xs text-slate-500">Yorumlar onaylandıktan sonra görünür.</p>}
-          <button disabled={submitting} type="submit" className="rounded-lg bg-slate-950 px-5 py-2 text-sm font-bold text-white disabled:opacity-60">
+          <button disabled={submitting} type="submit" className="min-h-11 rounded-md bg-slate-950 px-5 text-sm font-bold text-white hover:bg-cyan-700 disabled:opacity-60">
             {submitting ? 'Gönderiliyor...' : 'Yorum Gönder'}
           </button>
         </div>
